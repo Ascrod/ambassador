@@ -2970,7 +2970,8 @@ function chan_part (reason)
 CIRCChannel.prototype.invite =
 function chan_inviteuser (nick)
 {
-    this.parent.sendData("INVITE " + nick + " " + this.encodedName + "\n");
+    var rawNick = fromUnicode(nick, this.parent);
+    this.parent.sendData("INVITE " + rawNick + " " + this.encodedName + "\n");
     return true;
 }
 
