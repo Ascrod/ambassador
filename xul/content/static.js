@@ -4230,13 +4230,14 @@ function __display(message, msgtype, sourceObj, destObj)
                 // ...or to us. Messages from someone else to channel or similar.
 
                 if ((typeof message == "string") && me)
-                {
                     isImportant = msgIsImportant(message, nick, o.network);
-                    if (isImportant)
-                    {
-                        this.defaultCompletion = nick +
-                            client.prefs["nickCompleteStr"] + " ";
-                    }
+                else if (message.hasAttribute("isImportant") && me)
+                    isImportant = true;
+
+                if (isImportant)
+                {
+                    this.defaultCompletion = nick +
+                        client.prefs["nickCompleteStr"] + " ";
                 }
             }
         }
@@ -4432,14 +4433,27 @@ function __display(message, msgtype, sourceObj, destObj)
     {
         if (importantId)
         {
-            var channel = this.unicodeName;
-            var cmd = "jump-to-anchor " + importantId + " " + channel;
-            var prefix = getMsg(MSG_JUMPTO_BUTTON, [channel, cmd]);
-            message = prefix + " " + message;
+            // Create the linked inline button
+            var msgspan = document.createElementNS(XHTML_NS, "html:span");
+            msgspan.setAttribute("isImportant", "true");
+
+            var cmd = "jump-to-anchor " + importantId + " " + this.unicodeName;
+            var prefix = getMsg(MSG_JUMPTO_BUTTON, [this.unicodeName, cmd]);
+
+            // Munge prefix as a button
+            client.munger.getRule(".inline-buttons").enabled = true;
+            client.munger.munge(prefix + " ", msgspan, o);
+
+            // Munge rest of message normally
+            client.munger.getRule(".inline-buttons").enabled = false;
+            client.munger.munge(message, msgspan, o);
+
+            o.network.displayHere(msgspan, msgtype, sourceObj, destObj);
         }
-        client.munger.getRule(".inline-buttons").enabled = true;
-        o.network.displayHere(message, msgtype, sourceObj, destObj);
-        client.munger.getRule(".inline-buttons").enabled = false;
+        else
+        {
+            o.network.displayHere(message, msgtype, sourceObj, destObj);
+        }
     }
 
     // Log file time!
