@@ -1107,14 +1107,7 @@ function my_showtonet (e)
             break;
 
         case "251": /* users */
-            var cmdary = this.prefs["autoperform"];
-            for (var i = 0; i < cmdary.length; ++i)
-            {
-                if (cmdary[i][0] == "/")
-                    this.dispatch(cmdary[i].substr(1));
-                else
-                    this.dispatch(cmdary[i]);
-            }
+            this.doAutoPerform();
 
             this.isIdleAway = client.isIdleAway;
             if (this.prefs["away"])
@@ -1177,6 +1170,10 @@ function my_showtonet (e)
         case "422": /* no MOTD */
             this.busy = false;
             updateProgress();
+            
+            /* Some servers (wrongly) dont send 251, so try
+               auto-perform after the MOTD as well */
+            this.doAutoPerform();
             /* no break */
 
         case "372":
@@ -1902,6 +1899,9 @@ function my_sconnect (e)
     }
 
     this.NICK_RETRIES = this.prefs["nicknameList"].length + 3;
+    
+    // When connection begins, autoperform has not been sent
+    this.autoPerformSent = false;
 }
 
 CIRCNetwork.prototype.onError =
@@ -2257,6 +2257,23 @@ function my_reclaimname()
     setTimeout(callback, this.RECLAIM_WAIT);
 
     return true;
+}
+
+CIRCNetwork.prototype.doAutoPerform =
+function net_autoperform()
+{
+    if (("autoPerformSent" in this) && (this.autoPerformSent == false))
+    {
+        var cmdary = this.prefs["autoperform"];
+        for (var i = 0; i < cmdary.length; ++i)
+        {
+            if (cmdary[i][0] == "/")
+                this.dispatch(cmdary[i].substr(1));
+            else
+                this.dispatch(cmdary[i]);
+        }
+        this.autoPerformSent = true;
+    }
 }
 
 
