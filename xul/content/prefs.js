@@ -826,7 +826,7 @@ function onPrefChanged(prefName, newValue, oldValue)
             {
                 rule.enabled = newValue;
             }
-            if (prefName.substr(0, 5) == "ceip.")
+            if (prefName.substr(0, 9) == "ceip.log.")
                 client.ceip.notifyUpdate();
     }
 }
