@@ -204,7 +204,7 @@ function startTopicEdit()
 {
     var me = view.getUser(view.parent.me.unicodeName);
     if (!me || (!view.mode.publicTopic && !me.isOp && !me.isHalfOp) ||
-        !header["topicinput"].hasAttribute("hidden"))
+        !hasAttribute("topicinput", "hidden"))
     {
         return;
     }
@@ -221,7 +221,7 @@ function startTopicEdit()
 function cancelTopicEdit(force)
 {
     var originalTopic = mainWindow.decodeColorCodes(view.topic);
-    if (!header["topicnodes"].hasAttribute("hidden") ||
+    if (!hasAttribute("topicnodes", "hidden") ||
         (!force && (header["topicinput"].value != originalTopic)))
     {
         return;
@@ -322,8 +322,15 @@ function scrollToElement(element, position)
                  bottom: window.innerHeight };
     if (!hasAttribute("container", "hidden"))
     {
-        cont.top    += header["container"].offsetHeight;
-        cont.center += header["container"].offsetHeight / 2;
+        /* Offset height doesn't include the margins, so we get to do that
+         * ourselves via getComputedStyle(). We're assuming that will return
+         * a px value, which is all but guaranteed.
+         */
+        var headerHeight = header["container"].offsetHeight;
+        var css = getComputedStyle(header["container"], null);
+        headerHeight += parseInt(css.marginTop) + parseInt(css.marginBottom);
+        cont.top    += headerHeight;
+        cont.center += headerHeight / 2;
     }
 
     // Pick between 'top' and 'bottom' for 'inview' position.
@@ -419,7 +426,7 @@ function removeAttribute(field, name)
 
 function hasAttribute(field, name)
 {
-    header[field].hasAttribute(name);
+    return header[field].hasAttribute(name);
 }
 
 function setHeaderState(state)

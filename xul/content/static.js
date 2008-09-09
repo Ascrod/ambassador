@@ -601,10 +601,44 @@ function initInstrumentation()
 
 function getFindData(e)
 {
+    // findNext() wrapper to add our findStart/findEnd events.
+    function _cz_findNext() {
+        // Send start notification.
+        var ev = new CEvent("find", "findStart", e.sourceObject, "onFindStart");
+        client.eventPump.routeEvent(ev);
+
+        // Call the original findNext() and keep the result for later.
+        var rv = this.__proto__.findNext();
+
+        // Send end notification with result code.
+        var ev = new CEvent("find", "findEnd", e.sourceObject, "onFindEnd");
+        ev.findResult = rv;
+        client.eventPump.routeEvent(ev);
+
+        // Return the original findNext()'s result to keep up appearances.
+        return rv;
+    };
+
+    // Getter for webBrowserFind property.
+    function _cz_webBrowserFind() {
+        return this._cz_wbf;
+    };
+
     var findData = new nsFindInstData();
     findData.browser = e.sourceObject.frame;
     findData.rootSearchWindow = getContentWindow(e.sourceObject.frame);
     findData.currentSearchWindow = getContentWindow(e.sourceObject.frame);
+
+    /* Wrap up the webBrowserFind object so we get called for findNext(). Use
+     * __proto__ so that everything else is exactly like the original object.
+     */
+    findData._cz_wbf = { findNext: _cz_findNext };
+    findData._cz_wbf.__proto__ = findData.webBrowserFind;
+
+    /* Replace the nsFindInstData getter for webBrowserFind to call our
+     * function which in turn returns our object (_cz_wbf).
+     */
+    findData.__defineGetter__("webBrowserFind", _cz_webBrowserFind);
 
     /* Yay, evil hacks! findData.init doesn't care about the findService, it
      * gets option settings from webBrowserFind. As we want the wrap option *on*

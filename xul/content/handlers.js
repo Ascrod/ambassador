@@ -826,6 +826,17 @@ function onUserDoubleClick(event)
     dispatch("query", {nickname: nickname, source: "mouse"});
 }
 
+client.onFindEnd =
+CIRCNetwork.prototype.onFindEnd =
+CIRCChannel.prototype.onFindEnd =
+CIRCUser.prototype.onFindEnd =
+CIRCDCCChat.prototype.onFindEnd =
+CIRCDCCFileTransfer.prototype.onFindEnd =
+function this_onfindend(e)
+{
+    this.scrollToElement("selection", "inview");
+}
+
 CIRCChannel.prototype._updateConferenceMode =
 function my_updateconfmode()
 {
