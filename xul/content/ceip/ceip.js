@@ -17,7 +17,8 @@ function CEIP()
 CEIP.prototype.destroy =
 function ceip_destroy()
 {
-    this.stopLog();
+    if (this.enabled)
+        this.stopLog();
 }
 
 CEIP.prototype.notifyUpdate =
