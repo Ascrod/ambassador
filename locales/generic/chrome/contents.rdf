@@ -22,6 +22,6 @@
   <!-- Version Information.  State that we work only with major version of this
        package. -->
   <RDF:Description about="urn:mozilla:locale:@AB_CD@:chatzilla"
-                   chrome:localeVersion="@MOZILLA_LOCALE_VERSION@"/>
+                   chrome:localeVersion=""/>
 
 </RDF:RDF>

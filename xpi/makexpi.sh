@@ -206,7 +206,7 @@ echo -n .
 safeCommand $PERL make-jars.pl -e -v -z zip -p preprocessor.pl -s "$FEDIR/ff" -d "$JARROOT" '<' "$FEDIR/ff/jar.mn"
 echo -n .
 safeCommand $PERL preprocessor.pl -DAB_CD="en-US" "$LOCALEDIR/jar.mn" '>' "$LOCALEDIR/jar.mn.pp"
-safeCommand $PERL make-jars.pl -e -v -z zip -p preprocessor.pl -s "$LOCALEDIR" -d "$JARROOT" -c "$LOCALEDIR/en-US" -- "-DAB_CD=\"en-US\" -DMOZILLA_LOCALE_VERSION=\"\"" '<' "$LOCALEDIR/jar.mn.pp"
+safeCommand $PERL make-jars.pl -e -v -z zip -p preprocessor.pl -s "$LOCALEDIR" -d "$JARROOT" -c "$LOCALEDIR/en-US" -- "-DAB_CD=\"en-US\"" '<' "$LOCALEDIR/jar.mn.pp"
 safeCommand rm "$LOCALEDIR/jar.mn.pp"
 echo -n .
 cd "$OLDPWD"
