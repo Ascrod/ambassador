@@ -2313,7 +2313,8 @@ function cmdGotoURL(e)
         var ary = e.url.match(/^x-cz-command:(.*)$/i);
         // Do the escaping dance:
         var commandStr = decodeURI(ary[1]).quote();
-        var jsStr = "void(view.dispatch(" + commandStr + ", null, true))";
+        var eventStr = uneval({isInteractive: true, source: e.source});
+        var jsStr = "void(view.dispatch(" + commandStr + "," + eventStr + "))";
         var jsURI = "javascript:" + encodeURI(jsStr);
         getContentWindow(e.sourceObject.frame).location.href = jsURI;
         return;
@@ -2780,8 +2781,22 @@ function cmdTopic(e)
 
 function cmdAbout(e)
 {
-    display(CIRCServer.prototype.VERSION_RPLY);
-    display(MSG_HOMEPAGE);
+    if (e.source)
+    {
+        if ("aboutDialog" in client)
+            return client.aboutDialog.focus();
+
+        window.openDialog("chrome://chatzilla/content/about/about.xul", "",
+                          "chrome,dialog", { client: client });
+    }
+    else
+    {
+        var ver = CIRCServer.prototype.VERSION_RPLY;
+        client.munger.getRule(".inline-buttons").enabled = true;
+        display(getMsg(MSG_ABOUT_VERSION, [ver, "about"]));
+        display(MSG_ABOUT_HOMEPAGE);
+        client.munger.getRule(".inline-buttons").enabled = false;
+    }
 }
 
 function cmdAlias(e)

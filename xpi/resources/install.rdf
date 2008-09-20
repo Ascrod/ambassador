@@ -71,6 +71,7 @@
 		<em:contributor>Samuel Sieb</em:contributor>
 		<em:iconURL>chrome://chatzilla/skin/images/logo.png</em:iconURL>
 		<em:homepageURL>http://chatzilla.hacksrus.com/</em:homepageURL>
+		<em:aboutURL>chrome://chatzilla/content/about/about.xul</em:aboutURL>
 		<em:optionsURL>javascript:opener.openDialog('chrome://chatzilla/content/config.xul','','chrome,modal,resizable');window.close();</em:optionsURL>
 		
 		<!-- package files -->

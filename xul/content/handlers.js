@@ -151,6 +151,8 @@ function onUnload()
     }
     if ("configWindow" in client)
         client.configWindow.close();
+    if ("aboutDialog" in client)
+        client.aboutDialog.close();
 
     // We don't trust anybody.
     client.hiddenDocument = null;
