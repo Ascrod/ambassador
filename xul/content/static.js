@@ -3496,7 +3496,7 @@ function tabdnd_drop(aEvent, aXferData, aDragSession)
     // See comment above |var tabsDropObserver|.
     var url = transferUtils.retrieveURLFromData(aXferData.data,
                                                 aXferData.flavour.contentType);
-    if (!url || !url.match(/^ircs?:/))
+    if (!url || !(url.match(/^ircs?:/) || url.match(/^x-irc-dcc-(chat|file):/)))
         return;
 
     // Find the tab to insertBefore() the new one.
@@ -3528,7 +3528,8 @@ function tabdnd_drop(aEvent, aXferData, aDragSession)
     }
 
     // URL not found in tabs, so force it into life - this may connect/rejoin.
-    gotoIRCURL(url, { tabInsertBefore: dropTab });
+    if (url.substring(0, 3) == "irc")
+        gotoIRCURL(url, { tabInsertBefore: dropTab });
 }
 
 tabsDropObserver.getSupportedFlavours =
