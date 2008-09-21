@@ -536,7 +536,7 @@ function onTabCompleteRequest (e)
 
 }
 
-function onWindowKeyPress (e)
+function onWindowKeyPress(e)
 {
     var code = Number(e.keyCode);
     var w;
@@ -544,59 +544,80 @@ function onWindowKeyPress (e)
     var userList = document.getElementById("user-list");
     var elemFocused = document.commandDispatcher.focusedElement;
 
+    const isMac     = client.platform == "Mac";
+    const isLinux   = client.platform == "Linux";
+    const isWindows = client.platform == "Windows";
+    const isOS2     = client.platform == "OS/2";
+    const isUnknown = !(isMac || isLinux || isWindows || isOS2);
+    const isSuite   = client.host == "Mozilla";
+
     switch (code)
     {
-        case 9: /* tab */
-            if (e.ctrlKey || e.metaKey)
+        case 9: /* Tab */
+            // Control-Tab => next tab (all platforms)
+            // Control-Shift-Tab => previous tab (all platforms)
+            if (e.ctrlKey && !e.altKey && !e.metaKey)
             {
                 cycleView(e.shiftKey ? -1: 1);
                 e.preventDefault();
             }
             break;
 
-        case 33: /* pgup */
-            if (e.ctrlKey)
+        case 33: /* Page Up */
+        case 34: /* Page Down */
+            // Control-Page Up => previous tab (all platforms)
+            // Control-Page Down => next tab (all platforms)
+            if (e.ctrlKey && !e.altKey && !e.metaKey && !e.shiftKey)
             {
-                cycleView(-1);
+                cycleView(2 * code - 67);
                 e.preventDefault();
                 break;
             }
 
-            if (elemFocused == userList)
-                break;
-
-            w = client.currentFrame;
-            newOfs = w.pageYOffset - (w.innerHeight * 0.75);
-            if (newOfs > 0)
-                w.scrollTo (w.pageXOffset, newOfs);
-            else
-                w.scrollTo (w.pageXOffset, 0);
-            e.preventDefault();
+            if (!e.ctrlKey && !e.altKey && !e.metaKey && !e.shiftKey &&
+                (elemFocused != userList))
+            {
+                w = client.currentFrame;
+                newOfs = w.pageYOffset + (w.innerHeight * 0.75) *
+                                         (2 * code - 67);
+                if (newOfs > 0)
+                    w.scrollTo(w.pageXOffset, newOfs);
+                else
+                    w.scrollTo(w.pageXOffset, 0);
+                e.preventDefault();
+            }
             break;
 
-        case 34: /* pgdn */
-            if (e.ctrlKey)
+        case 37: /* Left Arrow */
+        case 39: /* Right Arrow */
+            // Command-Alt-Left Arrow => previous tab (Mac only)
+            // Command-Alt-Right Arrow => next tab (Mac only)
+            if (isMac && e.metaKey && e.altKey && !e.ctrlKey && !e.shiftKey)
             {
-                cycleView(1);
+                cycleView(code - 38);
                 e.preventDefault();
-                break;
             }
+            break;
 
-            if (elemFocused == userList)
-                break;
-
-            w = client.currentFrame;
-            newOfs = w.pageYOffset + (w.innerHeight * 0.75);
-            if (newOfs < (w.innerHeight + w.pageYOffset))
-                w.scrollTo (w.pageXOffset, newOfs);
-            else
-                w.scrollTo (w.pageXOffset, (w.innerHeight + w.pageYOffset));
-            e.preventDefault();
+        case 219: /* [ */
+        case 221: /* ] */
+            // Command-Shift-[ => previous tab (Mac only)
+            // Command-Shift-] => next tab (Mac only)
+            if (isMac && e.metaKey && e.shiftKey && !e.altKey && !e.ctrlKey)
+            {
+                cycleView(code - 220);
+                e.preventDefault();
+            }
             break;
 
         case 117: /* F6 */
-            advanceKeyboardFocus(e.shiftKey ? -1 : 1);
-            e.preventDefault();
+            // F6 => focus next (all platforms)
+            // Shift-F6 => focus previous (all platforms)
+            if (!e.altKey && !e.ctrlKey && !e.metaKey)
+            {
+                advanceKeyboardFocus(e.shiftKey ? -1 : 1);
+                e.preventDefault();
+            }
             break;
     }
 
@@ -623,13 +644,6 @@ function onWindowKeyPress (e)
       digit1 += 6;
 
     var idx = e.charCode - digit1;
-
-    const isMac     = client.platform == "Mac";
-    const isLinux   = client.platform == "Linux";
-    const isWindows = client.platform == "Windows";
-    const isOS2     = client.platform == "OS/2";
-    const isUnknown = !(isMac || isLinux || isWindows || isOS2);
-    const isSuite   = client.host == "Mozilla";
 
     if ((0 <= idx) && (idx <= 8))
     {
