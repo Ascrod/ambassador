@@ -3858,9 +3858,12 @@ function cmdDoCommand(e)
 {
     if (e.cmdName == "cmd_mozillaPrefs")
     {
-        goPreferences('navigator',
-                      'chrome://chatzilla/content/prefpanel/pref-irc.xul',
-                      'navigator');
+        // open Mozilla/SeaMonkey preferences
+        const PREF_URL = 'chrome://chatzilla/content/pref-irc.xul';
+        if (goPreferences.arity == 1) // SeaMonkey 2.x
+            goPreferences('navigator_pane');
+        else // Mozilla, SeaMonkey 1.x, etc.
+            goPreferences('navigator', PREF_URL, 'navigator');
     }
     else if (e.cmdName == "cmd_chatzillaPrefs")
     {
