@@ -205,8 +205,7 @@ function insertLink(matchText, containerTag, data, mungerEntry)
         client.prefs["urls.list"].update();
     }
 
-    var anchor = document.createElementNS("http://www.w3.org/1999/xhtml",
-                                          "html:a");
+    var anchor = document.createElementNS(XHTML_NS, "html:a");
     var mircRE = /\x1f|\x02|\x0f|\x16|\x03([0-9]{1,2}(,[0-9]{1,2})?)?/g;
     anchor.setAttribute("href", href.replace(mircRE, ""));
 
@@ -246,8 +245,7 @@ function insertMailToLink(matchText, containerTag, eventData, mungerEntry)
     else
         href = matchText;
 
-    var anchor = document.createElementNS("http://www.w3.org/1999/xhtml",
-                                          "html:a");
+    var anchor = document.createElementNS(XHTML_NS, "html:a");
     var mircRE = /\x1f|\x02|\x0f|\x16|\x03([0-9]{1,2}(,[0-9]{1,2})?)?/g;
     anchor.setAttribute("href", href.replace(mircRE, ""));
 
@@ -290,8 +288,7 @@ function insertChannelLink(matchText, containerTag, eventData, mungerEntry)
 
     var linkText = removeColorCodes(matchText);
     var encodedLinkText = fromUnicode(linkText, eventData.sourceObject);
-    var anchor = document.createElementNS("http://www.w3.org/1999/xhtml",
-                                          "html:a");
+    var anchor = document.createElementNS(XHTML_NS, "html:a");
     anchor.setAttribute("href", eventData.network.getURL(encodedLinkText));
 
     // Carry over formatting.
@@ -319,8 +316,7 @@ function insertTalkbackLink(matchText, containerTag, eventData, mungerEntry)
         return;
     }
 
-    var anchor = document.createElementNS("http://www.w3.org/1999/xhtml",
-                                          "html:a");
+    var anchor = document.createElementNS(XHTML_NS, "html:a");
 
     anchor.setAttribute("href", "http://talkback-public.mozilla.org/" +
                         "search/start.jsp?search=2&type=iid&id=" + matchText);
@@ -382,8 +378,7 @@ function insertBugzillaLink (matchText, containerTag, eventData, mungerEntry)
             }
         }
 
-        var anchor = document.createElementNS("http://www.w3.org/1999/xhtml",
-                                              "html:a");
+        var anchor = document.createElementNS(XHTML_NS, "html:a");
         anchor.setAttribute("href", bugURL);
         // Carry over formatting.
         var otherFormatting = calcClass(eventData);
@@ -418,8 +413,7 @@ function insertRheet(matchText, containerTag, eventData, mungerEntry)
         return;
     }
 
-    var anchor = document.createElementNS("http://www.w3.org/1999/xhtml",
-                                          "html:a");
+    var anchor = document.createElementNS(XHTML_NS, "html:a");
     anchor.setAttribute("href",
                         "http://ftp.mozilla.org/pub/mozilla.org/mozilla/libraries/bonus-tracks/rheet.wav");
     anchor.setAttribute("class", "chatzilla-rheet chatzilla-link");
@@ -434,6 +428,7 @@ function insertQuote (matchText, containerTag)
         containerTag.appendChild(document.createTextNode("\u201c"));
     else
         containerTag.appendChild(document.createTextNode("\u201d"));
+    containerTag.appendChild(document.createElementNS(XHTML_NS, "html:wbr"));
 }
 
 function insertSmiley(emoticon, containerTag)
@@ -491,8 +486,7 @@ function insertSmiley(emoticon, containerTag)
         return;
     }
 
-    var span = document.createElementNS ("http://www.w3.org/1999/xhtml",
-                                         "html:span");
+    var span = document.createElementNS(XHTML_NS, "html:span");
 
     /* create a span to hold the emoticon text */
     span.setAttribute ("class", "chatzilla-emote-txt");
@@ -506,8 +500,7 @@ function insertSmiley(emoticon, containerTag)
      * to turn off the emoticon text, but keep the image.  ie.
      * chatzilla-emote-txt { display: none; } turns off
      * chatzilla-emote-txt:after as well.*/
-    span = document.createElementNS("http://www.w3.org/1999/xhtml",
-                                    "html:span");
+    span = document.createElementNS(XHTML_NS, "html:span");
     span.setAttribute("class", "chatzilla-emote");
     span.setAttribute("type", type);
     span.setAttribute("title", emoticon);
@@ -633,8 +626,7 @@ function mircReverseColor (text, containerTag, data)
 
 function showCtrlChar(c, containerTag)
 {
-    var span = document.createElementNS ("http://www.w3.org/1999/xhtml",
-                                         "html:span");
+    var span = document.createElementNS(XHTML_NS, "html:span");
     span.setAttribute ("class", "chatzilla-control-char");
     if (c == "\t")
     {
@@ -656,13 +648,12 @@ function insertHyphenatedWord(longWord, containerTag, data)
     if (data && ("hasColorInfo" in data))
         newClass = calcClass(data);
 
-    var wbr = document.createElementNS("http://www.w3.org/1999/xhtml",
-                                       "html:wbr");
+    var wbr = document.createElementNS(XHTML_NS, "html:wbr");
     for (var i = 0; i < wordParts.length; ++i)
     {
         if (newClass)
         {
-            var newTag = document.createElementNS(NS_XHTML, "html:span");
+            var newTag = document.createElementNS(XHTML_NS, "html:span");
             newTag.setAttribute("class", newClass);
             newTag.appendChild(document.createTextNode(wordParts[i]));
             containerTag.appendChild(newTag);
@@ -690,7 +681,7 @@ function insertInlineButton(text, containerTag, data)
     var title = ary[2];
     var command = ary[3];
 
-    var link = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
+    var link = document.createElementNS(XHTML_NS, "html:a");
     link.setAttribute("href", "x-cz-command:" + encodeURI(command));
     link.setAttribute("title", title);
     link.setAttribute("class", "chatzilla-link");

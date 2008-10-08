@@ -80,8 +80,6 @@
  *
  */
 
-const NS_XHTML = "http://www.w3.org/1999/xhtml";
-
 function CMungerEntry(name, regex, className, priority, startPriority,
                       enable, tagName)
 {
@@ -159,7 +157,7 @@ function mng_munge(text, containerTag, data)
 {
 
     if (!containerTag)
-        containerTag = document.createElementNS(NS_XHTML, this.tagName);
+        containerTag = document.createElementNS(XHTML_NS, this.tagName);
 
     // Starting from the top, for each valid priority, check all the rules,
     // return as soon as something matches.
@@ -257,7 +255,7 @@ function mng_mungePriority(priority, text, containerTag, data)
         }
         else
         {
-            var tag = document.createElementNS(NS_XHTML, munger.tagName);
+            var tag = document.createElementNS(XHTML_NS, munger.tagName);
             tag.setAttribute("class", munger.className + calcClass(data));
 
             // Don't let this rule match again when we recurse.

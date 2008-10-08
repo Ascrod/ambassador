@@ -105,9 +105,6 @@ client.SAFE_LIST_COUNT = 500;
  */
 client.CONFERENCE_LOW_PASS = 10;
 
-// Namespaces we happen to need:
-const XHTML_NS = "http://www.w3.org/1999/xhtml";
-
 client.viewsArray = new Array();
 client.activityList = new Object();
 client.hostCompat = new Object();

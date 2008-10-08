@@ -37,6 +37,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+// Namespaces we happen to need:
+const XHTML_NS = "http://www.w3.org/1999/xhtml";
+
 var utils = new Object();
 
 var DEBUG = true;
