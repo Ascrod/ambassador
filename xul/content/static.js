@@ -238,9 +238,6 @@ function initStatic()
         dd("IO service failed to initialize: " + ex);
     }
     
-    // Need this for the userlist
-    client.atomSvc = getService("@mozilla.org/atom-service;1", "nsIAtomService");
-
     try
     {
         const nsISound = Components.interfaces.nsISound;
@@ -295,6 +292,18 @@ function initStatic()
 
     multilineInputMode(client.prefs["multiline"]);
     updateSpellcheck(client.prefs["inputSpellcheck"]);
+
+    // Initialize userlist stuff
+    // cache all the atoms to stop us crossing XPCOM boundaries *all the time*
+    client.atomCache = new Object();
+    var atomSvc = getService("@mozilla.org/atom-service;1", "nsIAtomService");
+    var atoms = ["founder-true", "founder-false", "admin-true", "admin-false",
+                 "op-true", "op-false", "halfop-true", "halfop-false",
+                 "voice-true", "voice-false", "away-true", "away-false",
+                 "unselected"];
+    for (var i = 0; i < atoms.length; i++)
+        client.atomCache[atoms[i]] = atomSvc.getAtom(atoms[i]);
+    
     if (client.prefs["showModeSymbols"])
         setListMode("symbol");
     else
@@ -3339,7 +3348,7 @@ function ul_getrowprops(index, properties)
 
     // See bug 432482 - work around Gecko deficiency.
     if (!this.selection.isSelected(index))
-        properties.AppendElement(client.atomSvc.getAtom("unselected"));
+        properties.AppendElement(client.atomCache["unselected"]);
 }
 
 // Properties getter for user list tree view
@@ -3353,16 +3362,16 @@ function ul_getcellprops(index, column, properties)
 
     // See bug 432482 - work around Gecko deficiency.
     if (!this.selection.isSelected(index))
-        properties.AppendElement(client.atomSvc.getAtom("unselected"));
+        properties.AppendElement(client.atomCache["unselected"]);
 
     var userObj = this.childData.childData[index]._userObj;
 
-    properties.AppendElement(client.atomSvc.getAtom("voice-" + userObj.isVoice));
-    properties.AppendElement(client.atomSvc.getAtom("op-" + userObj.isOp));
-    properties.AppendElement(client.atomSvc.getAtom("halfop-" + userObj.isHalfOp));
-    properties.AppendElement(client.atomSvc.getAtom("admin-" + userObj.isAdmin));
-    properties.AppendElement(client.atomSvc.getAtom("founder-" + userObj.isFounder));
-    properties.AppendElement(client.atomSvc.getAtom("away-" + userObj.isAway));
+    properties.AppendElement(client.atomCache["voice-" + userObj.isVoice]);
+    properties.AppendElement(client.atomCache["op-" + userObj.isOp]);
+    properties.AppendElement(client.atomCache["halfop-" + userObj.isHalfOp]);
+    properties.AppendElement(client.atomCache["admin-" + userObj.isAdmin]);
+    properties.AppendElement(client.atomCache["founder-" + userObj.isFounder]);
+    properties.AppendElement(client.atomCache["away-" + userObj.isAway]);
 }
 
 var contentDropObserver = new Object();
