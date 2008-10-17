@@ -627,7 +627,7 @@ function mircReverseColor (text, containerTag, data)
 function showCtrlChar(c, containerTag)
 {
     var span = document.createElementNS(XHTML_NS, "html:span");
-    span.setAttribute ("class", "chatzilla-control-char");
+    span.setAttribute("class", "chatzilla-control-char");
     if (c == "\t")
     {
         containerTag.appendChild(document.createTextNode(c));
@@ -637,8 +637,9 @@ function showCtrlChar(c, containerTag)
     var ctrlStr = c.charCodeAt(0).toString(16);
     if (ctrlStr.length < 2)
         ctrlStr = "0" + ctrlStr;
-    span.appendChild (document.createTextNode ("0x" + ctrlStr));
-    containerTag.appendChild (span);
+    span.appendChild(document.createTextNode("0x" + ctrlStr));
+    containerTag.appendChild(span);
+    containerTag.appendChild(document.createElementNS(XHTML_NS, "html:wbr"));
 }
 
 function insertHyphenatedWord(longWord, containerTag, data)
