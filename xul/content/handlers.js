@@ -2279,6 +2279,7 @@ function my_reclaimname()
         return false;
 
     this.pendingReclaimCheck = true;
+    this.INITIAL_NICK = this.preferredNick;
     this.primServ.changeNick(this.preferredNick);
 
     setTimeout(callback, this.RECLAIM_WAIT);
