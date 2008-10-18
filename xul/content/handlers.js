@@ -1072,6 +1072,7 @@ CIRCNetwork.prototype.on254 = /* channels found (in params[2]) */
 CIRCNetwork.prototype.on255 = /* link info */
 CIRCNetwork.prototype.on265 = /* local user details */
 CIRCNetwork.prototype.on266 = /* global user details */
+CIRCNetwork.prototype.on290 = /* CAPAB Response */
 CIRCNetwork.prototype.on375 = /* start of MOTD */
 CIRCNetwork.prototype.on372 = /* MOTD line */
 CIRCNetwork.prototype.on376 = /* end of MOTD */

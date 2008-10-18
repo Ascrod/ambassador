@@ -499,6 +499,7 @@ function CIRCServer (parent, hostname, port, isSecure, password)
     s.channelCount = -1;
     s.userModes = null;
     s.maxLineLength = 400;
+    s.capab = new Object();
 
     parent.servers[s.canonicalName] = s;
     if ("onInit" in s)
@@ -1607,6 +1608,28 @@ function serv_254(e)
     e.set = "network";
 }
 
+/* CAPAB response */
+CIRCServer.prototype.on290 =
+function my_290 (e)
+{
+    // we expect some sort of identifier
+    if (e.params.length < 2)
+        return;
+    
+    switch (e.params[2])
+    {
+        case "IDENTIFY-MSG":
+            /* Every message comes prefixed with either + or -
+               + indicates the user is registered
+               - indicates the user is not registered */
+            this.capab.identifyMsg = true;
+            break;
+        
+    }
+    e.destObject = this.parent;
+    e.set = "network";
+}
+
 /* user away message */
 CIRCServer.prototype.on301 =
 function serv_301(e)
@@ -2336,62 +2359,8 @@ function serv_invite(e)
 }
 
 CIRCServer.prototype.onNotice =
-function serv_notice (e)
-{
-    var targetName = e.params[1];
-
-    if (this.userModes)
-    {
-        // Strip off one (and only one) user mode prefix.
-        for (var i = 0; i < this.userModes.length; i++)
-        {
-            if (targetName[0] == this.userModes[i].symbol)
-            {
-                e.msgPrefix = this.userModes[i];
-                targetName = targetName.substr(1);
-                break;
-            }
-        }
-    }
-
-    if (arrayIndexOf(this.channelTypes, targetName[0]) != -1)
-    {
-        e.channel = new CIRCChannel(this, null, targetName);
-        if ("user" in e)
-            e.user = new CIRCChanUser(e.channel, e.user.unicodeName);
-        e.replyTo = e.channel;
-        e.set = "channel";
-    }
-    else if (!("user" in e))
-    {
-        e.set = "network";
-        e.destObject = this.parent;
-        return true;
-    }
-    else
-    {
-        e.set = "user";
-        e.replyTo = e.user; /* send replies to the user who sent the message */
-    }
-
-    if (e.params[2].search (/^\x01[^ ]+.*\x01$/) != -1)
-    {
-        e.type = "ctcp-reply";
-        e.destMethod = "onCTCPReply";
-        e.set = "server";
-        e.destObject = this;
-    }
-    else
-    {
-        e.msg = e.decodeParam(2, e.replyTo);
-        e.destObject = e.replyTo;
-    }
-
-    return true;
-}
-
 CIRCServer.prototype.onPrivmsg =
-function serv_privmsg (e)
+function serv_notice_privmsg (e)
 {
     var targetName = e.params[1];
 
@@ -2428,20 +2397,49 @@ function serv_privmsg (e)
     else
     {
         e.set = "user";
-        e.replyTo = e.user; /* send replys to the user who sent the message */
+        e.replyTo = e.user; /* send replies to the user who sent the message */
+    }
+
+    // The CAPAB IDENTIFY-MSG stuff for freenode
+    if (this.capab.identifyMsg)
+    {
+        e.identifyMsg = false;
+        var flag = e.params[2].substring(0,1);
+        if (flag == "+")
+        {
+            e.identifyMsg = true;
+            e.params[2] = e.params[2].substring(1);
+        }
+        else if (flag == "-")
+        {
+            e.params[2] = e.params[2].substring(1);
+        }
+        else
+        {
+            // Just print to console on failure - or we'd spam the user
+            dd("Warning: IDENTIFY-MSG is on, but there's no message flags");
+        }
     }
 
     if (e.params[2].search (/^\x01[^ ]+.*\x01$/) != -1)
     {
-        e.type = "ctcp";
-        e.destMethod = "onCTCP";
+        if (e.code == "NOTICE")
+        {
+            e.type = "ctcp-reply";
+            e.destMethod = "onCTCPReply";            
+        }
+        else // e.code == "PRIVMSG"
+        {
+            e.type = "ctcp";
+            e.destMethod = "onCTCP";
+        }
         e.set = "server";
         e.destObject = this;
     }
     else
     {
-        e.destObject = e.replyTo;
         e.msg = e.decodeParam(2, e.replyTo);
+        e.destObject = e.replyTo;
     }
 
     return true;
