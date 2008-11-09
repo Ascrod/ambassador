@@ -89,6 +89,10 @@ function initNetworks()
         displayName:  "hispano",
         isupportsKey: "",
         servers: [{hostname: "irc.irc-hispano.org", port: 6667}]};
+    networks["solidirc"] = {
+        displayName:  "solidirc",
+        isupportsKey: "",
+        servers: [{hostname: "irc.solidirc.com", port: 6667}]};
 
     for (var name in networks)
         networks[name].name = name;
