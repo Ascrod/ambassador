@@ -218,7 +218,14 @@ function onKeyPress(event)
 
 function onSelectionChange()
 {
-    channelJoinBtn.disabled = (channelTreeView.selectedIndex == -1);
+    var index = channelTreeView.selectedIndex;
+    if (index == -1)
+    {
+        channelJoinBtn.disabled = true;
+        return;
+    }
+    var row = channelTreeView.childData.locateChildByVisualRow(index);
+    channelJoinBtn.disabled = ((index == 0) && !row.name);
 }
 
 function onFilter()
@@ -231,6 +238,9 @@ function joinChannel()
     var index = channelTreeView.selectedIndex;
     if (index == -1)
         return false;
+    var row = channelTreeView.childData.locateChildByVisualRow(index);
+    if ((index == 0) && !row.name)
+        return false;
 
     /* Calculate the row index AS IF the 'create' row is visible. We're going
      * to use this so that the index chosen by the user is always consistent,
@@ -241,7 +251,6 @@ function joinChannel()
     client.ceip.logEvent({type: "dialog", dialog: "channels", event: "join",
                           index: realIndex});
 
-    var row = channelTreeView.childData.locateChildByVisualRow(index);
     network.dispatch("join", { channelName: row.name });
 
     return true;
