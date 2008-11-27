@@ -109,7 +109,7 @@ repackage-zip-%: $(STAGEDIST)
 repackage-win32-installer: $(STAGEDIST)
 ifneq (en-US,$(AB_CD))
 	mkdir -p $(STAGEDIST)/optional/extensions
-	mv $(DIST)/xpi-stage/$(XPI_NAME) $(STAGEDIST)/optional/extensions/$(INSTALL_EXTENSION_ID)
+	cp -r $(DIST)/xpi-stage/$(XPI_NAME) $(STAGEDIST)/optional/extensions/$(INSTALL_EXTENSION_ID)
 endif
 
 repackage-win32-installer-%: $(STAGEDIST)
