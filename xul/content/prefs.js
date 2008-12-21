@@ -678,6 +678,9 @@ function destroyPrefs()
 
 function onPrefChanged(prefName, newValue, oldValue)
 {
+    if (newValue == oldValue)
+        return;
+
     switch (prefName)
     {
         case "awayIdleTime":
@@ -840,6 +843,9 @@ function onNetworkPrefChanged(network, prefName, newValue, oldValue)
         return;
     }
 
+    if (newValue == oldValue)
+        return;
+
     network.updateHeader();
 
     switch (prefName)
@@ -920,6 +926,9 @@ function onChannelPrefChanged(channel, prefName, newValue, oldValue)
         return;
     }
 
+    if (newValue == oldValue)
+        return;
+
     channel.updateHeader();
 
     switch (prefName)
@@ -982,6 +991,9 @@ function onUserPrefChanged(user, prefName, newValue, oldValue)
         return;
     }
 
+    if (newValue == oldValue)
+        return;
+
     user.updateHeader();
 
     switch (prefName)
@@ -1024,6 +1036,9 @@ function onDCCUserPrefChanged(user, prefName, newValue, oldValue)
         user.prefManager.destroy();
         return;
     }
+
+    if (newValue == oldValue)
+        return;
 
     // DCC Users are a pain, they can have multiple views!
     function updateDCCView(view)

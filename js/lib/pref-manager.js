@@ -60,13 +60,7 @@ function PrefManager (branchName, defaultBundle)
 
     function pm_observe (prefService, topic, prefName)
     {
-        var r = prefManager.prefRecords[prefName];
-        if (!r)
-            return;
-
-        var oldValue = (r.realValue != null) ? r.realValue : r.defaultValue;
-        r.realValue = prefManager.getPref(prefName, PREF_RELOAD);
-        prefManager.onPrefChanged(prefName, r.realValue, oldValue);
+        prefManager.onPrefChanged(prefName);
     };
 
     const PREF_CTRID = "@mozilla.org/preferences-service;1";
@@ -185,9 +179,19 @@ function pm_forcesave()
 PrefManager.prototype.onPrefChanged =
 function pm_prefchanged(prefName, realValue, oldValue)
 {
+    var r, oldValue;
     // We're only interested in prefs we actually know about.
-    if (!(prefName in this.prefRecords))
+    if (!(prefName in this.prefRecords) || !(r = this.prefRecords[prefName]))
         return;
+
+    if (r.realValue != null)
+        oldValue = r.realValue;
+    else if (typeof r.defaultValue == "function")
+        oldValue = r.defaultValue(prefName);
+    else
+        oldValue = r.defaultValue;
+
+    var realValue = this.getPref(prefName, PREF_RELOAD);
 
     for (var i = 0; i < this.observers.length; i++)
         this.observers[i].onPrefChanged(prefName, realValue, oldValue);
@@ -255,33 +259,6 @@ function pm_addprefs(prefSpecs)
                      3 in prefSpecs[i] ? prefSpecs[i][3] : null, bundle,
                      2 in prefSpecs[i] ? prefSpecs[i][2] : null);
     }
-}
-
-PrefManager.prototype.addDeferredPrefs =
-function pm_addprefsd(targetManager, writeThrough)
-{
-    function deferGet(prefName)
-    {
-        return targetManager.getPref(prefName);
-    };
-
-    function deferSet(prefName, value)
-    {
-        return targetManager.setPref(prefName, value);
-    };
-
-    var setter = null;
-
-    // Make sure we know about pref changes.
-    targetManager.addObserver(this);
-
-    if (writeThrough)
-        setter = deferSet;
-
-    var prefs = targetManager.prefs;
-
-    for (var i = 0; i < prefs.length; ++i)
-        this.addPref(prefs[i], deferGet, setter);
 }
 
 PrefManager.prototype.updateArrayPref =
