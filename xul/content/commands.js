@@ -192,6 +192,7 @@ function initCommands()
          ["toggle-ui",         cmdToggleUI,                        CMD_CONSOLE],
          ["toggle-pref",       cmdTogglePref,                                0],
          ["topic",             cmdTopic,           CMD_NEED_CHAN | CMD_CONSOLE],
+         ["unalias",           cmdAlias,                           CMD_CONSOLE],
          ["unignore",          cmdIgnore,           CMD_NEED_NET | CMD_CONSOLE],
          ["unban",             cmdBanOrExcept,     CMD_NEED_CHAN | CMD_CONSOLE],
          ["unexcept",          cmdBanOrExcept,     CMD_NEED_CHAN | CMD_CONSOLE],
@@ -2816,7 +2817,7 @@ function cmdAlias(e)
 
     var ary;
 
-    if (e.commandList == "-")
+    if ((e.commandList == "-") || (e.command.name == "unalias"))
     {
         /* remove alias */
         ary = getAlias(e.aliasName);
