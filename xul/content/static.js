@@ -379,6 +379,25 @@ function initStatic()
         }
     }
 
+    // Get back input history from previous session:
+    var inputHistoryFile = new nsLocalFile(client.prefs["profilePath"]);
+    inputHistoryFile.append("inputHistory.txt");
+    try
+    {
+        client.inputHistoryLogger = new TextLogger(inputHistoryFile.path,
+                                                   client.MAX_HISTORY);
+    }
+    catch (ex)
+    {
+        display(getMsg(MSG_ERR_INPUTHISTORY_NOT_WRITABLE,
+                       inputHistoryFile.path),
+                MT_ERROR);
+        dd(formatException(ex));
+        client.inputHistoryLogger = null;
+    }
+    if (client.inputHistoryLogger)
+        client.inputHistory = client.inputHistoryLogger.read().reverse();
+
     client.defaultCompletion = client.COMMAND_CHAR + "help ";
 
     client.deck = document.getElementById('output-deck');

@@ -681,7 +681,11 @@ function onWindowBlue(e)
 function onInputCompleteLine(e)
 {
     if (!client.inputHistory.length || client.inputHistory[0] != e.line)
-        client.inputHistory.unshift (e.line);
+    {
+        client.inputHistory.unshift(e.line);
+        if (client.inputHistoryLogger)
+            client.inputHistoryLogger.append(e.line);
+    }
 
     if (client.inputHistory.length > client.MAX_HISTORY)
         client.inputHistory.pop();
