@@ -2833,7 +2833,7 @@ function cmdAlias(e)
 
         feedback(e, getMsg(MSG_ALIAS_REMOVED, e.aliasName));
     }
-    else if (e.aliasName)
+    else if (e.aliasName && e.commandList)
     {
         /* add/change alias */
         client.commandManager.defineCommand(e.aliasName, e.commandList);
@@ -2846,6 +2846,15 @@ function cmdAlias(e)
         aliasDefs.update();
 
         feedback(e, getMsg(MSG_ALIAS_CREATED, [e.aliasName, e.commandList]));
+    }
+    else if (e.aliasName)
+    {
+        /* display alias */
+        ary = getAlias(e.aliasName);
+        if (!ary)
+            display(getMsg(MSG_NOT_AN_ALIAS, e.aliasName), MT_ERROR);
+        else
+            display(getMsg(MSG_FMT_ALIAS, [e.aliasName, ary[1]]));
     }
     else
     {
