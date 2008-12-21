@@ -1697,6 +1697,16 @@ function serv_318(e)
     e.set = "network";
 }
 
+/* ircu's 330 numeric ("X is logged in as Y") */
+CIRCServer.prototype.on330 =
+function serv_330(e)
+{
+    e.user = new CIRCUser(this, null, e.params[2]);
+
+    e.destObject = this.parent;
+    e.set = "network";
+}
+
 /* TOPIC reply - no topic set */
 CIRCServer.prototype.on331 =
 function serv_331 (e)
