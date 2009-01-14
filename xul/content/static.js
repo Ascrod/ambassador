@@ -4186,7 +4186,9 @@ function __display(message, msgtype, sourceObj, destObj)
         
     // Is the message 'to' or 'from' somewhere other than this view
     var toOther = ((sourceObj == me) && destObj && (destObj != this));
-    var fromOther = (toUser && (destObj == me) && (sourceObj != this));
+    var fromOther = (toUser && (destObj == me) && (sourceObj != this) &&
+                     // Need extra check for DCC users:
+                     !((this.TYPE == "IRCDCCChat") && (this.user == sourceObj)));
 
     // Attach "ME!" if appropriate, so motifs can style differently.
     if ((sourceObj == me) && !toOther)
