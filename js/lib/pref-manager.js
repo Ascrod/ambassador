@@ -414,6 +414,7 @@ function pm_setpref(prefName, value)
     }
     this.delayedSave();
 
+    // Always update this after changing the preference.
     record.realValue = value;
 
     return value;
@@ -422,13 +423,15 @@ function pm_setpref(prefName, value)
 PrefManager.prototype.clearPref =
 function pm_reset(prefName)
 {
-    this.prefRecords[prefName].realValue = null;
     try {
         this.prefBranch.clearUserPref(prefName);
     } catch(ex) {
         // Do nothing, the pref didn't exist.
     }
     this.delayedSave();
+
+    // Always update this after changing the preference.
+    this.prefRecords[prefName].realValue = null;
 }
 
 PrefManager.prototype.addPref =
