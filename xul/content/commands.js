@@ -107,6 +107,7 @@ function initCommands()
          ["echo",              cmdEcho,                            CMD_CONSOLE],
          ["enable-plugin",     cmdAblePlugin,                      CMD_CONSOLE],
          ["eval",              cmdEval,                            CMD_CONSOLE],
+         ["evalsilent",        cmdEval,                            CMD_CONSOLE],
          ["except",            cmdBanOrExcept,     CMD_NEED_CHAN | CMD_CONSOLE],
          ["find",              cmdFind,                                      0],
          ["find-again",        cmdFindAgain,                                 0],
@@ -245,7 +246,7 @@ function initCommands()
          ["motif-dark",       "motif dark",                                  0],
          ["motif-light",      "motif light",                                 0],
          ["motif-default",    "motif default",                               0],
-         ["sync-output",      "eval syncOutputFrame(this)",                  0],
+         ["sync-output",      "evalsilent syncOutputFrame(this)",            0],
          ["userlist",         "toggle-ui userlist",                CMD_CONSOLE],
          ["tabstrip",         "toggle-ui tabstrip",                CMD_CONSOLE],
          ["statusbar",        "toggle-ui status",                  CMD_CONSOLE],
@@ -2275,14 +2276,16 @@ function cmdEval(e)
     try
     {
         sourceObject.doEval = function (__s) { return eval(__s); }
-        sourceObject.display(e.expression, MT_EVALIN);
+        if (e.command.name == "eval")
+            sourceObject.display(e.expression, MT_EVALIN);
         var rv = String(sourceObject.doEval (e.expression));
-        sourceObject.display (rv, MT_EVALOUT);
+        if (e.command.name == "eval")
+            sourceObject.display(rv, MT_EVALOUT);
 
     }
     catch (ex)
     {
-        sourceObject.display (String(ex), MT_ERROR);
+        sourceObject.display(String(ex), MT_ERROR);
     }
 }
 
