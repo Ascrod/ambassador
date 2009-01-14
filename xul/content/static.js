@@ -4440,7 +4440,7 @@ function __display(message, msgtype, sourceObj, destObj)
             msgRow.setAttribute("id", importantId);
         }
         msgRow.setAttribute("important", "true");
-        msgRow.setAttribute("aria-channel", "notify");
+        msgRow.setAttribute("aria-live", "assertive");
     }
 
     // Timestamps first...
