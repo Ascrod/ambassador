@@ -2827,7 +2827,7 @@ function cmdAlias(e)
             return;
         }
 
-        delete client.commandManager.commands[e.aliasName];
+        // Command Manager is updated when the preference changes.
         arrayRemoveAt(aliasDefs, ary[0]);
         aliasDefs.update();
 
@@ -2836,13 +2836,13 @@ function cmdAlias(e)
     else if (e.aliasName && e.commandList)
     {
         /* add/change alias */
-        client.commandManager.defineCommand(e.aliasName, e.commandList);
         ary = getAlias(e.aliasName);
         if (ary)
             aliasDefs[ary[0]] = e.aliasName + " = " + e.commandList;
         else
             aliasDefs.push(e.aliasName + " = " + e.commandList);
 
+        // Command Manager is updated when the preference changes.
         aliasDefs.update();
 
         feedback(e, getMsg(MSG_ALIAS_CREATED, [e.aliasName, e.commandList]));

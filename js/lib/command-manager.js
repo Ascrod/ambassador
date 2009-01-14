@@ -171,6 +171,7 @@ CommandRecord.prototype.argNames = new Array();
 function CommandManager (defaultBundle)
 {
     this.commands = new Object();
+    this.commandHistory = new Object();
     this.defaultBundle = defaultBundle;
     this.currentDispatchDepth = 0;
     this.maxDispatchDepth = 10;
@@ -340,6 +341,15 @@ function cmgr_uninstkey (command)
 CommandManager.prototype.addCommand =
 function cmgr_add (command)
 {
+    if (command.name in this.commands)
+    {
+        /* We've already got a command with this name - invoke the history
+         * storage so that we can undo this back to its original state.
+         */
+        if (!(command.name in this.commandHistory))
+            this.commandHistory[command.name] = new Array();
+        this.commandHistory[command.name].push(this.commands[command.name]);
+    }
     this.commands[command.name] = command;
 }
 
@@ -358,6 +368,15 @@ CommandManager.prototype.removeCommand =
 function cmgr_remove (command)
 {
     delete this.commands[command.name];
+    if (command.name in this.commandHistory)
+    {
+        /* There was a previous command with this name - restore the most
+         * recent from the history, returning the command to its former glory.
+         */
+        this.commands[command.name] = this.commandHistory[command.name].pop();
+        if (this.commandHistory[command.name].length == 0)
+            delete this.commandHistory[command.name];
+    }
 }
 
 /**
