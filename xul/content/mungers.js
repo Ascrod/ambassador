@@ -57,7 +57,7 @@ function initMunger()
      * - end with whitespace, non-word, or end-of-line
      */
     client.linkRE =
-        /(?:\s|\W|^)((?:(\w[\w-]+):[^\s]+|www(\.[^.\s]+){2,})\b[\/=]?)(?=\s|\W|$)/;
+        /(?:\s|\W|^)((?:(\w[\w-]+):[^\s]+|www(\.[^.\s]+){2,})\b[\/=\)]?)(?=\s|\W|$)/;
 
     // Colours: \x03, with optional foreground and background colours
     client.colorRE = /(\x03((\d{1,2})(,\d{1,2}|)|))/;
@@ -149,11 +149,21 @@ function insertLink(matchText, containerTag, data, mungerEntry)
     var linkText;
 
     var trailing;
-    ary = matchText.match(/([.,?]+)$/);
+    ary = matchText.match(/([.,?\)]+)$/);
     if (ary)
     {
         linkText = RegExp.leftContext;
         trailing = ary[1];
+        
+        // We special-case links that end with (something), often found on wikis
+        // if "trailing" starts with ) and there's an unclosed ( in the
+        // "linkText"; then we put the final ) back in
+        if ((trailing.indexOf(")") == 0) && (linkText.match(/\([^\)]*$/)))
+        {
+            
+            linkText += ")";
+            trailing = trailing.substr(1);
+        }
     }
     else
     {
