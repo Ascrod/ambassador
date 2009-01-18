@@ -43,6 +43,7 @@
 <dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     xmlns:html="http://www.w3.org/1999/xhtml"
     windowtype="irc:chatzilla:channels"
+    id="chatzilla-window"
     buttons="cancel"
     onload="onLoad()"
     onunload="onUnload()"
