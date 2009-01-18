@@ -60,7 +60,7 @@
       <hbox align="center">
         <label value="&qsearch.label;" accesskey="&qsearch.accesskey;" 
             control="filterText"/>
-        <textbox id="filterText" flex="1" type="timed" timeout="500" 
+        <textbox id="filterText" flex="1" type="search" 
             oncommand="onFilter()" onkeypress="onKeyPress(event)"/>
       </hbox>
       <checkbox id="searchTopics" oncommand="runFilter(); focusSearch()" 

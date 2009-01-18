@@ -149,6 +149,14 @@ function onLoad()
     channelJoinBtn = document.getElementById("joinBtn");
     channelRefreshBtn = document.getElementById("refreshNow");
 
+    // If the new "search" binding is not working (i.e. doesn't exist)...
+    if (!("searchButton" in channelFilterText))
+    {
+        // ...restore the search box to its former self.
+        channelFilterText.setAttribute("timeout", "500");
+        channelFilterText.setAttribute("type", "timed");
+    }
+
     // Sort by user count, decending.
     changeSort("chanColUsers");
 
