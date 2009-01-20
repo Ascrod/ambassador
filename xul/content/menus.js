@@ -265,7 +265,7 @@ function initMenus()
          ["faq"],
          ["-"],
          ["ceip"],
-         ["about"]
+         ["about", {id: "aboutName"}]
         ]
     };
 
