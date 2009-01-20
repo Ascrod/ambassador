@@ -86,7 +86,7 @@ function initPrefs()
     var logDefault = client.prefManager.logPath.clone();
     logDefault.append(escapeFileName("client.log"));
 
-    var gotos = ["goto-url",        "goto-url-newwin",
+    var gotos = ["goto-url-newtab", "goto-url-newwin",
                  "goto-url-newtab", "goto-url-newtab"];
     if (client.host == "XULRunner")
     {
@@ -96,7 +96,7 @@ function initPrefs()
     else if (client.host == "Songbird")
     {
         // Songbird has a browser, but only supports a single browser window
-        gotos = ["goto-url",        "goto-url-newtab",
+        gotos = ["goto-url-newtab", "goto-url-newtab",
                  "goto-url-newtab", "goto-url-newtab"];
     }
 
