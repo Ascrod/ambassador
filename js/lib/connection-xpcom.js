@@ -221,6 +221,9 @@ function bc_connect(host, port, config, observer)
         proxyInfo = getProxyFor("irc://" + host + ":" + port);
     }
 
+    if (proxyInfo && ("type" in proxyInfo) && (proxyInfo.type == "unknown"))
+        throw JSIRC_ERR_PAC_LOADING;
+
     if (jsenv.HAS_STREAM_PROVIDER)
     {
         if (("isSecure" in config) && config.isSecure)
@@ -309,7 +312,7 @@ function bc_connect(host, port, config, observer)
         this.sendData("CONNECT " + host + ":" + port + " HTTP/1.1\r\n\r\n");
     }
 
-    return this.isConnected;
+    return true;
 
 }
 

@@ -1935,7 +1935,7 @@ CIRCNetwork.prototype.onError =
 function my_neterror (e)
 {
     var msg;
-    var type = "ERROR";
+    var type = MT_ERROR;
 
     if (typeof e.errorCode != "undefined")
     {
@@ -1959,12 +1959,19 @@ function my_neterror (e)
 
             case JSIRC_ERR_CANCELLED:
                 msg = MSG_ERR_CANCELLED;
-                type = "INFO";
+                type = MT_INFO;
+                break;
+
+            case JSIRC_ERR_PAC_LOADING:
+                msg = MSG_WARN_PAC_LOADING;
+                type = MT_WARN;
                 break;
         }
     }
     else
+    {
         msg = e.params[e.params.length - 1];
+    }
 
     dispatch("sync-header");
     updateTitle();
@@ -1980,11 +1987,13 @@ function my_neterror (e)
     if (msg)
         this.display(msg, type);
 
+    if (e.errorCode == JSIRC_ERR_PAC_LOADING)
+        return;
+
     if (this.deleteWhenDone)
         this.dispatch("delete-view");
 
     delete this.deleteWhenDone;
-
 }
 
 
@@ -1992,7 +2001,7 @@ CIRCNetwork.prototype.onDisconnect =
 function my_netdisconnect (e)
 {
     var msg, msgNetwork;
-    var msgType = "ERROR";
+    var msgType = MT_ERROR;
 
     if (typeof e.disconnectStatus != "undefined")
     {

@@ -42,6 +42,7 @@ const JSIRC_ERR_EXHAUSTED = "JSIRCE:E";
 const JSIRC_ERR_CANCELLED = "JSIRCE:C";
 const JSIRC_ERR_NO_SECURE = "JSIRCE:NO_SECURE";
 const JSIRC_ERR_OFFLINE   = "JSIRCE:OFFLINE";
+const JSIRC_ERR_PAC_LOADING = "JSIRCE:PAC_LOADING";
 
 function userIsMe (user)
 {
@@ -127,6 +128,7 @@ CIRCNetwork.prototype.INITIAL_CHANNEL = "#jsbot";
 CIRCNetwork.prototype.INITIAL_UMODE = "+iw";
 
 CIRCNetwork.prototype.MAX_CONNECT_ATTEMPTS = 5;
+CIRCNetwork.prototype.PAC_RECONNECT_DELAY = 5 * 1000;
 CIRCNetwork.prototype.getReconnectDelayMs = function() { return 15000; }
 CIRCNetwork.prototype.stayingPower = false;
 
@@ -403,12 +405,24 @@ function net_doconnect(e)
         {
             this.state = NET_OFFLINE;
 
-            ev = new CEvent ("network", "error", this, "onError");
+            ev = new CEvent("network", "error", this, "onError");
             ev.server = this;
             ev.debug = "Exception opening socket: " + ex;
             ev.errorCode = JSIRC_ERR_NO_SOCKET;
             if ((typeof ex == "object") && (ex.result == NS_ERROR_OFFLINE))
                 ev.errorCode = JSIRC_ERR_OFFLINE;
+            if ((typeof ex == "string") && (ex == JSIRC_ERR_PAC_LOADING))
+            {
+                ev.errorCode = JSIRC_ERR_PAC_LOADING;
+                ev.retryDelay = CIRCNetwork.prototype.PAC_RECONNECT_DELAY;
+                /* PAC loading is not a problem with any specific server. We'll
+                 * retry the connection in 5 seconds.
+                 */
+                this.nextHost--;
+                this.state = NET_WAITING;
+                setTimeout(function(n) { n.immediateConnect() },
+                           ev.retryDelay, this);
+            }
             this.eventPump.addEvent(ev);
         }
     }
