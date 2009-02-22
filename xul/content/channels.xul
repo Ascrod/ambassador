@@ -97,13 +97,13 @@
           <row align="center">
             <label value="&minusers.label;" accesskey="&minusers.accesskey;" 
                 control="minUsers"/>
-            <textbox id="minUsers" type="timed" timeout="500" 
+            <textbox id="minUsers" type="search" 
                 oncommand="onFilter()"/>
             </row>
             <row align="center">
             <label value="&maxusers.label;" accesskey="&maxusers.accesskey;"
                 control="maxUsers"/>
-            <textbox id="maxUsers" type="timed" timeout="500" 
+            <textbox id="maxUsers" type="search" 
                 oncommand="onFilter()"/>
           </row>
         </rows>

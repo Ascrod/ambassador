@@ -152,9 +152,13 @@ function onLoad()
     // If the new "search" binding is not working (i.e. doesn't exist)...
     if (!("searchButton" in channelFilterText))
     {
-        // ...restore the search box to its former self.
+        // ...restore the text boxes to their former selves.
         channelFilterText.setAttribute("timeout", "500");
         channelFilterText.setAttribute("type", "timed");
+        channelMinUsers.setAttribute("timeout", "500");
+        channelMinUsers.setAttribute("type", "timed");
+        channelMaxUsers.setAttribute("timeout", "500");
+        channelMaxUsers.setAttribute("type", "timed");
     }
 
     // Sort by user count, decending.
