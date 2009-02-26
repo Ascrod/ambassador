@@ -83,6 +83,26 @@ futils.umask = PERM_IWOTH | PERM_IWGRP;
 futils.MSG_SAVE_AS = "Save As";
 futils.MSG_OPEN = "Open";
 
+/**
+ * Internal function used by |pickSaveAs|, |pickOpen| and |pickGetFolder|.
+ *
+ * @param initialPath (*defaultDir* in |pick| functions) Sets the
+ *                    initial directory for the dialog. The user may browse
+ *                    to any other directory - it does not restrict anything.
+ * @param typeList Optional. An |Array| or space-separated string of allowed
+ *                 file types for the dialog. An item in the array may be a
+ *                 string (used as title and filter) or a two-element array
+ *                 (title and filter, respectively); when using a string,
+ *                 the following standard filters may be used: |$all|, |$html|,
+ *                 |$text|, |$images|, |$xml|, |$xul|, |$noAll| (prevents "All
+ *                 Files" filter being included).
+ * @param attribs Optional. Takes an object with either or both of the
+ *                properties: |defaultString| (*defaultFile* in |pick|
+ *                functions) sets the initial/default filename, and
+ *                |defaultExtension| XXX FIXME (this seems wrong?) XXX.
+ * @returns An |Object| with |ok| (Boolean), |file| (|nsILocalFile|) and
+ *          |picker| (|nsIFilePicker|) properties.
+ */
 futils.getPicker =
 function futils_nosepicker(initialPath, typeList, attribs)
 {
@@ -214,6 +234,17 @@ function getPickerChoice(picker)
     return obj;
 }
 
+/**
+ * Displays a standard file save dialog.
+ *
+ * @param title Optional. The title for the dialog.
+ * @param typeList Optional. See |futils.getPicker| for details.
+ * @param defaultFile Optional. See |futils.getPicker| for details.
+ * @param defaultDir Optional. See |futils.getPicker| for details.
+ * @param defaultExt Optional. See |futils.getPicker| for details.
+ * @returns An |Object| with "ok" (Boolean), "file" (|nsILocalFile|) and
+ *          "picker" (|nsIFilePicker|) properties.
+ */
 function pickSaveAs (title, typeList, defaultFile, defaultDir, defaultExt)
 {
     if (!defaultDir && "lastSaveAsDir" in futils)
@@ -232,6 +263,16 @@ function pickSaveAs (title, typeList, defaultFile, defaultDir, defaultExt)
     return rv;
 }
 
+/**
+ * Displays a standard file open dialog.
+ *
+ * @param title Optional. The title for the dialog.
+ * @param typeList Optional. See |futils.getPicker| for details.
+ * @param defaultFile Optional. See |futils.getPicker| for details.
+ * @param defaultDir Optional. See |futils.getPicker| for details.
+ * @returns An |Object| with "ok" (Boolean), "file" (|nsILocalFile|) and
+ *          "picker" (|nsIFilePicker|) properties.
+ */
 function pickOpen (title, typeList, defaultFile, defaultDir)
 {
     if (!defaultDir && "lastOpenDir" in futils)
@@ -249,6 +290,14 @@ function pickOpen (title, typeList, defaultFile, defaultDir)
     return rv;
 }
 
+/**
+ * Displays a standard directory selection dialog.
+ *
+ * @param title Optional. The title for the dialog.
+ * @param defaultDir Optional. See |futils.getPicker| for details.
+ * @returns An |Object| with "ok" (Boolean), "file" (|nsILocalFile|) and
+ *          "picker" (|nsIFilePicker|) properties.
+ */
 function pickGetFolder(title, defaultDir)
 {
     if (!defaultDir && "lastOpenDir" in futils)
