@@ -1162,7 +1162,11 @@ function pwin_onLoad()
 
     // Force the window to be the right size now, not later.
     window.sizeToContent();
-    
+    // XXX: If we're on mac, make it wider because the default theme's
+    //      tabs are huge:
+    if (client.platform == "Mac")
+        window.resizeBy(66, 0);
+ 
     // Center window.
     if (("arguments" in window) && (0 in window.arguments))
     {
