@@ -526,13 +526,14 @@ function mmgr_menucmd(event)
  * Appends a sub-menu to an existing menu.
  * @param parentNode  DOM Node to insert into
  * @param beforeNode  DOM Node already contained by parentNode, to insert before
- * @param id      ID of the sub-menu to add.
- * @param label   Text to use for this sub-menu.  The & character can be
- *                used to indicate the accesskey.
- * @param attribs Object containing CSS attributes to set on the element.
+ * @param domId       ID of the sub-menu to add.
+ * @param label       Text to use for this sub-menu.
+ * @param accesskey   Accesskey to use for the sub-menu.
+ * @param attribs     Object containing CSS attributes to set on the element.
  */
 MenuManager.prototype.appendSubMenu =
-function mmgr_addsmenu (parentNode, beforeNode, menuName, domId, label, attribs)
+function mmgr_addsmenu(parentNode, beforeNode, menuName, domId, label,
+                       accesskey, attribs)
 {
     var document = parentNode.ownerDocument;
 
@@ -557,7 +558,7 @@ function mmgr_addsmenu (parentNode, beforeNode, menuName, domId, label, attribs)
 
     menupopup.setAttribute ("menuName", menuName);
 
-    menu.setAttribute ("accesskey", getAccessKey(label));
+    menu.setAttribute("accesskey", accesskey);
     label = label.replace("&", "");
     menu.setAttribute ("label", label);
     menu.setAttribute ("isSeparator", true);
@@ -643,7 +644,7 @@ function mmgr_addmenu (parentNode, beforeNode, commandName, attribs)
     menuitem.setAttribute ("id", parentId + ":" + commandName);
     menuitem.setAttribute ("commandname", command.name);
     menuitem.setAttribute ("key", "key:" + command.name);
-    menuitem.setAttribute ("accesskey", getAccessKey(command.label));
+    menuitem.setAttribute("accesskey", command.accesskey);
     var label = command.label.replace("&", "");
     menuitem.setAttribute ("label", label);
     if (command.format)
@@ -777,9 +778,12 @@ function mmgr_newmenu (parentNode, beforeNode, menuName, domId, attribs)
         return null;
 
     var menuSpec = this.menuSpecs[menuName];
+    if (!("accesskey" in menuSpec))
+        menuSpec.accesskey = getAccessKey(menuSpec.label);
 
-    var subMenu = this.appendSubMenu (parentNode, beforeNode, menuName, domId,
-                                      menuSpec.label, attribs);
+    var subMenu = this.appendSubMenu(parentNode, beforeNode, menuName, domId,
+                                     menuSpec.label, menuSpec.accesskey,
+                                     attribs);
 
     // Keep track where we're adding popup nodes derived from some menuSpec
     if (!("uiElements" in this.menuSpecs[menuName]))
@@ -830,5 +834,5 @@ function mmgr_newitems (parentNode, beforeNode, menuItems)
             dd ("unknown command " + itemName + " referenced in " + parentId);
         }
     }
-
 }
+

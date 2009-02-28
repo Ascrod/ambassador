@@ -45,8 +45,8 @@ function getAccessKey (str)
     return str[i + 1];
 }
 
-function CommandRecord (name, func, usage, help, label, flags, keystr, tip,
-                        format)
+function CommandRecord(name, func, usage, help, label, accesskey, flags,
+                       keystr, tip, format)
 {
     this.name = name;
     this.func = func;
@@ -54,6 +54,7 @@ function CommandRecord (name, func, usage, help, label, flags, keystr, tip,
     this.scanUsage();
     this.help = help;
     this.label = label ? label : name;
+    this.accesskey = accesskey ? accesskey : "";
     this.format = format;
     this.labelstr = label.replace ("&", "");
     this.tip = tip;
@@ -238,13 +239,15 @@ function cmdmgr_defcmd (name, func, flags, usage, bundle)
 
     var label = getMsgFrom(bundle, "cmd." + name + ".label", null,
                            labelDefault);
+    var accesskey = getMsgFrom(bundle, "cmd." + name + ".accesskey", null,
+                               getAccessKey(label));
     var help  = getMsgFrom(bundle, "cmd." + name + ".help", null,
                            helpDefault);
     var keystr = getMsgFrom (bundle, "cmd." + name + ".key", null, "");
     var format = getMsgFrom (bundle, "cmd." + name + ".format", null, null);
     var tip = getMsgFrom (bundle, "cmd." + name + ".tip", null, "");
-    var command = new CommandRecord (name, func, usage, help, label, flags,
-                                     keystr, tip, format);
+    var command = new CommandRecord(name, func, usage, help, label, accesskey,
+                                    flags, keystr, tip, format);
     this.addCommand(command);
     if (aliasFor)
         command.aliasFor = aliasFor;

@@ -135,6 +135,7 @@ function initMenus()
 
     client.menuSpecs["mainmenu:chatzilla"] = {
         label: MSG_MNU_CHATZILLA,
+        accesskey: getAccessKeyForMenu('MSG_MNU_CHATZILLA'),
         getContext: getDefaultContext,
         items:
         [
@@ -149,6 +150,7 @@ function initMenus()
 
     client.menuSpecs["mainmenu:irc"] = {
         label: MSG_MNU_IRC,
+        accesskey: getAccessKeyForMenu('MSG_MNU_IRC'),
         getContext: getDefaultContext,
         items:
         [
@@ -181,6 +183,7 @@ function initMenus()
 
     client.menuSpecs["mainmenu:edit"] = {
         label: MSG_MNU_EDIT,
+        accesskey: getAccessKeyForMenu('MSG_MNU_EDIT'),
         getContext: getDefaultContext,
         items:
         [
@@ -206,6 +209,7 @@ function initMenus()
 
     client.menuSpecs["popup:motifs"] = {
         label: MSG_MNU_MOTIFS,
+        accesskey: getAccessKeyForMenu('MSG_MNU_MOTIFS'),
         items:
         [
          ["motif-default",
@@ -222,6 +226,7 @@ function initMenus()
 
     client.menuSpecs["mainmenu:view"] = {
         label: MSG_MNU_VIEW,
+        accesskey: getAccessKeyForMenu('MSG_MNU_VIEW'),
         getContext: getDefaultContext,
         items:
         [
@@ -257,6 +262,7 @@ function initMenus()
      * about it. */
     client.menuSpecs["mainmenu:help"] = {
         label: MSG_MNU_HELP,
+        accesskey: getAccessKeyForMenu('MSG_MNU_HELP'),
         domID: "menu_Help",
         items:
         [
@@ -271,6 +277,7 @@ function initMenus()
 
     client.menuSpecs["popup:fonts"] = {
         label: MSG_MNU_FONTS,
+        accesskey: getAccessKeyForMenu('MSG_MNU_FONTS'),
         getContext: getFontContext,
         items:
         [
@@ -310,6 +317,7 @@ function initMenus()
 
     client.menuSpecs["popup:opcommands"] = {
         label: MSG_MNU_OPCOMMANDS,
+        accesskey: getAccessKeyForMenu('MSG_MNU_OPCOMMANDS'),
         items:
         [
          ["op",         {visibleif: isop           + "!cx.user.isOp"}],
@@ -329,6 +337,7 @@ function initMenus()
 
     client.menuSpecs["popup:usercommands"] = {
         label: MSG_MNU_USERCOMMANDS,
+        accesskey: getAccessKeyForMenu('MSG_MNU_USERCOMMANDS'),
         items:
         [
          ["query",    {visibleif: "cx.channel && cx.user"}],
@@ -449,6 +458,7 @@ function initMenus()
 
     client.menuSpecs["popup:nickname"] = {
         label: MSG_STATUS,
+        accesskey: getAccessKeyForMenu('MSG_STATUS'),
         getContext: getDefaultContext,
         items: client.menuSpecs["mainmenu:nickname"].items
     };
@@ -517,3 +527,21 @@ function getCommandContext (id, event)
 
     return cx;
 }
+
+/**
+ * Gets an accesskey for the menu with label string ID labelString.
+ * At first, we attempt to extract it from the label string, otherwise
+ * we fall back to using a separate string.
+ *
+ * @param labelString   the id for the locale string corresponding to the label
+ * @return              the accesskey for the menu.
+ */
+function getAccessKeyForMenu(labelString)
+{
+    var rv = getAccessKey(window[labelString]);
+    if (!rv)
+        rv = window[labelString + "_ACCESSKEY"];
+    return rv;
+}
+
+
