@@ -327,7 +327,7 @@ function pm_getpref(prefName, reload)
         defaultValue = record.defaultValue;
     }
 
-    var realValue = null;
+    var realValue = defaultValue;
 
     try
     {
@@ -356,9 +356,6 @@ function pm_getpref(prefName, reload)
     {
         // if the pref doesn't exist, ignore the exception.
     }
-
-    if (realValue == null)
-        return defaultValue;
 
     record.realValue = realValue;
     return realValue;
