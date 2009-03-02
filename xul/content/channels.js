@@ -131,6 +131,10 @@ function onLoad()
             window[m] = client.mainWindow[m];
     }
 
+    // Set the <dialog>'s class so we can do platform-specific CSS.
+    var dialog = document.getElementById("chatzilla-window");
+    dialog.className = "platform-" + client.platform;
+
     var tree = document.getElementById("channelList");
     channelTreeBoxObject = tree.treeBoxObject;
 
