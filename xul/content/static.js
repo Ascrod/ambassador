@@ -3686,7 +3686,7 @@ function updateTimestampFor(view, displayRow)
     while (tsCell.lastChild)
         tsCell.removeChild(tsCell.lastChild);
 
-    if (fmt && (!client.prefs["collapseMsgs"] || (fmt != view._timestampLast)))
+    if (fmt && (!view.prefs["collapseMsgs"] || (fmt != view._timestampLast)))
         tsCell.appendChild(document.createTextNode(fmt));
     view._timestampLast = fmt;
 }
