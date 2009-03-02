@@ -1124,32 +1124,27 @@ function getMessagesContext(cx, element)
                 break;
 
             case "tr":
-                var nickname = element.getAttribute("msg-user");
-                if (!nickname)
+                // NOTE: msg-user is the canonicalName.
+                cx.canonNick = element.getAttribute("msg-user");
+                if (!cx.canonNick)
                     break;
 
-                // strip out  a potential ME! suffix
-                var ary = nickname.match(/([^ ]+)/);
-                nickname = ary[1];
+                // Strip out a potential ME! suffix.
+                var ary = cx.canonNick.match(/([^ ]+)/);
+                cx.canonNick = ary[1];
 
                 if (!cx.network)
                     break;
 
-                // NOTE: nickname is the unicodeName here!
                 if (cx.channel)
-                    cx.user = cx.channel.getUser(nickname);
+                    cx.user = cx.channel.getUser(cx.canonNick);
                 else
-                    cx.user = cx.network.getUser(nickname);
+                    cx.user = cx.network.getUser(cx.canonNick);
 
                 if (cx.user)
-                {
                     cx.nickname = cx.user.unicodeName;
-                    cx.canonNick = cx.user.canonicalName;
-                }
                 else
-                {
-                    cx.nickname = nickname;
-                }
+                    cx.nickname = toUnicode(cx.canonNick, cx.network);
                 break;
         }
 
@@ -4160,8 +4155,8 @@ function __display(message, msgtype, sourceObj, destObj)
     var fromAttr = "";
     if (sourceObj)
     {
-        if ("unicodeName" in sourceObj)
-            fromAttr = sourceObj.unicodeName;
+        if ("canonicalName" in sourceObj)
+            fromAttr = sourceObj.canonicalName;
         else if ("name" in sourceObj)
             fromAttr = sourceObj.name;
         else
@@ -4176,8 +4171,8 @@ function __display(message, msgtype, sourceObj, destObj)
     var toAttr = "";
     if (destObj)
     {
-        if ("unicodeName" in destObj)
-            toAttr = destObj.unicodeName;
+        if ("canonicalName" in destObj)
+            toAttr = destObj.canonicalName;
         else if ("name" in destObj)
             toAttr = destObj.name;
         else
@@ -4194,7 +4189,7 @@ function __display(message, msgtype, sourceObj, destObj)
     if ((sourceObj == me) && !toOther)
         fromAttr = fromAttr + " ME!";
     if (destObj && destObj == me)
-        toAttr = me.unicodeName + " ME!";
+        toAttr = me.canonicalName + " ME!";
 
     /* isImportant means to style the messages as important, and flash the
      * window, getAttention means just flash the window. */
