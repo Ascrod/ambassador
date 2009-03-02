@@ -87,6 +87,7 @@ function initCommands()
          ["dcc-decline",       cmdDCCDecline,                      CMD_CONSOLE],
          ["dcc-list",          cmdDCCList,                         CMD_CONSOLE],
          ["dcc-send",          cmdDCCSend,          CMD_NEED_SRV | CMD_CONSOLE],
+         ["dcc-show-file",     cmdDCCShowFile,                     CMD_CONSOLE],
          ["deop",              cmdChanUserMode,    CMD_NEED_CHAN | CMD_CONSOLE],
          ["describe",          cmdDescribe,         CMD_NEED_SRV | CMD_CONSOLE],
          ["hop",               cmdChanUserMode,    CMD_NEED_CHAN | CMD_CONSOLE],
@@ -4517,6 +4518,22 @@ function cmdDCCDecline(e)
     display(getMsg(MSG_DCC_PENDING_MATCHES, [list.length]));
     display(MSG_DCC_MATCHES_HELP);
     return true;
+}
+
+function cmdDCCShowFile(e)
+{
+    var f = nsLocalFile(e.file);
+    if (f && f.parent && f.parent.exists())
+    {
+        try
+        {
+            f.reveal();
+        }
+        catch (ex)
+        {
+            dd(formatException(ex));
+        }
+    }
 }
 
 function cmdTextDirection(e)

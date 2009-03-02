@@ -3230,8 +3230,10 @@ function my_dccfiledisconnect(e)
 
     if (this.state.dir == DCC_DIR_GETTING)
     {
-        msg = getMsg(MSG_DCCFILE_CLOSED_SAVED,
-                     this._getParams().concat(this.localPath));
+        var cmd = "dcc-file-show " + this.localPath;
+        var msgId = (client.platform == "Mac") ? MSG_DCCFILE_CLOSED_SAVED_MAC :
+                                                 MSG_DCCFILE_CLOSED_SAVED;
+        msg = getMsg(msgId, this._getParams().concat(this.localPath, cmd));
     }
     else
     {
