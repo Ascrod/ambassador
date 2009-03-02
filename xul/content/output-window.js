@@ -435,8 +435,8 @@ function setHeaderState(state)
     {
         if (state)
         {
-            updateHeader();
             removeAttribute("container", "hidden");
+            updateHeader();
         }
         else
         {
