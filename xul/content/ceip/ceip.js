@@ -200,7 +200,12 @@ function ceip_logevent(data)
         newFile.createUnique(NORMAL_FILE_TYPE, 0600);
         oldFile.moveTo(null, newFile.leafName);
 
+        /* startLog() will reset the nest, but we might be in the middle of a
+         * command execution right now and would rather not let that happen.
+         */
+        var commandNest = this.commandNest;
         this.startLog();
+        this.commandNest = commandNest;
     }
     catch (ex)
     {
