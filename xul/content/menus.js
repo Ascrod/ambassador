@@ -540,7 +540,7 @@ function getAccessKeyForMenu(labelString)
 {
     var rv = getAccessKey(window[labelString]);
     if (!rv)
-        rv = window[labelString + "_ACCESSKEY"];
+        rv = window[labelString + "_ACCESSKEY"] || "";
     return rv;
 }
 
