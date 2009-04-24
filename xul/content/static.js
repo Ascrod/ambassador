@@ -4237,9 +4237,16 @@ function __display(message, msgtype, sourceObj, destObj)
     if (fromAttr)
     {
         if (fromUser)
+        {
             msgRow.setAttribute("msg-user", fromAttr);
+            // Set some mode information for channel users
+            if (fromType == 'IRCChanUser')
+                msgRow.setAttribute("msg-user-mode", sourceObj.modes.join(" "));
+        }
         else
+        {
             msgRow.setAttribute("msg-source", fromAttr);
+        }
     }
     if (toOther)
         msgRow.setAttribute("to-other", toOther);
