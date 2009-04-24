@@ -231,7 +231,7 @@ function initPrefs()
          ["nickCompleteStr",    ":",      "global"],
          ["nickname",           defaultNick, ".ident"],
          ["nicknameList",       [],       "lists.nicknameList"],
-         ["outgoing.colorCodes",  false,  "global"],
+         ["outgoing.colorCodes",  true,   "global"],
          ["outputWindowURL",   "chrome://chatzilla/content/output-window.html",
                                           "hidden"],
          ["proxy.typeOverride", "",       ".connect"],
