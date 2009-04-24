@@ -159,6 +159,7 @@ function stock_initOutputWindow(newClient, newView, newClickHandler)
     else
         name = view.name;
     splash.appendChild(document.createTextNode(name));
+    onResize();
 
     setTimeout(initHeader, 500);
 
@@ -198,6 +199,14 @@ function onTopicKeypress(e)
         default:
             client.mainWindow.onInputKeyPress(e);
     }
+}
+
+function onResize()
+{
+    var halfHeight = Math.floor(window.innerHeight / 2);
+    var splash = document.getElementById("splash");
+    splash.style.paddingTop = halfHeight + "px";
+    splash.style.paddingBottom = halfHeight + "px";
 }
 
 function startTopicEdit()
