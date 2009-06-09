@@ -309,23 +309,25 @@ function initMenus()
     };
 
     // Me is op.
-    var isop    = "(cx.channel.iAmOp()) && ";
+    var isop     = "(cx.channel.iAmOp()) && ";
     // Me is op or half-op.
-    var isopish = "(cx.channel.iAmOp() || cx.channel.iAmHalfOp()) && ";
+    var isopish  = "(cx.channel.iAmOp() || cx.channel.iAmHalfOp()) && ";
     // Server has half-ops.
-    var shop    = "(cx.server.supports.prefix.indexOf('h') > 0) && ";
-
+    var shop     = "(cx.server.supports.prefix.indexOf('h') > 0) && ";
+    // User is Me or Me is op.
+    var isoporme = "((cx.user == cx.server.me) || cx.channel.iAmOp()) && ";
+    
     client.menuSpecs["popup:opcommands"] = {
         label: MSG_MNU_OPCOMMANDS,
         accesskey: getAccessKeyForMenu('MSG_MNU_OPCOMMANDS'),
         items:
         [
-         ["op",         {visibleif: isop           + "!cx.user.isOp"}],
-         ["deop",       {visibleif: isop           + "cx.user.isOp"}],
-         ["hop",        {visibleif: isopish + shop + "!cx.user.isHalfOp"}],
-         ["dehop",      {visibleif: isopish + shop + "cx.user.isHalfOp"}],
-         ["voice",      {visibleif: isopish        + "!cx.user.isVoice"}],
-         ["devoice",    {visibleif: isopish        + "cx.user.isVoice"}],
+         ["op",         {visibleif: isop     + "!cx.user.isOp"}],
+         ["deop",       {visibleif: isop     + "cx.user.isOp"}],
+         ["hop",        {visibleif: isop     + "!cx.user.isHalfOp"}],
+         ["dehop",      {visibleif: isoporme + "cx.user.isHalfOp"}],
+         ["voice",      {visibleif: isopish  + "!cx.user.isVoice"}],
+         ["devoice",    {visibleif: isopish  + "cx.user.isVoice"}],
          ["-"],
          ["ban",        {enabledif: "(" + isop + "1) || (" + isopish + "!cx.user.isOp)"}],
          ["unban",      {enabledif: "(" + isop + "1) || (" + isopish + "!cx.user.isOp)"}],
