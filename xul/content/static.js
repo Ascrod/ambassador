@@ -173,12 +173,11 @@ function init()
 
     client.ident = new IdentServer(client);
 
-    // start logging.  nothing should call display() before this point.
+    // Start log rotation checking first.  This will schedule the next check.
+    checkLogFiles();
+    // Start logging.  Nothing should call display() before this point.
     if (client.prefs["log"])
         client.openLogFile(client);
-    // kick-start a log-check interval to make sure we change logfiles in time:
-    // It will fire 2 seconds past the next full hour.
-    setTimeout("checkLogFiles()", 3602000 - (Number(new Date()) % 3600000));
 
     // Make sure the userlist is on the correct side.
     updateUserlistSide(client.prefs["userlistLeft"]);
@@ -4974,9 +4973,12 @@ function checkLogFiles()
     if (client.logFile && (d > client.nextLogFileDate))
         client.closeLogFile(client, true);
 
-    // We use the same line again to make sure we keep a constant offset
-    // from the full hour, in case the timers go crazy at some point.
-    setTimeout("checkLogFiles()", 3602000 - (Number(new Date()) % 3600000));
+    /* We need to calculate the correct time for the next check. This is
+     * attempting to hit 2 seconds past the hour. We need the timezone offset
+     * here for when it is not a whole number of hours from UTC.
+     */
+    var shiftedDate = d.getTime() + d.getTimezoneOffset() * 60000;
+    setTimeout("checkLogFiles()", 3602000 - (shiftedDate % 3600000));
 }
 
 CIRCChannel.prototype.getLCFunction =
