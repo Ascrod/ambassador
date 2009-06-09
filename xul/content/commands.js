@@ -1629,14 +1629,14 @@ function cmdDeleteView(e)
         return;
     }
 
-    if (e.view.TYPE == "IRCChannel" && e.view.active)
+    if (e.view.TYPE == "IRCChannel" && e.view.joined)
     {
         e.view.dispatch("part", { deleteWhenDone: true });
         return;
     }
     if (e.view.TYPE == "IRCDCCChat" && e.view.active)
         e.view.disconnect();
-    if (e.view.TYPE == "IRCNetwork" && (e.view.state == NET_CONNECTING || 
+    if (e.view.TYPE == "IRCNetwork" && (e.view.state == NET_CONNECTING ||
                                         e.view.state == NET_WAITING))
     {
         e.view.dispatch("cancel", { deleteWhenDone: true });
@@ -1748,7 +1748,7 @@ function cmdDesc(e)
     }
     else // no network, change the general pref
     {
-        dispatch("pref", {prefName: "desc", prefValue: e.description, 
+        dispatch("pref", {prefName: "desc", prefValue: e.description,
                           isInteractive: e.isInteractive});
     }
 }
@@ -1931,7 +1931,7 @@ function cmdMatchUsers(e)
 
     if (matches.users.length == 0)
         display(getMsg(MSG_NO_MATCHING_NICKS, msgNotChecked));
-    else 
+    else
         display(getMsg(MSG_MATCHING_NICKS, [nicknameStr, msgNotChecked]));
 }
 
@@ -2374,7 +2374,7 @@ function cmdGotoURL(e)
         {
             dd(formatException(ex));
         }
-        
+
     }
 
     if (e.command.name == "goto-url-newwin")
@@ -2467,7 +2467,7 @@ function cmdJoin(e)
             display (getMsg(MSG_ERR_INVALID_CHARSET, e.charset), MT_ERROR);
             return null;
         }
-    
+
         if (e.channelName.search(",") != -1)
         {
             // We can join multiple channels! Woo!
@@ -2483,13 +2483,13 @@ function cmdJoin(e)
             }
             return chan;
         }
-    
+
         if ((arrayIndexOf(["#", "&", "+", "!"], e.channelName[0]) == -1) &&
             (arrayIndexOf(e.server.channelTypes, e.channelName[0]) == -1))
         {
             e.channelName = e.server.channelTypes[0] + e.channelName;
         }
-    
+
         var charset = e.charset ? e.charset : e.network.prefs["charset"];
         chan = e.server.addChannel(e.channelName, charset);
         if (e.charset)
@@ -2594,6 +2594,12 @@ function cmdLeave(e)
     }
     else
     {
+        /* We can leave the channel when not active
+         * this will close the view and prevent rejoin after a reconnect
+         */
+        if (e.channel.joined)
+            e.channel.joined = false;
+
         if (e.deleteWhenDone)
             e.channel.dispatch("delete-view");
     }
@@ -3112,7 +3118,7 @@ function cmdOper(e)
     if (!e.password)
         return;
 
-    e.server.sendData("OPER " + fromUnicode(e.opername, e.server) + " " + 
+    e.server.sendData("OPER " + fromUnicode(e.opername, e.server) + " " +
                       fromUnicode(e.password, e.server) + "\n");
 }
 
