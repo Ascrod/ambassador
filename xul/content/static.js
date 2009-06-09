@@ -4004,28 +4004,53 @@ function my_splitlinesforsending(line)
     return realLines;
 }
 
+/* Displays a network-centric message on the most appropriate view.
+ *
+ * When |client.SLOPPY_NETWORKS| is |true|, messages will be displayed on the
+ * *current* view instead of the network view, if the current view is part of
+ * the same network.
+ */
 CIRCNetwork.prototype.display =
-function net_display (message, msgtype, sourceObj, destObj)
+function net_display(message, msgtype, sourceObj, destObj)
 {
     var o = getObjectDetails(client.currentObject);
-
     if (client.SLOPPY_NETWORKS && client.currentObject != this &&
         o.network == this && o.server && o.server.isConnected)
     {
-        client.currentObject.display (message, msgtype, sourceObj, destObj);
+        client.currentObject.display(message, msgtype, sourceObj, destObj);
     }
     else
     {
-        this.displayHere (message, msgtype, sourceObj, destObj);
+        this.displayHere(message, msgtype, sourceObj, destObj);
     }
 }
 
+/* Displays a channel-centric message on the most appropriate view.
+ *
+ * If the channel view already exists (visible or hidden), messages are added
+ * to it; otherwise, messages go to the *network* view.
+ */
+CIRCChannel.prototype.display =
+function chan_display(message, msgtype, sourceObj, destObj)
+{
+    if ("messages" in this)
+        this.displayHere(message, msgtype, sourceObj, destObj);
+    else
+        this.parent.parent.displayHere(message, msgtype, sourceObj, destObj);
+}
+
+/* Displays a user-centric message on the most appropriate view.
+ *
+ * If the user view already exists (visible or hidden), messages are added to
+ * it; otherwise, it goes to the *current* view if the current view is part of
+ * the same network, or the *network* view if not.
+ */
 CIRCUser.prototype.display =
 function usr_display(message, msgtype, sourceObj, destObj)
 {
     if ("messages" in this)
     {
-        this.displayHere (message, msgtype, sourceObj, destObj);
+        this.displayHere(message, msgtype, sourceObj, destObj);
     }
     else
     {
@@ -4033,19 +4058,22 @@ function usr_display(message, msgtype, sourceObj, destObj)
         if (o.server && o.server.isConnected &&
             o.network == this.parent.parent &&
             client.currentObject.TYPE != "IRCUser")
-            client.currentObject.display (message, msgtype, sourceObj, destObj);
+            client.currentObject.display(message, msgtype, sourceObj, destObj);
         else
-            this.parent.parent.displayHere (message, msgtype, sourceObj,
-                                            destObj);
+            this.parent.parent.displayHere(message, msgtype, sourceObj,
+                                           destObj);
     }
 }
 
+/* Displays a DCC user/file transfer-centric message on the most appropriate view.
+ *
+ * If the DCC user/file transfer view already exists (visible or hidden),
+ * messages are added to it; otherwise, messages go to the *current* view.
+ */
 CIRCDCCChat.prototype.display =
 CIRCDCCFileTransfer.prototype.display =
 function dcc_display(message, msgtype, sourceObj, destObj)
 {
-    var o = getObjectDetails(client.currentObject);
-
     if ("messages" in this)
         this.displayHere(message, msgtype, sourceObj, destObj);
     else
@@ -4110,7 +4138,6 @@ function this_getFontCSS(format)
 client.display =
 client.displayHere =
 CIRCNetwork.prototype.displayHere =
-CIRCChannel.prototype.display =
 CIRCChannel.prototype.displayHere =
 CIRCUser.prototype.displayHere =
 CIRCDCCChat.prototype.displayHere =

@@ -1592,32 +1592,39 @@ function my_listrply (e)
     }
 }
 
-CIRCNetwork.prototype.on401 =
-function my_401 (e)
+CIRCNetwork.prototype.on401 = /* ERR_NOSUCHNICK */
+CIRCNetwork.prototype.on402 = /* ERR_NOSUCHSERVER */
+CIRCNetwork.prototype.on403 = /* ERR_NOSUCHCHANNEL */
+function my_401(e)
 {
-    var target = e.server.toLowerCase(e.params[2]);
-    if (target in this.users && "messages" in this.users[target])
-    {
-        this.users[target].displayHere(e.params[3]);
-    }
-    else if (target in this.primServ.channels &&
-             "messages" in this.primServ.channels[target])
-    {
-        this.primServ.channels[target].displayHere(e.params[3]);
-    }
+    var server, channel, user;
+
+    /* Note that servers generally only send 401 and 402, sharing the former
+     * between nicknames and channels, but we're ready for anything.
+     */
+    if (e.code == 402)
+        server = e.decodeParam(2);
+    else if (arrayIndexOf(e.server.channelTypes, e.params[2][0]) != -1)
+        channel = new CIRCChannel(e.server, null, e.params[2]);
     else
+        user = new CIRCUser(e.server, null, e.params[2]);
+
+    if (user && this.whoisList && (user.canonicalName in this.whoisList))
     {
-        if (this.whoisList && (target in this.whoisList))
-        {
-            // if this is from a whois, send a whowas and don't display anything
-            this.primServ.whowas(target, 1);
-            this.whoisList[target] = false;
-        }
-        else
-        {
-            display(toUnicode(e.params[3], this));
-        }
+        // If this is from a /whois, send a /whowas and don't display anything.
+        this.primServ.whowas(user.unicodeName, 1);
+        this.whoisList[user.canonicalName] = false;
+        return;
     }
+
+    if (user)
+        user.display(getMsg(MSG_IRC_401, [user.unicodeName]), e.code);
+    else if (server)
+        this.display(getMsg(MSG_IRC_402, [server]), e.code);
+    else if (channel)
+        channel.display(getMsg(MSG_IRC_403, [channel.unicodeName]), e.code);
+    else
+        dd("on401: unreachable code.");
 }
 
 /* 464; "invalid or missing password", occurs as a reply to both OPER and
