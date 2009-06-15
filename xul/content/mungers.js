@@ -62,12 +62,14 @@ function initMunger()
     // Colours: \x03, with optional foreground and background colours
     client.colorRE = /(\x03((\d{1,2})(,\d{1,2}|)|))/;
 
+    client.whitespaceRE = new RegExp("(\\S{" + client.MAX_WORD_DISPLAY + ",})");
+
     const LOW_PRIORITY = 5;
     const NORMAL_PRIORITY = 10;
     const HIGH_PRIORITY = 15;
     const HIGHER_PRIORITY = 20;
 
-    var munger = client.munger = new CMunger(insertHyphenatedWord);
+    var munger = client.munger = new CMunger(insertText);
     // Special internal munger!
     munger.addRule(".inline-buttons", /(\[\[.*?\]\])/, insertInlineButton,
                    10, 5, false);
@@ -114,8 +116,7 @@ function initMunger()
          /((^|\s)(?:[>]?[B8=:;(xX][~']?[-^v"]?(?:[)|(PpSs0oO\?\[\]\/\\]|D+)|>[-^v]?\)|[oO9][._][oO9])(\s|$))/,
          insertSmiley, NORMAL_PRIORITY, NORMAL_PRIORITY);
     munger.addRule("rheet", /(?:\s|\W|^)(rhee+t\!*)(?:\s|$)/i, insertRheet, 10, 10);
-    munger.addRule("word-hyphenator",
-                   new RegExp ("(\\S{" + client.MAX_WORD_DISPLAY + ",})"),
+    munger.addRule("word-hyphenator", client.whitespaceRE,
                    insertHyphenatedWord, LOW_PRIORITY, NORMAL_PRIORITY);
 
     client.enableColors = client.prefs["munger.colorCodes"];
@@ -234,7 +235,7 @@ function insertLink(matchText, containerTag, data, mungerEntry)
     delete data.inLink;
     containerTag.appendChild(anchor);
     if (trailing)
-        insertHyphenatedWord(trailing, containerTag, data);
+        insertText(trailing, containerTag, data);
 
 }
 
@@ -428,7 +429,7 @@ function insertRheet(matchText, containerTag, eventData, mungerEntry)
                         "http://ftp.mozilla.org/pub/mozilla.org/mozilla/libraries/bonus-tracks/rheet.wav");
     anchor.setAttribute("class", "chatzilla-rheet chatzilla-link");
     //anchor.setAttribute ("target", "_content");
-    insertHyphenatedWord(matchText, anchor, eventData);
+    insertText(matchText, anchor, eventData);
     containerTag.appendChild(anchor);
 }
 
@@ -652,28 +653,67 @@ function showCtrlChar(c, containerTag)
     containerTag.appendChild(document.createElementNS(XHTML_NS, "html:wbr"));
 }
 
-function insertHyphenatedWord(longWord, containerTag, data)
+function insertText(text, containerTag, data)
 {
-    var wordParts = splitLongWord(longWord, client.MAX_WORD_DISPLAY);
     var newClass = "";
     if (data && ("hasColorInfo" in data))
         newClass = calcClass(data);
+    if (!newClass)
+        delete data.hasColorInfo;
+
+    if (newClass)
+    {
+        var spanTag = document.createElementNS(XHTML_NS, "html:span");
+        spanTag.setAttribute("class", newClass);
+        containerTag.appendChild(spanTag);
+        containerTag = spanTag;
+    }
+
+    var arg;
+    while ((arg = text.match(client.whitespaceRE)))
+    {
+        // Find the start of the match so we can insert the preceding text.
+        var start = text.indexOf(arg[0]);
+        if (start > 0)
+            containerTag.appendChild(document.createTextNode(text.substr(0, start)));
+
+        // Process the long word itself.
+        insertHyphenatedWord(arg[1], containerTag, { dontStyleText: true });
+
+        // Continue with the rest of the text.
+        text = text.substr(start + arg[0].length);
+    }
+
+    // Insert any left-over text on the end.
+    if (text)
+        containerTag.appendChild(document.createTextNode(text));
+}
+
+function insertHyphenatedWord(longWord, containerTag, data)
+{
+    var wordParts = splitLongWord(longWord, client.MAX_WORD_DISPLAY);
+
+    if (!data || !("dontStyleText" in data))
+    {
+        var newClass = "";
+        if (data && ("hasColorInfo" in data))
+            newClass = calcClass(data);
+        if (!newClass)
+            delete data.hasColorInfo;
+
+        if (newClass)
+        {
+            var spanTag = document.createElementNS(XHTML_NS, "html:span");
+            spanTag.setAttribute("class", newClass);
+            containerTag.appendChild(spanTag);
+            containerTag = spanTag;
+        }
+    }
 
     var wbr = document.createElementNS(XHTML_NS, "html:wbr");
     for (var i = 0; i < wordParts.length; ++i)
     {
-        if (newClass)
-        {
-            var newTag = document.createElementNS(XHTML_NS, "html:span");
-            newTag.setAttribute("class", newClass);
-            newTag.appendChild(document.createTextNode(wordParts[i]));
-            containerTag.appendChild(newTag);
-        }
-        else
-        {
-            delete data.hasColorInfo;
-            containerTag.appendChild(document.createTextNode(wordParts[i]));
-        }
+        containerTag.appendChild(document.createTextNode(wordParts[i]));
         containerTag.appendChild(wbr.cloneNode(true));
     }
 }
