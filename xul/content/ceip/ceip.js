@@ -92,13 +92,21 @@ CEIP.prototype.startLog =
 function ceip_startlog()
 {
     dd("CEIP: LOGGING START");
+    var version = getVersionInfo();
     this.enabled = true;
     this.logEvent({
         type: "logger",
         event: "start",
         userid: client.prefs["ceip.userid"],
         clientVersion: __cz_version,
-        clientVersionSuffix: __cz_suffix
+        clientVersionSuffix: __cz_suffix,
+        clientLocale: this.getSelectedLocale("chatzilla"),
+        hostName: version.hostName,
+        hostVersion: version.hostVersion,
+        hostBuildID: version.hostBuildID,
+        hostLocale: this.getSelectedLocale("global"),
+        tz: this.getWinterTimezoneOffset(),
+        tzNow: (new Date()).getTimezoneOffset()
     });
 
     var self = this;
@@ -363,6 +371,48 @@ function ceip_geteventviewtype(e)
     }
     catch (ex) {}
     return MSG_UNKNOWN;
+}
+
+/**
+ * Gets the currently selected locale for a given package.
+ *
+ * @param packageName A package to get the selected locale of, e.g. "global",
+ *                    "chatzilla".
+ * @returns An IETF language tag (e.g. "en-US") for the locale.
+ */
+CEIP.prototype.getSelectedLocale =
+function ceip_getselectedlocale(packageName)
+{
+    var selectedLocale = "";
+    try
+    {
+        var chromeReg = getService("@mozilla.org/chrome/chrome-registry;1",
+                                   "nsIXULChromeRegistry");
+        selectedLocale = chromeReg.getSelectedLocale(packageName);
+    }
+    catch (ex) {}
+    return selectedLocale;
+}
+
+/**
+ * Gets a date-independent timezone offset for the user.
+ *
+ * The calculation takes the two solstices, using approximate dates 21st June
+ * and 21st December, and chooses the most "behind" timezone offset of them as
+ * the winter timezone offset.
+ *
+ * @returns A value which is constant throughout the year for a given timezone.
+ */
+CEIP.prototype.getWinterTimezoneOffset =
+function ceip_getwintertimezoneoffset()
+{
+    var d1 = new Date();
+    d1.setMonth(5);
+    d1.setDate(21);
+    var d2 = new Date();
+    d2.setMonth(11);
+    d2.setDate(21);
+    return Math.max(d1.getTimezoneOffset(), d2.getTimezoneOffset());
 }
 
 CEIP.prototype.isCommandIgnored =

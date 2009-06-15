@@ -407,7 +407,6 @@ function getVersionInfo()
     var version = new Object();
     version.cz = __cz_version + (__cz_suffix ? "-" + __cz_suffix : "");
     version.ua = navigator.userAgent;
-    version.host = "Unknown";
 
     var app = getService("@mozilla.org/xre/app-info;1", "nsIXULAppInfo");
     if (app)
@@ -420,24 +419,30 @@ function getVersionInfo()
              */
 
             // "XULRunner 1.7+"
-            version.host = "XULRunner " + app.platformVersion;
+            version.hostName = "XULRunner";
+            version.hostVersion = app.platformVersion;
+            version.host = version.hostName + " " + version.hostVersion;
 
             // "XULRunner 1.7+/2005071506"
             version.ua = version.host + "/" + app.platformBuildID;
+            version.hostBuildID = app.platformBuildID;
         }
         else
         {
             // "Mozilla Firefox 1.0+"
-            version.host = app.vendor + " " + app.name + " " + app.version;
+            version.hostName = app.vendor + " " + app.name;
+            version.hostVersion = app.version;
+            version.host = version.hostName + " " + version.hostVersion;
 
             // "Firefox 1.0+/2005071506"
-            version.ua = app.name + " " + app.version + "/";
             if ("platformBuildID" in app) // 1.1 and up
-                version.ua += app.platformBuildID;
+                version.hostBuildID = app.platformBuildID;
             else if ("geckoBuildID" in app) // 1.0 - 1.1 trunk only
-                version.ua += app.geckoBuildID;
+                version.hostBuildID = app.geckoBuildID;
             else // Uh oh!
-                version.ua += "??????????";
+                version.hostBuildID = "??????????";
+            version.ua = app.name + " " + app.version + "/" +
+                         version.hostBuildID;
         }
     }
     else
@@ -451,8 +456,11 @@ function getVersionInfo()
             else
                 version.ua = client.entities.brandShortName + " " + ary[1]; // Suite
             version.ua += "/" + ary[2];
+            version.hostBuildID = ary[2];
         }
-        version.host = client.entities.brandShortName;
+        version.hostName = client.entities.brandShortName;
+        version.hostVersion = "";
+        version.host = version.hostName;
     }
 
     version.host += ", " + client.platform;
