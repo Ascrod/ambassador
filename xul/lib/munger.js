@@ -23,6 +23,7 @@
  * Contributor(s):
  *   Robert Ginda, rginda@ndcico.com, original author
  *   Samuel Sieb, samuel@sieb.net, MIRC color codes
+ *   Gijs Kruitbosch, gijskruitbosch@gmail.com, priority munging
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -237,15 +238,13 @@ function mng_mungePriority(priority, text, containerTag, data)
         var munger = firstMatch.munger;
         firstMatch.end = firstMatch.start + firstMatch.text.length;
 
-        // Insert the text before the match if there is any
+        // Need to deal with the text before the match, if there is any.
         var beforeText = text.substr(0, firstMatch.start);
         if (firstMatch.start > 0)
-            this.insertPlainText(beforeText, containerTag, data);
+            this.munge(beforeText, containerTag, data);
 
         if (typeof munger.lambdaReplace == "function")
         {
-            // There is no need to munge the "before" text, as we should
-            // have found the earliest matching entry by now.
             // The munger rule itself should take care of munging the 'inside'
             // of the match.
             munger.lambdaReplace(firstMatch.text, containerTag, data, munger);

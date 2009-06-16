@@ -72,7 +72,7 @@ function initMunger()
     var munger = client.munger = new CMunger(insertText);
     // Special internal munger!
     munger.addRule(".inline-buttons", /(\[\[.*?\]\])/, insertInlineButton,
-                   10, 5, false);
+                   HIGH_PRIORITY, LOW_PRIORITY, false);
     munger.addRule("quote", /(``|'')/, insertQuote,
                    NORMAL_PRIORITY, NORMAL_PRIORITY);
     munger.addRule("bold", /(?:[\s(\[]|^)(\*[^*()]*\*)(?:[\s\]).,;!\?]|$)/,
