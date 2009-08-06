@@ -388,9 +388,8 @@ function initStatic()
     }
     catch (ex)
     {
-        display(getMsg(MSG_ERR_INPUTHISTORY_NOT_WRITABLE,
-                       inputHistoryFile.path),
-                MT_ERROR);
+        msg = getMsg(MSG_ERR_INPUTHISTORY_NOT_WRITABLE, inputHistoryFile.path);
+        setTimeout("client.display(" + msg.quote() + ", MT_ERROR)", 0);
         dd(formatException(ex));
         client.inputHistoryLogger = null;
     }
