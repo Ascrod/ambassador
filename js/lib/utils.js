@@ -801,6 +801,11 @@ function arrayRemoveAt (ary, i)
     ary.splice (i, 1);
 }
 
+function objectContains(o, p)
+{
+    return Object.hasOwnProperty.call(o, p);
+}
+
 /* length should be an even number >= 6 */
 function abbreviateWord (str, length)
 {

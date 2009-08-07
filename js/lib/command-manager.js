@@ -344,12 +344,12 @@ function cmgr_uninstkey (command)
 CommandManager.prototype.addCommand =
 function cmgr_add (command)
 {
-    if (command.name in this.commands)
+    if (objectContains(this.commands, command.name))
     {
         /* We've already got a command with this name - invoke the history
          * storage so that we can undo this back to its original state.
          */
-        if (!(command.name in this.commandHistory))
+        if (!objectContains(this.commandHistory, command.name))
             this.commandHistory[command.name] = new Array();
         this.commandHistory[command.name].push(this.commands[command.name]);
     }
@@ -371,7 +371,7 @@ CommandManager.prototype.removeCommand =
 function cmgr_remove (command)
 {
     delete this.commands[command.name];
-    if (command.name in this.commandHistory)
+    if (objectContains(this.commandHistory, command.name))
     {
         /* There was a previous command with this name - restore the most
          * recent from the history, returning the command to its former glory.
@@ -393,7 +393,7 @@ function cmgr_remove (command)
 CommandManager.prototype.addHook =
 function cmgr_hook (commandName, func, id, before)
 {
-    if (!ASSERT(commandName in this.commands,
+    if (!ASSERT(objectContains(this.commands, commandName),
                 "Unknown command '" + commandName + "'"))
     {
         return;
@@ -484,11 +484,8 @@ function cmgr_list (partialName, flags)
 
     /* A command named "eval" wouldn't show up in the result of keys() because
      * eval is not-enumerable, even if overwritten, in Mozilla 1.0. */
-    if (("eval" in this.commands) && (typeof this.commands.eval == "object") &&
-        !arrayContains(commandNames, "eval"))
-    {
+    if (objectContains(this.commands, "eval") && !arrayContains(commandNames, "eval"))
         commandNames.push("eval");
-    }
 
     for (var i in commandNames)
     {
