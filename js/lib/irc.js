@@ -2186,17 +2186,18 @@ function serv_nick (e)
         {
             var cuser = this.channels[c].users[oldKey];
             renameProperty (this.channels[c].users, oldKey, newKey);
+
+            // User must be a channel user, update sort name for userlist,
+            // before we route the event further:
+            cuser.updateSortName();
+
             ev = new CEvent ("channel", "nick", this.channels[c], "onNick");
             ev.channel = this.channels[c];
             ev.user = cuser;
             ev.server = this;
             ev.oldNick = e.oldNick;
             this.parent.eventPump.routeEvent(ev);
-
-            // User must be a channel user, update sort name for userlist:
-            cuser.updateSortName();
         }
-
     }
 
     if (e.user == this.me)
