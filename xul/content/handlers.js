@@ -310,7 +310,7 @@ function onTooltip(event)
     var XLinkTitleText = null;
 
     var element = document.tooltipNode;
-    while (element)
+    while (element && (element != document.documentElement))
     {
         if (element.nodeType == Node.ELEMENT_NODE)
         {
