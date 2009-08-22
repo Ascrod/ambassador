@@ -1494,3 +1494,7 @@ function strftime(format, time)
     }
     return format.replace(/%%/, "%");
 }
+
+// No-op window.getAttention if it's not found, this is for in-a-tab mode.
+if (typeof getAttention == "undefined")
+    getAttention = function() {};
