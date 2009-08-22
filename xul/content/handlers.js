@@ -1926,10 +1926,18 @@ function my_sconnect (e)
 
     if (this.prefs["identd.enabled"])
     {
-        if (jsenv.HAS_SERVER_SOCKETS)
-            client.ident.addNetwork(this, e.server);
-        else
+        try
+        {
+            if (jsenv.HAS_SERVER_SOCKETS)
+                client.ident.addNetwork(this, e.server);
+            else
+                display(MSG_IDENT_SERVER_NOT_POSSIBLE, MT_WARN);
+        }
+        catch (ex)
+        {
             display(MSG_IDENT_SERVER_NOT_POSSIBLE, MT_WARN);
+            dd(formatException(ex));
+        }
     }
 
     this.NICK_RETRIES = this.prefs["nicknameList"].length + 3;
