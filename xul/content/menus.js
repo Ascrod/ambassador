@@ -166,18 +166,19 @@ function initMenus()
          //[">popup:current_networks"]
          [">popup:nickname"],
          ["-"],
-         ["leave",       {visibleif: ChannelActive}],
-         ["rejoin",      {visibleif: ChannelInactive}],
-         ["disconnect",  {visibleif: NetConnected}],
-         ["reconnect",   {visibleif: NetDisconnected}],
-         ["-",           {visibleif: "cx.network"}],
          ["clear-view"],
-         ["hide-view",   {enabledif: "client.viewsArray.length > 1"}],
-         ["delete-view", {enabledif: "client.viewsArray.length > 1"}],
-         ["-"],
+         ["hide-view", {enabledif: "client.viewsArray.length > 1"}],
          ["toggle-oas",
                  {type: "checkbox",
-                  checkedif: "isStartupURL(cx.sourceObject.getURL())"}]
+                  checkedif: "isStartupURL(cx.sourceObject.getURL())"}],
+         ["-"],
+         ["leave",       {visibleif: ChannelActive}],
+         ["rejoin",      {visibleif: ChannelInactive}],
+         ["delete-view", {visibleif: "!" + ChannelActive}],
+         ["disconnect",  {visibleif: NetConnected}],
+         ["reconnect",   {visibleif: NetDisconnected}],
+         ["-"],
+         ["toggle-text-dir"]
         ]
     };
 
