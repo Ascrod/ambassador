@@ -53,7 +53,7 @@
   <!-- Tree entry (SeaMonkey 2) -->
   <treechildren id="prefsPanelChildren">
     <treeitem id="chatzillaItem"
-              insertafter="editor,mailnews,navigator"
+              insertbefore="securityItem"
               label="&pref-irc.window.title;"
               prefpane="chatzilla_pane"
               url="chrome://chatzilla/content/pref-irc-toolkit.xul"/>
