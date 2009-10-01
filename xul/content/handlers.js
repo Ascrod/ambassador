@@ -502,7 +502,7 @@ function onTabCompleteRequest (e)
                 /* then list possible completions, */
                 display(getMsg(MSG_FMT_MATCHLIST,
                                [matches.length, word,
-                                matches.join(MSG_COMMASP)]));
+                                matches.sort().join(MSG_COMMASP)]));
             }
             else
             {
