@@ -55,8 +55,9 @@ OPS.push({ key: "filter", canStop: true  });
 
 
 // Define constants for each operation.
+// JavaScript won't let you delete things declared with "var", workaround:
 // NOTE: This order MUST be the same as those above!
-var s = 0;
+window.s = 0;
 const OP_LIST   = ++s;  // A /list operation on the server.
 const OP_LOAD   = ++s;  // Loading the saved file.
 const OP_FILTER = ++s;  // Filtering the loaded list.
@@ -71,7 +72,7 @@ const STATE_ERROR = ++s;  // Error occurred: don't try do to any more.
 const STATE_START = ++s;  // Starting an operation.
 const STATE_RUN   = ++s;  // Running...
 const STATE_STOP  = ++s;  // Clean-up/ending operation.
-delete s;
+delete window.s;
 
 
 // Store all the operation data here.
