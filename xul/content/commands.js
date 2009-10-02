@@ -1052,7 +1052,7 @@ function cmdChanUserMode(e)
     }
     else if (e.nicknameList)
     {
-        for (i = 0; i < e.nicknameList.length; i++)
+        for (var i = 0; i < e.nicknameList.length; i++)
         {
             user = e.channel.getUser(e.nicknameList[i]);
             if (!user)
@@ -1466,7 +1466,7 @@ function cmdNetworks(e)
     var netnames = keys(client.networks).sort();
     var lastname = netnames[netnames.length - 1];
 
-    for (n in netnames)
+    for (var n in netnames)
     {
         var net = client.networks[netnames[n]];
         var a = document.createElementNS(XHTML_NS, "html:a");

@@ -257,7 +257,7 @@ function changeCSS(url, id)
     if (!id)
         id = "main-css";
     
-    node = document.getElementById(id);
+    var node = document.getElementById(id);
 
     if (!node)
     {

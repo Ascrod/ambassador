@@ -105,7 +105,7 @@ MenuManager.prototype.createMenus =
 function mmgr_createtb(document, menuid)
 {
     var menu = document.getElementById(menuid);
-    for (id in this.menuSpecs)
+    for (var id in this.menuSpecs)
     {
         var domID;
         if ("domID" in this.menuSpecs[id])

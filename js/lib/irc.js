@@ -78,7 +78,8 @@ function decodeParam(number, charsetOrObject)
     return rv;
 }
 
-var i = 1;
+// JavaScript won't let you delete things declared with "var", workaround:
+window.i = 1;
 
 const NET_OFFLINE       = i++; // Initial, disconected.
 const NET_WAITING       = i++; // Waiting before trying.
@@ -87,7 +88,7 @@ const NET_CANCELLING    = i++; // Cancelling connect.
 const NET_ONLINE        = i++; // Connected ok.
 const NET_DISCONNECTING = i++; // Disconnecting.
 
-delete i;
+delete window.i;
 
 /*
  * irc network
@@ -1220,7 +1221,7 @@ function serv_ppline(e)
     if (incomplete)
         this.savedLine = lines.pop();
 
-    for (i in lines)
+    for (var i in lines)
     {
         var ev = new CEvent("server", "rawdata", this, "onRawData");
         ev.data = lines[i].replace(/\r/g, "");

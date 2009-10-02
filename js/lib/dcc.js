@@ -280,7 +280,8 @@ function dcc_findbyid(id)
 }
 
 
-var val = -1;
+// JavaScript won't let you delete things declared with "var", workaround:
+window.val = -1;
 
 const DCC_STATE_FAILED        = val++; // try connect (accept), but it failed.
 const DCC_STATE_INIT          = val++; // not "doing" anything
@@ -291,7 +292,7 @@ const DCC_STATE_CONNECTED     = val++; // all going ok.
 const DCC_STATE_DONE          = val++; // finished ok.
 const DCC_STATE_ABORTED       = val++; // send wasn't accepted in time.
 
-delete val;
+delete window.val;
 
 const DCC_DIR_UNKNOWN = 0;
 const DCC_DIR_SENDING = 1;
@@ -794,7 +795,7 @@ function dchat_dataavailable(e)
     if (incomplete)
         this.savedLine = lines.pop();
 
-    for (i in lines)
+    for (var i in lines)
     {
         var ev = new CEvent("dcc-chat", "rawdata", this, "onRawData");
         ev.data = lines[i];

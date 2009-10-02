@@ -437,7 +437,7 @@ function opdata_loadData()
     // Now get the list of pref names, and add them...
     var prefList = this.parent.prefManager.prefNames;
     
-    for (i in prefList)
+    for (var i in prefList)
         this.addPref(prefList[i]);
 }
 
@@ -748,7 +748,7 @@ function pdata_loadData()
                 this.edit.removeChild(this.edit.firstChild);
             
             // Add new ones.
-            for (i = 0; i < this.val.length; i++)
+            for (var i = 0; i < this.val.length; i++)
             {
                 var item = document.createElement("listitem");
                 item.value = this.val[i];
@@ -1011,7 +1011,7 @@ function pwin_onLoad()
                             "(?:\\.(users|channels)?\\.([^.]+))?\\.");
     var rv = new Object();
     var netList = client.prefManager.prefBranch.getChildList("networks.", rv);
-    for (i in netList)
+    for (var i in netList)
     {
         var m = netList[i].match(prefRE);
         if (!m)
