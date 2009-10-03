@@ -338,6 +338,7 @@ function ceip_uploadlog(file)
         request.onload = uploadLogDone;
         request.onerror = uploadLogError;
         request.open("POST", uploadUrl);
+        request.setRequestHeader("Content-Type", "application/xml");
         request.send(data);
     }
     catch(ex)
