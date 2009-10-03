@@ -2365,7 +2365,7 @@ function serv_pong (e)
         return true;
 
     if (this.lastPingSent)
-        this.lag = roundTo ((new Date() - this.lastPingSent) / 1000, 2);
+        this.lag = (new Date() - this.lastPingSent) / 1000;
 
     this.lastPingSent = null;
 

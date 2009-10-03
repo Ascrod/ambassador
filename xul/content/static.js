@@ -2334,7 +2334,7 @@ function updateNetwork()
     {
         if (o.server.me)
             nick = o.server.me.unicodeName;
-        lag = (o.server.lag != -1) ? o.server.lag : MSG_UNKNOWN;
+        lag = (o.server.lag != -1) ? o.server.lag.toFixed(2) : MSG_UNKNOWN;
     }
     client.statusBar["header-url"].setAttribute("value",
                                                  client.currentObject.getURL());
