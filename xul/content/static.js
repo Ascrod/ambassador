@@ -397,6 +397,42 @@ function initStatic()
     if (client.inputHistoryLogger)
         client.inputHistory = client.inputHistoryLogger.read().reverse();
 
+    // Set up URL collector.
+    var urlsFile = new nsLocalFile(client.prefs["profilePath"]);
+    urlsFile.append("urls.txt");
+    try
+    {
+        client.urlLogger = new TextLogger(urlsFile.path,
+                                          client.prefs["urls.store.max"]);
+    }
+    catch (ex)
+    {
+        msg = getMsg(MSG_ERR_URLS_NOT_WRITABLE, urlsFile.path);
+        setTimeout("client.display(" + msg.quote() + ", MT_ERROR)", 0);
+        dd(formatException(ex));
+        client.urlLogger = null;
+    }
+
+    // Migrate old list preference to file.
+    try
+    {
+        // Throws if the preference doesn't exist.
+        if (client.urlLogger)
+            var urls = client.prefManager.prefBranch.getCharPref("urls.list");
+    }
+    catch (ex)
+    {
+    }
+    if (urls)
+    {
+        // Add the old URLs to the new file.
+        urls = client.prefManager.stringToArray(urls);
+        for (var i = 0; i < urls.length; i++)
+            client.urlLogger.append(urls[i]);
+        // Completely purge the old preference.
+        client.prefManager.prefBranch.clearUserPref("urls.list");
+    }
+
     client.defaultCompletion = client.COMMAND_CHAR + "help ";
 
     client.deck = document.getElementById('output-deck');

@@ -258,7 +258,6 @@ function initPrefs()
          ["timestamps",         false,        "appearance.timestamps"],
          ["timestamps.display", "[%H:%M]",    "appearance.timestamps"],
          ["timestamps.log",     "[%Y-%m-%d %H:%M:%S]", "hidden"],
-         ["urls.list",          [],       "hidden"],
          ["urls.store.max",     100,      "global"],
          ["urls.display",       10,       "hidden"],
          ["username",           "chatzilla", ".ident"],
@@ -818,6 +817,14 @@ function onPrefChanged(prefName, newValue, oldValue)
 
         case "inputSpellcheck":
             updateSpellcheck(newValue);
+            break;
+
+        case "urls.store.max":
+            if (client.urlLogger)
+            {
+                client.urlLogger.autoLimit = newValue;
+                client.urlLogger.limit(newValue);
+            }
             break;
 
         default:

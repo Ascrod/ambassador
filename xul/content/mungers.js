@@ -209,12 +209,10 @@ function insertLink(matchText, containerTag, data, mungerEntry)
      * don't log.
      */
     if ((!("dontLogURLs" in data) || !data.dontLogURLs) &&
-        (!("noStateChange" in data) || !data.noStateChange))
+        (!("noStateChange" in data) || !data.noStateChange) &&
+        client.urlLogger)
     {
-        var max = client.prefs["urls.store.max"];
-        if (client.prefs["urls.list"].unshift(href) > max)
-            client.prefs["urls.list"].pop();
-        client.prefs["urls.list"].update();
+        client.urlLogger.append(href);
     }
 
     var anchor = document.createElementNS(XHTML_NS, "html:a");
