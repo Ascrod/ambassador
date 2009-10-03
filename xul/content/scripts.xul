@@ -44,7 +44,6 @@
 
   <overlaytarget id="scripts-overlay-target">
 
-    <script src="chrome://global/content/strres.js"/>
     <script src="chrome://global/content/nsUserSettings.js"/>
     <script src="chrome://global/content/nsTransferable.js"/>
     <script src="chrome://global/content/nsClipboard.js"/>
