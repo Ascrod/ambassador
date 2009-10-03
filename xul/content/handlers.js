@@ -567,7 +567,8 @@ function onWindowKeyPress(e)
         case 34: /* Page Down */
             // Control-Page Up => previous tab (all platforms)
             // Control-Page Down => next tab (all platforms)
-            if (e.ctrlKey && !e.altKey && !e.metaKey && !e.shiftKey)
+            if ((e.ctrlKey && !e.altKey && !e.metaKey && !e.shiftKey) ||
+                (e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey))
             {
                 cycleView(2 * code - 67);
                 e.preventDefault();
