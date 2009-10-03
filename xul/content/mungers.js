@@ -23,6 +23,7 @@
  * Contributor(s):
  *   Robert Ginda, rginda@ndcico.com, original author
  *   Samuel Sieb, samuel@sieb.net, MIRC color codes
+ *   Gijs Kruitbosch, gijskruitbosch@gmail.com
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -57,7 +58,7 @@ function initMunger()
      * - end with whitespace, non-word, or end-of-line
      */
     client.linkRE =
-        /(?:\s|\W|^)((?:(\w[\w-]+):[^\s]+|www(\.[^.\s]+){2,})\b[\/=\)]?)(?=\s|\W|$)/;
+        /(?:\W|^)((?:(\w[\w-]+):[^\s]+|www(\.[^.\s]+){2,})\b[\/=\)]?)(?=\s|\W|$)/;
 
     // Colours: \x03, with optional foreground and background colours
     client.colorRE = /(\x03((\d{1,2})(,\d{1,2}|)|))/;
@@ -101,13 +102,13 @@ function initMunger()
     // This has a higher starting priority so as to get it to match before the
     // normal link, which won't know about mailto and then fail.
     munger.addRule(".mailto",
-       /(?:\s|\W|^)((mailto:)?[^:;\\<>\[\]()\'\"\s\u201d]+@[^.<>\[\]()\'\"\s\u201d]+\.[^<>\[\]()\'\"\s\u201d]+)/i,
+       /(?:\W|^)((mailto:)?[^:;\\<>\[\]()\'\"\s\u201d]+@[^.<>\[\]()\'\"\s\u201d]+\.[^<>\[\]()\'\"\s\u201d]+)/i,
                    insertMailToLink, NORMAL_PRIORITY, HIGHER_PRIORITY, false);
     munger.addRule("bugzilla-link",
-                   /(?:\s|\W|^)(bug\s+(?:#?\d+|#[^\s,]{1,20})(?:\s+comment\s+#?\d+)?)/i,
+                   /(?:\W|^)(bug\s+(?:#?\d+|#[^\s,]{1,20})(?:\s+comment\s+#?\d+)?)/i,
                    insertBugzillaLink, NORMAL_PRIORITY, NORMAL_PRIORITY);
     munger.addRule("channel-link",
-                /(?:\s|\W|^)[@%+]?(#[^<>,\[\](){}\"\s\u201d]*[^:,.<>\[\](){}\'\"\s\u201d])/i,
+                /(?:[^\w#]|^)[@%+]?(#[^<>,\[\](){}\"\s\u201d]*[^:,.<>\[\](){}\'\"\s\u201d])/i,
                    insertChannelLink, NORMAL_PRIORITY, NORMAL_PRIORITY);
     munger.addRule("talkback-link", /(?:\W|^)(TB\d{8,}[A-Z]?)(?:\W|$)/,
                    insertTalkbackLink, NORMAL_PRIORITY, NORMAL_PRIORITY);
@@ -115,7 +116,7 @@ function initMunger()
     munger.addRule("face",
          /((^|\s)(?:[>]?[B8=:;(xX][~']?[-^v"]?(?:[)|(PpSs0oO\?\[\]\/\\]|D+)|>[-^v]?\)|[oO9][._][oO9])(\s|$))/,
          insertSmiley, NORMAL_PRIORITY, NORMAL_PRIORITY);
-    munger.addRule("rheet", /(?:\s|\W|^)(rhee+t\!*)(?:\s|$)/i, insertRheet, 10, 10);
+    munger.addRule("rheet", /(?:\W|^)(rhee+t\!*)(?:\s|$)/i, insertRheet, 10, 10);
     munger.addRule("word-hyphenator", client.whitespaceRE,
                    insertHyphenatedWord, LOW_PRIORITY, NORMAL_PRIORITY);
 
