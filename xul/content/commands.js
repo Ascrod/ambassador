@@ -4528,7 +4528,9 @@ function cmdDCCDecline(e)
 
 function cmdDCCShowFile(e)
 {
-    var f = nsLocalFile(e.file);
+    var f = getFileFromURLSpec(e.file);
+    if (f)
+        f = nsLocalFile(f.path);
     if (f && f.parent && f.parent.exists())
     {
         try

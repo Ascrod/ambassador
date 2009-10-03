@@ -3245,16 +3245,19 @@ function my_dccfiledisconnect(e)
 
     if (this.state.dir == DCC_DIR_GETTING)
     {
-        var cmd = "dcc-file-show " + this.localPath;
+        var localURL = getURLSpecFromFile(this.localPath);
+        var cmd = "dcc-show-file " + localURL;
         var msgId = (client.platform == "Mac") ? MSG_DCCFILE_CLOSED_SAVED_MAC :
                                                  MSG_DCCFILE_CLOSED_SAVED;
-        msg = getMsg(msgId, this._getParams().concat(this.localPath, cmd));
+        msg = getMsg(msgId, this._getParams().concat(localURL, cmd));
     }
     else
     {
         msg = getMsg(MSG_DCCFILE_CLOSED_SENT, this._getParams());
     }
+    client.munger.getRule(".inline-buttons").enabled = true;
     this.display(msg, "DCC-FILE");
+    client.munger.getRule(".inline-buttons").enabled = false;
 }
 
 var CopyPasteHandler = new Object();
