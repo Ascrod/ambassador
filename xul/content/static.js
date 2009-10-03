@@ -25,6 +25,7 @@
  *   Chiaki Koufugata chiaki@mozilla.gr.jp UI i18n
  *   Samuel Sieb, samuel@sieb.net, MIRC color codes, munger menu, and various
  *   James Ross, silver@warwickcompsoc.co.uk
+ *   Gijs Kruitbosch, gijskruitbosch@gmail.com
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -742,19 +743,22 @@ function processStartupScripts()
 {
     client.plugins = new Array();
     var scripts = client.prefs["initialScripts"];
+    var basePath = getURLSpecFromFile(client.prefs["profilePath"]); 
+    var baseURL = client.iosvc.newURI(basePath, null, null);
     for (var i = 0; i < scripts.length; ++i)
     {
-        if (scripts[i].search(/^file:|chrome:/i) != 0)
+        var url = client.iosvc.newURI(scripts[i], null, baseURL);
+        if (url.scheme != "file" && url.scheme != "chrome")
         {
             display(getMsg(MSG_ERR_INVALID_SCHEME, scripts[i]), MT_ERROR);
             continue;
         }
 
-        var path = getFileFromURLSpec(scripts[i]);
+        var path = getFileFromURLSpec(url.spec);
 
         if (!path.exists())
         {
-            display(getMsg(MSG_ERR_ITEM_NOT_FOUND, scripts[i]), MT_WARN);
+            display(getMsg(MSG_ERR_ITEM_NOT_FOUND, url.spec), MT_WARN);
             continue;
         }
 

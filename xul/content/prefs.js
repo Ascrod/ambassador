@@ -70,7 +70,6 @@ function initPrefs()
     scriptPath.append("scripts");
     if (!scriptPath.exists())
         mkdir(scriptPath);
-    client.prefManager.scriptPath = scriptPath;
 
     var logPath = profilePath.clone();
     logPath.append("logs");
@@ -179,7 +178,7 @@ function initPrefs()
          ["font.size",          0,        "appearance.misc"],
          ["identd.enabled",     false,    client.prefManager.identGroup],
          ["initialURLs",        [],       "startup.initialURLs"],
-         ["initialScripts",     [getURLSpecFromFile(scriptPath.path)],
+         ["initialScripts",     ["scripts/"],
                                           "startup.initialScripts"],
          ["instrumentation.key", 0,       "hidden"],
          ["instrumentation.ceip", false,  "hidden"],
