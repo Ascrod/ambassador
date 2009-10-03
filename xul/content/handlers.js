@@ -225,7 +225,7 @@ function onMessageViewMouseDown(e)
     {
         return true;
     }
-        
+
     var cx = getMessagesContext(null, e.target);
     var command = getEventCommand(e);
     if (!client.commandManager.isCommandSatisfied(cx, command))
@@ -241,7 +241,7 @@ function getEventCommand(e)
         return client.prefs["messages.metaClick"];
     if (e.ctrlKey)
         return client.prefs["messages.ctrlClick"];
-    
+
     return client.prefs["messages.click"];
 }
 
@@ -1203,7 +1203,7 @@ function my_showtonet (e)
         case "422": /* no MOTD */
             this.busy = false;
             updateProgress();
-            
+
             /* Some servers (wrongly) dont send 251, so try
                auto-perform after the MOTD as well */
             this.doAutoPerform();
@@ -1942,7 +1942,7 @@ function my_sconnect (e)
     }
 
     this.NICK_RETRIES = this.prefs["nicknameList"].length + 3;
-    
+
     // When connection begins, autoperform has not been sent
     this.autoPerformSent = false;
 }
@@ -2018,6 +2018,7 @@ function my_netdisconnect (e)
 {
     var msg, msgNetwork;
     var msgType = MT_ERROR;
+    var retrying = true;
 
     if (typeof e.disconnectStatus != "undefined")
     {
@@ -2070,6 +2071,24 @@ function my_netdisconnect (e)
                                  [this.getURL(), e.server.getURL(),
                                   formatException(e.exception)]);
                 }
+                retrying = false;
+                break;
+
+            // Group all certificate errors together.
+            // The exception adding dialog will explain the reasons.
+            case SEC_ERROR_EXPIRED_CERTIFICATE:
+            case SEC_ERROR_UNKNOWN_ISSUER:
+            case SEC_ERROR_UNTRUSTED_ISSUER:
+            case SEC_ERROR_UNTRUSTED_CERT:
+            case SEC_ERROR_EXPIRED_ISSUER_CERTIFICATE:
+            case SEC_ERROR_CA_CERT_INVALID:
+            case SEC_ERROR_INADEQUATE_KEY_USAGE:
+            case SSL_ERROR_BAD_CERT_DOMAIN:
+                var cmd = "ssl-exception";
+                cmd += " " + e.server.hostname + " " + e.server.port;
+                cmd += " true";
+                msg = getMsg(MSG_INVALID_CERT, [this.getURL(), cmd]);
+                retrying = false;
                 break;
 
             default:
@@ -2096,9 +2115,7 @@ function my_netdisconnect (e)
     }
     // We won't reconnect if the error was really bad, or if the user doesn't
     // want us to do so.
-    else if (((typeof e.disconnectStatus != "undefined") &&
-              (e.disconnectStatus == NS_ERROR_ABORT)) ||
-             !this.stayingPower)
+    else if (!retrying || !this.stayingPower)
     {
         msgNetwork = msg;
     }
@@ -2133,7 +2150,7 @@ function my_netdisconnect (e)
     }
 
     /* If we were connected ok, put an error on all tabs. If we were only
-     * /trying/ to connect, and failed, just put it on the network tab. 
+     * /trying/ to connect, and failed, just put it on the network tab.
      */
     client.munger.getRule(".inline-buttons").enabled = true;
     if (this.state == NET_ONLINE)
@@ -3385,5 +3402,3 @@ function ule_sortByMode(a, b)
     var bName = b._userObj.sortName.toLowerCase();
     return (aName < bName ? -1 : 1);
 }
-
-

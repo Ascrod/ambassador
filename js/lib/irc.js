@@ -152,7 +152,7 @@ function net_geturl(target, flags)
     {
         scheme = "ircs"
     }
-    
+
     var obj = {host: this.unicodeName, scheme: scheme};
 
     if (target)
@@ -1062,12 +1062,22 @@ function serv_disconnect(e)
     if (!this.isConnected)
         return;
 
+    // Don't reconnect from a certificate error.
+    var certErrors = [SEC_ERROR_EXPIRED_CERTIFICATE, SEC_ERROR_UNKNOWN_ISSUER,
+                      SEC_ERROR_UNTRUSTED_ISSUER, SEC_ERROR_UNTRUSTED_CERT,
+                      SEC_ERROR_EXPIRED_ISSUER_CERTIFICATE,
+                      SEC_ERROR_CA_CERT_INVALID, SEC_ERROR_INADEQUATE_KEY_USAGE,
+                      SSL_ERROR_BAD_CERT_DOMAIN];
+    var certError = arrayContains(certErrors, e.disconnectStatus);
+
     // Don't reconnect if our connection was aborted.
     var wasAborted = (e.disconnectStatus == NS_ERROR_ABORT);
-    if (((this.parent.state == NET_CONNECTING) && !wasAborted) ||
+    var dontReconnect = certError || wasAborted;
+
+    if (((this.parent.state == NET_CONNECTING) && !dontReconnect) ||
         /* fell off while connecting, try again */
         (this.parent.primServ == this) && (this.parent.state == NET_ONLINE) &&
-        (!("quitting" in this) && this.parent.stayingPower && !wasAborted))
+        (!("quitting" in this) && this.parent.stayingPower && !dontReconnect))
     { /* fell off primary server, reconnect to any host in the serverList */
         setTimeout(delayedConnectFn, 0, this.parent);
     }
@@ -1630,7 +1640,7 @@ function my_290 (e)
     // we expect some sort of identifier
     if (e.params.length < 2)
         return;
-    
+
     switch (e.params[2])
     {
         case "IDENTIFY-MSG":
@@ -1639,7 +1649,7 @@ function my_290 (e)
                - indicates the user is not registered */
             this.capab.identifyMsg = true;
             break;
-        
+
     }
     e.destObject = this.parent;
     e.set = "network";
@@ -2452,7 +2462,7 @@ function serv_notice_privmsg (e)
         if (e.code == "NOTICE")
         {
             e.type = "ctcp-reply";
-            e.destMethod = "onCTCPReply";            
+            e.destMethod = "onCTCPReply";
         }
         else // e.code == "PRIVMSG"
         {
@@ -2825,7 +2835,7 @@ function chan_geturl()
     var target = this.encodedName;
     var flags = this.mode.key ? ["needkey"] : [];
 
-    if ((target[0] == "#") && (target.length > 1) && 
+    if ((target[0] == "#") && (target.length > 1) &&
         arrayIndexOf(this.parent.channelTypes, target[1]) == -1)
     {
         /* First character is "#" (which we're allowed to omit), and the
@@ -2999,7 +3009,7 @@ function chan_inviteuser (nick)
     return true;
 }
 
-CIRCChannel.prototype.findUsers = 
+CIRCChannel.prototype.findUsers =
 function chan_findUsers(mask)
 {
     var ary = [];
@@ -3778,4 +3788,3 @@ function makeCanonicalIRCURL(url)
     }
     return constructIRCURL(urlObject);
 }
-

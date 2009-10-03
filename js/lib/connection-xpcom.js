@@ -57,6 +57,24 @@ const NS_NET_STATUS_SENDING_TO = NS_ERROR_MODULE_NETWORK + 5;
 const NS_NET_STATUS_RECEIVING_FROM = NS_ERROR_MODULE_NETWORK + 6;
 const NS_NET_STATUS_CONNECTING_TO = NS_ERROR_MODULE_NETWORK + 7;
 
+// Security error constants:
+// http://mxr.mozilla.org/mozilla/source/security/nss/lib/util/secerr.h
+const SEC_ERROR_BASE = 0x805A2000;
+// http://mxr.mozilla.org/mozilla/source/security/nss/lib/ssl/sslerr.h
+const SSL_ERROR_BASE = 0x805A3000;
+
+// The subset of certificate errors which is allowed to be overridden
+// http://bonsai.mozilla.org/cvsblame.cgi?file=mozilla/security/manager/ssl/src/nsNSSIOLayer.cpp&rev=1.165#2921
+
+const SEC_ERROR_EXPIRED_CERTIFICATE = SEC_ERROR_BASE - 11;
+const SEC_ERROR_UNKNOWN_ISSUER = SEC_ERROR_BASE - 13;
+const SEC_ERROR_UNTRUSTED_ISSUER = SEC_ERROR_BASE - 20;
+const SEC_ERROR_UNTRUSTED_CERT = SEC_ERROR_BASE - 21;
+const SEC_ERROR_EXPIRED_ISSUER_CERTIFICATE = SEC_ERROR_BASE - 30;
+const SEC_ERROR_CA_CERT_INVALID = SEC_ERROR_BASE - 36;
+const SEC_ERROR_INADEQUATE_KEY_USAGE = SEC_ERROR_BASE - 90;
+const SSL_ERROR_BAD_CERT_DOMAIN = SSL_ERROR_BASE - 12;
+
 // Security Constants.
 const STATE_IS_BROKEN = 1;
 const STATE_IS_SECURE = 2;
@@ -108,6 +126,49 @@ function toSOutputStream(stream, binary)
     return sstream;
 }
 
+/* This object implements nsIBadCertListener2
+ * The idea is to suppress the default UI's alert box
+ * and allow the exception to propagate normally
+ */
+function BadCertHandler()
+{
+}
+
+BadCertHandler.prototype.getInterface =
+function badcert_getinterface(aIID)
+{
+    return this.QueryInterface(aIID);
+}
+
+BadCertHandler.prototype.QueryInterface =
+function badcert_queryinterface(aIID)
+{
+    if (aIID.equals(Components.interfaces.nsIBadCertListener2) ||
+        aIID.equals(Components.interfaces.nsISSLErrorListener) ||
+        aIID.equals(Components.interfaces.nsIInterfaceRequestor) ||
+        aIID.equals(Components.interfaces.nsISupports))
+    {
+        return this;
+    }
+
+    throw Components.results.NS_ERROR_NO_INTERFACE;
+}
+
+/* Returning true in the following two callbacks
+ * means suppress default the error UI (modal alert).
+ */
+BadCertHandler.prototype.notifyCertProblem =
+function badcert_notifyCertProblem(socketInfo, sslStatus, targetHost)
+{
+    return true;
+}
+
+BadCertHandler.prototype.notifySSLError =
+function badcert_notifySSLError(socketInfo, error, targetSite)
+{
+    return true;
+}
+
 /**
  * Wraps up various mechanics of sockets for easy consumption by other code.
  *
@@ -148,7 +209,7 @@ function CBSConnection (binary)
      *       make matters worse, an incompatible change to the "readBytes"
      *       method of this interface was made on 2003-03-13; luckly, this
      *       change also added a "readByteArray" method, which we will check
-     *       for below, to determin if we can use the binary streams.
+     *       for below, to determine if we can use the binary streams.
      */
 
     // We want to check for working binary streams only the first time.
@@ -162,6 +223,22 @@ function CBSConnection (binary)
             var inputStream = isCls.createInstance(nsIBinaryInputStream);
             if ("readByteArray" in inputStream)
                 CBSConnection.prototype.workingBinaryStreams = true;
+        }
+    }
+
+    /*
+     * As part of the changes in Gecko 1.9, invalid SSL certificates now
+     * produce a horrible error message. We must look up the toolkit version
+     * to see if we need to catch these errors cleanly - see bug 454966.
+     */
+    if (!("strictSSL" in CBSConnection.prototype))
+    {
+        CBSConnection.prototype.strictSSL = false;
+        var app = getService("@mozilla.org/xre/app-info;1", "nsIXULAppInfo");
+        if (app && ("platformVersion" in app) &&
+            compareVersions("1.9", app.platformVersion) >= 0)
+        {
+            CBSConnection.prototype.strictSSL = true;
         }
     }
 
@@ -281,6 +358,9 @@ function bc_connect(host, port, config, observer)
             this._transport = this._sockService.
                               createTransport(["ssl"], 1, host, port,
                                               proxyInfo);
+
+            if (this.strictSSL)
+                this._transport.securityCallbacks = new BadCertHandler();
         }
         else
         {

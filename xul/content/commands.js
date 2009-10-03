@@ -180,6 +180,7 @@ function initCommands()
          ["stats",             cmdSimpleCommand,    CMD_NEED_SRV | CMD_CONSOLE],
          ["squery",            cmdSquery,           CMD_NEED_SRV | CMD_CONSOLE],
          ["sslserver",         cmdSSLServer,                       CMD_CONSOLE],
+         ["ssl-exception",     cmdSSLException,                              0],
          ["stalk",             cmdStalk,                           CMD_CONSOLE],
          ["supports",          cmdSupports,         CMD_NEED_SRV | CMD_CONSOLE],
          ["sync-font",         cmdSync,                                      0],
@@ -280,7 +281,10 @@ function initCommands()
     var restList = ["reason", "action", "text", "message", "params", "font",
                     "expression", "ircCommand", "prefValue", "newTopic", "file",
                     "password", "commandList", "commands", "description"];
+    var stateList = ["connect"];
+
     client.commandManager.argTypes.__aliasTypes__(restList, "rest");
+    client.commandManager.argTypes.__aliasTypes__(stateList, "state");
     client.commandManager.argTypes["plugin"] = parsePlugin;
 }
 
@@ -1569,6 +1573,28 @@ function cmdSSLServer(e)
     }
 
     return client.connectToNetwork(name, true);
+}
+
+function cmdSSLException(e)
+{
+    var opts = "chrome,centerscreen,modal";
+    var location = e.hostname ? e.hostname + ':' + e.port : undefined;
+    var args = {location: location, prefetchCert: true};
+
+    window.openDialog("chrome://pippki/content/exceptionDialog.xul",
+                      "", opts, args);
+
+    if (!args.exceptionAdded)
+        return;
+
+    if (e.connect)
+    {
+        // When we come via the inline button, we just want to reconnect
+        if (e.source == "mouse")
+            dispatch("reconnect");
+        else
+            dispatch("sslserver " + e.hostname + " " + e.port);
+    }
 }
 
 
