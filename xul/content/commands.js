@@ -24,6 +24,7 @@
  *   Robert Ginda, <rginda@netscape.com>, original author
  *   Chiaki Koufugata, chiaki@mozilla.gr.jp, UI i18n
  *   James Ross, silver@warwickcompsoc.co.uk
+ *   Gijs Kruitbosch, gijskruitbosch@gmail.com
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -3616,7 +3617,7 @@ function cmdSave(e)
                     && wbp.currentState == nsIWBP.PERSIST_STATE_FINISHED)
                 {
                     // Let the user know:
-                    pm = [e.sourceObject.viewName, e.filename];
+                    pm = [e.sourceObject.viewName, getURLSpecFromFile(file)];
                     display(getMsg(MSG_SAVE_SUCCESSFUL, pm), MT_INFO);
                 }
                 /* Check if we've finished. WebBrowserPersist screws up when we
@@ -3627,7 +3628,7 @@ function cmdSave(e)
                 {
                     if (wbp)
                         wbp.progressListener = null;
-                    pm = [e.sourceObject.viewName, e.filename];
+                    pm = [e.sourceObject.viewName, getURLSpecFromFile(file)];
                     display(getMsg(MSG_SAVE_SUCCESSFUL, pm), MT_INFO);
                 }
             }
@@ -3700,7 +3701,7 @@ function cmdSave(e)
         }
         catch (ex)
         {
-            // try to use it as an url
+            // try to use it as a URL
             try
             {
                 file = getFileFromURLSpec(e.filename);
