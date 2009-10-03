@@ -1441,7 +1441,7 @@ function strftime(format, time)
 
             if ("pad" in tbranch)
             {
-                var padwith = (padwith in tbranch) ? tbranch.padwith : "0";
+                var padwith = ("padwith" in tbranch) ? tbranch.padwith : "0";
                 rpl = padNumber(rpl, tbranch.pad, padwith);
             }
         }
