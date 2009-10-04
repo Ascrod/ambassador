@@ -210,8 +210,41 @@ a.chatzilla-link:hover {
     font-style: italic;
 }
 
-.chatzilla-underline, a.chatzilla-underline.chatzilla-link {
+/* In CSS, text-decoration is a list of decorations to apply to the text.
+ * However, as it is just one property, there is no way to apply it additively;
+ * instead, we're forced to have all the 7 combinations (of 8 - one is none).
+ */
+
+.chatzilla-overline {
+    text-decoration: overline;
+}
+
+.chatzilla-strikethrough {
+    text-decoration: line-through;
+}
+
+.chatzilla-underline,
+a.chatzilla-underline.chatzilla-link {
     text-decoration: underline;
+}
+
+.chatzilla-overline.chatzilla-strikethrough {
+    text-decoration: overline line-through;
+}
+
+.chatzilla-overline.chatzilla-underline,
+a.chatzilla-overline.chatzilla-underline.chatzilla-link {
+    text-decoration: overline underline;
+}
+
+.chatzilla-strikethrough.chatzilla-underline,
+a.chatzilla-strikethrough.chatzilla-underline.chatzilla-link {
+    text-decoration: line-through underline;
+}
+
+.chatzilla-overline.chatzilla-strikethrough.chatzilla-underline,
+a.chatzilla-overline.chatzilla-strikethrough.chatzilla-underline.chatzilla-link {
+    text-decoration: overline line-through underline;
 }
 
 .chatzilla-teletype {

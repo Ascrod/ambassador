@@ -95,6 +95,8 @@ function initMunger()
                    NORMAL_PRIORITY, NORMAL_PRIORITY);
     munger.addRule(".mirc-reverse", /(\x16)/, mircReverseColor,
                    NORMAL_PRIORITY, NORMAL_PRIORITY);
+    munger.addRule(".ansi-escape-sgr", /(\x1b\[([\d;]*)m)/,
+                   ansiEscapeSGR, NORMAL_PRIORITY, NORMAL_PRIORITY);
     munger.addRule("ctrl-char", /([\x01-\x1f])/, showCtrlChar,
                    NORMAL_PRIORITY, NORMAL_PRIORITY);
     munger.addRule("link", client.linkRE, insertLink, NORMAL_PRIORITY, HIGH_PRIORITY);
@@ -605,11 +607,7 @@ function mircResetColor (text, containerTag, data)
         return;
     }
 
-    delete data.currFgColor;
-    delete data.currBgColor;
-    delete data.isBold;
-    delete data.isUnderline;
-    delete data.hasColorInfo;
+    removeColorInfo(data);
 }
 
 function mircReverseColor (text, containerTag, data)
@@ -632,6 +630,145 @@ function mircReverseColor (text, containerTag, data)
     else
         delete data.currBgColor;
     data.hasColorInfo = true;
+}
+
+function ansiEscapeSGR(text, containerTag, data)
+{
+    if (!client.enableColors ||
+        (("noANSIColors" in data) && data.noANSIColors) ||
+        (("noStateChange" in data) && data.noStateChange))
+    {
+        return;
+    }
+
+    /* ANSI SGR (Select Graphic Rendition) escape support. Matched text may
+     * have any number of effects, each a number separated by a semicolon. If
+     * there are no effects listed, it is treated as effect "0" (reset/normal).
+     */
+
+    text = text.substr(2, text.length - 3) || "0";
+
+    const ansiToMircColor = [
+        "01", "05", "03", "07", "02", "06", "10", "15",
+        "14", "04", "09", "08", "12", "13", "11", "00"
+    ];
+
+    var effects = text.split(";");
+    for (var i = 0; i < effects.length; i++)
+    {
+        data.hasColorInfo = true;
+
+        switch (Number(effects[i]))
+        {
+            case 0: // Reset/normal.
+                removeColorInfo(data);
+                break;
+
+            case 1: // Intensity: bold.
+                data.isBold = true;
+                break;
+
+            case 3: // Italic: on.
+                data.isItalic = true;
+                break;
+
+            case 4: // Underline: single.
+                data.isUnderline = true;
+                break;
+
+            case 9: // Strikethrough: on.
+                data.isStrikethrough = true;
+                break;
+
+            case 22: // Intensity: normal.
+                delete data.isBold;
+                break;
+
+            case 23: // Italic: off.
+                delete data.isItalic;
+                break;
+
+            case 24: // Underline: off.
+                delete data.isUnderline;
+                break;
+
+            case 29: // Strikethrough: off.
+                delete data.isStrikethrough;
+                break;
+
+            case 53: // Overline: on.
+                data.isOverline = true;
+                break;
+
+            case 55: // Overline: off.
+                delete data.isOverline;
+                break;
+
+            case 30: // FG: Black.
+            case 31: // FG: Red.
+            case 32: // FG: Green.
+            case 33: // FG: Yellow.
+            case 34: // FG: Blue.
+            case 35: // FG: Magenta.
+            case 36: // FG: Cyan.
+            case 37: // FG: While (light grey).
+                data.currFgColor = ansiToMircColor[effects[i] - 30];
+                break;
+
+            case 39: // FG: default.
+                delete data.currFgColor;
+                break;
+
+            case 40: // BG: Black.
+            case 41: // BG: Red.
+            case 42: // BG: Green.
+            case 43: // BG: Yellow.
+            case 44: // BG: Blue.
+            case 45: // BG: Magenta.
+            case 46: // BG: Cyan.
+            case 47: // BG: While (light grey).
+                data.currBgColor = ansiToMircColor[effects[i] - 40];
+                break;
+
+            case 49: // BG: default.
+                delete data.currBgColor;
+                break;
+
+            case 90: // FG: Bright Black (dark grey).
+            case 91: // FG: Bright Red.
+            case 92: // FG: Bright Green.
+            case 93: // FG: Bright Yellow.
+            case 94: // FG: Bright Blue.
+            case 95: // FG: Bright Magenta.
+            case 96: // FG: Bright Cyan.
+            case 97: // FG: Bright While.
+                data.currFgColor = ansiToMircColor[effects[i] - 90 + 8];
+                break;
+
+            case 100: // BG: Bright Black (dark grey).
+            case 101: // BG: Bright Red.
+            case 102: // BG: Bright Green.
+            case 103: // BG: Bright Yellow.
+            case 104: // BG: Bright Blue.
+            case 105: // BG: Bright Magenta.
+            case 106: // BG: Bright Cyan.
+            case 107: // BG: Bright While.
+                data.currBgColor = ansiToMircColor[effects[i] - 100 + 8];
+                break;
+        }
+    }
+}
+
+function removeColorInfo(data)
+{
+    delete data.currFgColor;
+    delete data.currBgColor;
+    delete data.isBold;
+    delete data.isItalic;
+    delete data.isOverline;
+    delete data.isStrikethrough;
+    delete data.isUnderline;
+    delete data.hasColorInfo;
 }
 
 function showCtrlChar(c, containerTag)
@@ -753,6 +890,12 @@ function calcClass(data)
             className += " chatzilla-bg" + data.currBgColor;
         if ("isBold" in data)
             className += " chatzilla-bold";
+        if ("isItalic" in data)
+            className += " chatzilla-italic";
+        if ("isOverline" in data)
+            className += " chatzilla-overline";
+        if ("isStrikethrough" in data)
+            className += " chatzilla-strikethrough";
         if ("isUnderline" in data)
             className += " chatzilla-underline";
     }
