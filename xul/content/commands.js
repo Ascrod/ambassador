@@ -2334,13 +2334,21 @@ function cmdGotoURL(e)
 {
     const EXT_PROTO_SVC = "@mozilla.org/uriloader/external-protocol-service;1";
 
-    if (e.url.search(/^ircs?:/i) == 0)
+    if (/^ircs?:/.test(e.url))
     {
         gotoIRCURL(e.url);
         return;
     }
 
-    if (e.url.search(/^x-cz-command:/i) == 0)
+    if (/^x-irc-dcc-(chat|file):[0-9a-fA-F]+$/.test(e.url))
+    {
+        var view = client.dcc.findByID(e.url.substr(15));
+        if (view)
+            dispatch("set-current-view", {view: view});
+        return;
+    }
+
+    if (/^x-cz-command:/.test(e.url))
     {
         var ary = e.url.match(/^x-cz-command:(.*)$/i);
         // Do the escaping dance:

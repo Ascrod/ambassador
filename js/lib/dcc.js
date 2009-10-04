@@ -590,7 +590,7 @@ CIRCDCCChat.prototype.TYPE = "IRCDCCChat";
 CIRCDCCChat.prototype.getURL =
 function dchat_geturl()
 {
-    return "x-irc-dcc-chat://" + this.user.remoteIP + ":" + this.port;
+    return "x-irc-dcc-chat:" + this.id;
 }
 
 // Call to make this end request DCC Chat with targeted user.
@@ -974,8 +974,7 @@ CIRCDCCFileTransfer.prototype.TYPE = "IRCDCCFileTransfer";
 CIRCDCCFileTransfer.prototype.getURL =
 function dfile_geturl()
 {
-    return "x-irc-dcc-file://" + this.user.remoteIP + ":" +
-           this.port + "/" + encodeURIComponent(this.filename);
+    return "x-irc-dcc-file:" + this.id;
 }
 
 CIRCDCCFileTransfer.prototype.dispose =

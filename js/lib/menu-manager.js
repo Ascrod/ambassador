@@ -345,7 +345,10 @@ function mmgr_showpop (event)
         if (!("repeatList" in cx))
             cx.repeatList = new Object();
 
-        // Get the array of new items to add.
+        /* Get the array of new items to add by evaluating "repeatfor" with
+         * "cx" in scope. Usually will return an already-calculated Array
+         * either from "cx" or somewhere in the object model.
+         */
         var ary = evalAttribute(menuitem, "repeatfor");
 
         if ((typeof ary != "object") || !isinstance(ary, Array))
@@ -362,7 +365,10 @@ function mmgr_showpop (event)
         // Save the array in the context object.
         cx.repeatList[menuitem.getAttribute("repeatid")] = ary;
 
-        // Get the max. number of items we're allowed to show from |ary|.
+        /* Get the maximum number of items we're allowed to show from |ary| by
+         * evaluating "repeatlimit" with "cx" in scope. This could be a fixed
+         * limit or dynamically calculated (e.g. from prefs).
+         */
         var limit = evalAttribute(menuitem, "repeatlimit");
         // Make sure we've got a number at all...
         if (typeof limit != "number")
@@ -386,8 +392,34 @@ function mmgr_showpop (event)
                 props[name] = menuitem.getAttribute(name);
         }
 
+        var lastGroup = "";
         for (i = 0; i < limit; i++)
         {
+            /* Check for groupings. For each item we add, if "repeatgroup" gives
+             * a different value, we insert a separator.
+             */
+            if (menuitem.getAttribute("repeatgroup"))
+            {
+                cx.index = i;
+                ary = cx.repeatList[menuitem.getAttribute("repeatid")];
+                var item = ary[i];
+                /* Apply any updates to "cx" for this item by evaluating
+                 * "repeatmap" with "cx" and "item" in scope. This may just
+                 * copy some attributes from "item" to "cx" or it may do more.
+                 */
+                evalAttribute(menuitem, "repeatmap");
+                /* Get the item's group by evaluating "repeatgroup" with "cx"
+                 * and "item" in scope. Usually will return an appropriate
+                 * property from "item".
+                 */
+                var group = evalAttribute(menuitem, "repeatgroup");
+
+                if ((i > 0) && (lastGroup != group))
+                    this.appendMenuSeparator(popup, menuitem, props);
+
+                lastGroup = group;
+            }
+
             props.repeatindex = i;
             this.appendMenuItem(popup, menuitem, cmd, props);
         }
@@ -402,6 +434,10 @@ function mmgr_showpop (event)
             cx.index = menuitem.getAttribute("repeatindex");
             ary = cx.repeatList[menuitem.getAttribute("repeatid")];
             var item = ary[cx.index];
+            /* Apply any updates to "cx" for this item by evaluating
+             * "repeatmap" with "cx" and "item" in scope. This may just
+             * copy some attributes from "item" to "cx" or it may do more.
+             */
             evalAttribute(menuitem, "repeatmap");
         }
 
@@ -515,6 +551,10 @@ function mmgr_menucmd(event)
         cx.index = menuitem.getAttribute("repeatindex");
         var ary = cx.repeatList[menuitem.getAttribute("repeatid")];
         var item = ary[cx.index];
+        /* Apply any updates to "cx" for this item by evaluating
+         * "repeatmap" with "cx" and "item" in scope. This may just
+         * copy some attributes from "item" to "cx" or it may do more.
+         */
         evalAttribute(menuitem, "repeatmap");
     }
 

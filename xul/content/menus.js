@@ -161,9 +161,7 @@ function initMenus()
          //["manage-networks"],
          //["manage-plugins"],
          ["-"],
-         // Planned future menu items, not implemented yet.
-         //["-"]
-         //[">popup:current_networks"]
+         [">popup:views"],
          [">popup:nickname"],
          ["-"],
          ["clear-view"],
@@ -179,6 +177,20 @@ function initMenus()
          ["reconnect",   {visibleif: NetDisconnected}],
          ["-"],
          ["toggle-text-dir"]
+        ]
+    };
+
+    client.menuSpecs["popup:views"] = {
+        label: MSG_MNU_VIEWS,
+        accesskey: getAccessKeyForMenu('MSG_MNU_VIEWS'),
+        getContext: getViewsContext,
+        items:
+        [
+         ["goto-url", {type: "radio",
+                       checkedif: "cx.url == cx.sourceObject.getURL()",
+                       repeatfor: "cx.views",
+                       repeatgroup: "item.group",
+                       repeatmap: "cx.url = item.url; cx.label = item.label"}]
         ]
     };
 
