@@ -2292,7 +2292,7 @@ function my_netwallops(e)
 CIRCNetwork.prototype.on421 =
 function my_421(e)
 {
-    this.display(getMsg(MSG_ERR_UNKNOWN_COMMAND, e.params[2]), MT_ERROR);
+    this.display(getMsg(MSG_IRC_421, e.decodeParam(2)), MT_ERROR);
     return true;
 }
 
