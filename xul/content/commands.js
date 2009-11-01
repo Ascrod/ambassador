@@ -3393,16 +3393,15 @@ function cmdKnock(e)
 
 function cmdClient(e)
 {
-    dispatch("create-tab-for-view", { view: client });
-
-    if (!client.messages)
+    if (!("messages" in client))
     {
-        client.display(MSG_CLIENT_OPENED);
-        dispatch("set-current-view", { view: client });
         client.display(MSG_WELCOME, "HELLO");
+        dispatch("set-current-view", { view: client });
+        dispatch("help", { hello: true });
         dispatch("networks");
-        dispatch("commands");
-    } else {
+    }
+    else
+    {
         dispatch("set-current-view", { view: client });
     }
 }
