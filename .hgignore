@@ -1,0 +1,6 @@
+(^|/)Makefile$
+
+^xpi/chatzilla-.*\.xpi$
+^xpi/jar-tree$
+^xpi/xpi-tree$
+^xpi/xpi-tree-.*
