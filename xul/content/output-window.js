@@ -513,8 +513,9 @@ function updateNetwork()
         setAttribute("status","condition", "green");
         setAttribute("status", "title",
                      getMsg(MSG_CONNECT_VIA, view.primServ.unicodeName));
-        if (view.primServ.lag != -1)
-            setText("lag", getMsg(MSG_FMT_SECONDS, view.primServ.lag));
+        var lag = view.primServ.lag;
+        if (lag != -1)
+            setText("lag", getMsg(MSG_FMT_SECONDS, lag.toFixed(2)));
         else
             setText("lag", MSG_UNKNOWN);
         
