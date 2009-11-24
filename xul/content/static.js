@@ -3056,7 +3056,9 @@ function replaceColorCodes(msg)
     // Find things that look like URLs and escape the color code inside of those
     // to prevent munging the URLs resulting in broken links. Leave codes at
     // the start of the URL alone.
-    msg = msg.replace(new RegExp(client.linkRE.source, "g"), function(url) {
+    msg = msg.replace(new RegExp(client.linkRE.source, "g"), function(url, _foo, scheme) {
+        if (!client.checkURLScheme(scheme))
+            return url;
         return url.replace(/%[BC][0-9A-Fa-f]/g, function(hex, index) {
             // as JS does not support lookbehind and we don't want to consume the
             // preceding character, we test for an existing %% manually
@@ -3823,6 +3825,24 @@ function c_updatemenus(menus)
         return null;
 
     return this.menuManager.updateMenus(document, menus);
+}
+
+client.checkURLScheme =
+function c_checkURLScheme(url)
+{
+    if (!("schemes" in client))
+    {
+        var pfx = "@mozilla.org/network/protocol;1?name=";
+        var len = pfx.length;
+
+        client.schemes = new Object();
+        for (var c in Components.classes)
+        {
+            if (c.indexOf(pfx) == 0)
+                client.schemes[c.substr(len)] = true;
+        }
+    }
+    return (url in client.schemes);
 }
 
 client.adoptNode =

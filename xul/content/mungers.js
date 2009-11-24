@@ -177,20 +177,7 @@ function insertLink(matchText, containerTag, data, mungerEntry)
     var ary = linkText.match(/^(\w[\w-]+):/);
     if (ary)
     {
-        if (!("schemes" in client))
-        {
-            var pfx = "@mozilla.org/network/protocol;1?name=";
-            var len = pfx.length;
-
-            client.schemes = new Object();
-            for (var c in Components.classes)
-            {
-                if (c.indexOf(pfx) == 0)
-                    client.schemes[c.substr(len)] = true;
-            }
-        }
-
-        if (!(ary[1] in client.schemes))
+        if (!client.checkURLScheme(ary[1]))
         {
             mungerEntry.enabled = false;
             client.munger.munge(matchText, containerTag, data);
