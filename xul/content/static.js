@@ -3359,12 +3359,13 @@ function getTabForObject(source, create)
         browser.setAttribute("type", "content");
         browser.setAttribute("flex", "1");
         browser.setAttribute("tooltip", "html-tooltip-node");
-        browser.setAttribute("context", "context:messages");
         //browser.setAttribute("onload", "scrollDown(true);");
         browser.setAttribute("onclick",
                              "return onMessageViewClick(event)");
         browser.setAttribute("onmousedown",
                              "return onMessageViewMouseDown(event)");
+        browser.setAttribute("oncontextmenu",
+                             "return onMessageViewContextMenu(event)");
         browser.setAttribute("ondragover",
                              "nsDragAndDrop.dragOver(event, " +
                              "contentDropObserver);");

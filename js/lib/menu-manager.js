@@ -683,7 +683,9 @@ function mmgr_addmenu (parentNode, beforeNode, commandName, attribs)
     var menuitem = document.createElement ("menuitem");
     menuitem.setAttribute ("id", parentId + ":" + commandName);
     menuitem.setAttribute ("commandname", command.name);
-    menuitem.setAttribute ("key", "key:" + command.name);
+    // Add keys if this isn't a context menu:
+    if (parentId.indexOf("context") != 0)
+        menuitem.setAttribute("key", "key:" + command.name);
     menuitem.setAttribute("accesskey", command.accesskey);
     var label = command.label.replace("&", "");
     menuitem.setAttribute ("label", label);

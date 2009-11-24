@@ -233,6 +233,28 @@ function onMessageViewMouseDown(e)
     return true;
 }
 
+function onMessageViewContextMenu(e)
+{
+    var elem = e.target;
+    var menu = document.getElementById("context:messages");
+    while (elem)
+    {
+        if (elem.localName && elem.localName.toLowerCase() == "input")
+        {
+            menu = document.getElementById("context:edit");
+            break;
+        }
+        elem = elem.parentNode;
+    }
+    document.popupNode = e.target;
+    if ("openPopupAtScreen" in menu)
+        menu.openPopupAtScreen(e.screenX, e.screenY, true);
+    else
+        menu.showPopup(null, e.screenX + 2, e.screenY + 2, "context", "", "");
+    e.stopPropagation();
+    e.preventDefault();
+}
+
 function getEventCommand(e)
 {
     if (e.which == 2)
