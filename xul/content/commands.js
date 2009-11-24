@@ -89,6 +89,7 @@ function initCommands()
          ["dcc-list",          cmdDCCList,                         CMD_CONSOLE],
          ["dcc-send",          cmdDCCSend,          CMD_NEED_SRV | CMD_CONSOLE],
          ["dcc-show-file",     cmdDCCShowFile,                     CMD_CONSOLE],
+         ["delayed",           cmdDelayed,                         CMD_CONSOLE],
          ["deop",              cmdChanUserMode,    CMD_NEED_CHAN | CMD_CONSOLE],
          ["describe",          cmdDescribe,         CMD_NEED_SRV | CMD_CONSOLE],
          ["hop",               cmdChanUserMode,    CMD_NEED_CHAN | CMD_CONSOLE],
@@ -1138,6 +1139,15 @@ function cmdCharset(e)
 function cmdCreateTabForView(e)
 {
     return getTabForObject(e.view, true);
+}
+
+function cmdDelayed(e)
+{
+    function _dispatch()
+    {
+        dispatch(e.rest, null, e.isInteractive);
+    }
+    setTimeout(_dispatch, e.delay * 1000);
 }
 
 function cmdSync(e)
