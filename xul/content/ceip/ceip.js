@@ -444,9 +444,9 @@ function ceip_hookcommandbefore(e)
         if (typeof e.command.func == "string")
             data.alias = true;
         if (("source" in e) && (typeof e.source == "string"))
-            data.interactive = e.source;
+            data.source = e.source;
         else if (e.isInteractive)
-            data.interactive = true;
+            data.source = "inputbox";
         if (this.commandNest > 1)
             data.nest = (this.commandNest - 1);
 
