@@ -4,3 +4,5 @@
 ^xpi/jar-tree$
 ^xpi/xpi-tree$
 ^xpi/xpi-tree-.*
+
+.*\.pyc
