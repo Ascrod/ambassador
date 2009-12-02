@@ -1553,8 +1553,19 @@ function cmdDeleteView(e)
         e.view.dispatch("part", { deleteWhenDone: true });
         return;
     }
-    if (e.view.TYPE == "IRCDCCChat" && e.view.active)
-        e.view.disconnect();
+
+    if (e.view.TYPE == "IRCDCCChat")
+    {
+        if ((e.view.state.state == DCC_STATE_REQUESTED) ||
+            (e.view.state.state == DCC_STATE_ACCEPTED) ||
+            (e.view.state.state == DCC_STATE_CONNECTED))
+        {
+            // abort() calls disconnect() if it is appropriate.
+            e.view.abort();
+            // Fall through: we don't delete on disconnect.
+        }
+    }
+
     if (e.view.TYPE == "IRCNetwork" && (e.view.state == NET_CONNECTING ||
                                         e.view.state == NET_WAITING))
     {
