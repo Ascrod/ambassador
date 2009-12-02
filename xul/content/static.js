@@ -3799,7 +3799,7 @@ function updateTimestamps(view)
     }
 }
 
-function updateTimestampFor(view, displayRow)
+function updateTimestampFor(view, displayRow, forceOldStamp)
 {
     var time = new Date(1 * displayRow.getAttribute("timestamp"));
     var tsCell = displayRow.firstChild;
@@ -3813,9 +3813,12 @@ function updateTimestampFor(view, displayRow)
     while (tsCell.lastChild)
         tsCell.removeChild(tsCell.lastChild);
 
-    if (fmt && (!view.prefs["collapseMsgs"] || (fmt != view._timestampLast)))
+    var needStamp = fmt && (forceOldStamp || !view.prefs["collapseMsgs"] ||
+                            (fmt != view._timestampLast));
+    if (needStamp)
         tsCell.appendChild(document.createTextNode(fmt));
-    view._timestampLast = fmt;
+    if (!forceOldStamp)
+        view._timestampLast = fmt;
 }
 
 client.updateMenus =
@@ -4835,25 +4838,7 @@ function addHistory (source, obj, mergeData)
             source.messageCount++;
 
         if (source.messageCount > source.MAX_MESSAGES)
-        {
-            // Get the top of row 2, and subtract the top of row 1.
-            var height = tbody.firstChild.nextSibling.firstChild.offsetTop -
-                         tbody.firstChild.firstChild.offsetTop;
-            var window = getContentWindow(source.frame);
-            var x = window.pageXOffset;
-            var y = window.pageYOffset;
-            tbody.removeChild (tbody.firstChild);
-            --source.messageCount;
-            while (tbody.firstChild && tbody.firstChild.childNodes[1] &&
-                   tbody.firstChild.childNodes[1].getAttribute("class") ==
-                   "msg-data")
-            {
-                --source.messageCount;
-                tbody.removeChild (tbody.firstChild);
-            }
-            if (!checkScroll(source.frame) && (y > height))
-                window.scrollTo(x, y - height);
-        }
+            removeExcessMessages(source);
     }
 
     if (needScroll)
@@ -4863,6 +4848,56 @@ function addHistory (source, obj, mergeData)
         setTimeout(scrollDown, 1000, source.frame, false);
         setTimeout(scrollDown, 2000, source.frame, false);
     }
+}
+
+function removeExcessMessages(source)
+{
+    var window = getContentWindow(source.frame);
+    var rows = source.messages.rows;
+    var lastItemOffset = rows[rows.length - 1].offsetTop;
+    var tbody = source.messages.firstChild;
+    while (source.messageCount > source.MAX_MESSAGES)
+    {
+        if (tbody.firstChild.className == "msg-nested-tr")
+        {
+            var table = tbody.firstChild.firstChild.firstChild;
+            var toBeRemoved = source.messageCount - source.MAX_MESSAGES;
+            // If we can remove the entire table, do that...
+            if (table.rows.length <= toBeRemoved)
+            {
+                tbody.removeChild(tbody.firstChild);
+                source.messageCount -= table.rows.length;
+                table = null; // Don't hang onto this.
+                continue;
+            }
+            // Otherwise, remove rows from this table instead:
+            tbody = table.firstChild;
+        }
+        var nextLastNode = tbody.firstChild.nextSibling;
+        // If the next node has only 2 childNodes,
+        // assume we're dealing with collapsed msgs,
+        // and move the nickname element:
+        if (nextLastNode.childNodes.length == 2)
+        {
+            var nickElem = tbody.firstChild.childNodes[1];
+            var rowspan = nickElem.getAttribute("rowspan") - 1;
+            tbody.firstChild.removeChild(nickElem);
+            nickElem.setAttribute("rowspan", rowspan);
+            nextLastNode.insertBefore(nickElem, nextLastNode.lastChild);
+        }
+        tbody.removeChild(tbody.firstChild);
+        --source.messageCount;
+    }
+    var oldestItem = rows[0];
+    if (oldestItem.className == "msg-nested-tr")
+        oldestItem = rows[0].firstChild.firstChild.firstChild.firstChild;
+    updateTimestampFor(source, oldestItem, true);
+
+    // Scroll by as much as the lowest item has moved up:
+    lastItemOffset -= rows[rows.length - 1].offsetTop;
+    var y = window.pageYOffset;
+    if (!checkScroll(source.frame) && (y > lastItemOffset))
+        window.scrollBy(0, -lastItemOffset);
 }
 
 function findPreviousColumnInfo(table)
