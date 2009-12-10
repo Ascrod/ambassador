@@ -249,7 +249,6 @@ function initCommands()
          ["toggle-timestamps","timestamps toggle",                           0],
          ["motif-dark",       "motif dark",                                  0],
          ["motif-light",      "motif light",                                 0],
-         ["motif-default",    "motif default",                               0],
          ["sync-output",      "evalsilent syncOutputFrame(this)",            0],
          ["userlist",         "toggle-ui userlist",                CMD_CONSOLE],
          ["tabstrip",         "toggle-ui tabstrip",                CMD_CONSOLE],

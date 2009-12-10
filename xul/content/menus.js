@@ -225,9 +225,6 @@ function initMenus()
         accesskey: getAccessKeyForMenu('MSG_MNU_MOTIFS'),
         items:
         [
-         ["motif-default",
-                 {type: "checkbox",
-                  checkedif: isMotif("default")}],
          ["motif-dark",
                  {type: "checkbox",
                   checkedif: isMotif("dark")}],
