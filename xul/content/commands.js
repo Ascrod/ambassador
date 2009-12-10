@@ -129,6 +129,7 @@ function initCommands()
          ["idle-back",         cmdAway,                                      0],
          ["ignore",            cmdIgnore,           CMD_NEED_NET | CMD_CONSOLE],
          ["input-text-direction", cmdInputTextDirection,                     0],
+         ["install-plugin",    cmdInstallPlugin,                   CMD_CONSOLE],
          ["invite",            cmdInvite,           CMD_NEED_SRV | CMD_CONSOLE],
          ["join",              cmdJoin,             CMD_NEED_SRV | CMD_CONSOLE],
          ["join-charset",      cmdJoin,             CMD_NEED_SRV | CMD_CONSOLE],
@@ -2622,7 +2623,7 @@ function cmdLoad(e)
 
         if ((plugin.API > 0) && plugin.prefs["enabled"])
             dispatch("enable-plugin " + index);
-        return rv;
+        return {rv: rv};
     }
     catch (ex)
     {
@@ -4478,6 +4479,103 @@ function cmdInputTextDirection(e)
     }
 
     return true;
+}
+
+function cmdInstallPlugin(e)
+{
+    var ipURL = "chrome://chatzilla/content/install-plugin/install-plugin.xul";
+    var ctx = {};
+    var pluginDownloader =
+    {
+        onStartRequest: function _onStartRequest(request, context)
+        {
+            var tempName = "plugin-install.temp";
+            if (urlMatches)
+                tempName += urlMatches[2];
+
+            ctx.outFile = getTempFile(client.prefs["profilePath"], tempName);
+            ctx.outFileH = fopen(ctx.outFile, ">");
+        }, 
+        onDataAvailable: function _onDataAvailable(request, context, stream,
+                                                   offset, count)
+        {
+            if (!ctx.inputStream)
+                ctx.inputStream = toSInputStream(stream, true);
+
+            ctx.outFileH.write(ctx.inputStream.readBytes(count));
+        },
+        onStopRequest: function _onStopRequest(request, context, statusCode)
+        {
+            ctx.outFileH.close();
+ 
+            if (statusCode == 0)
+            {
+                client.installPlugin(e.name, ctx.outFile);
+            }
+            else
+            {
+                display(getMsg(MSG_INSTALL_PLUGIN_ERR_DOWNLOAD, statusCode),
+                        MT_ERROR);
+            }
+
+            try
+            {
+                ctx.outFile.remove(false);
+            }
+            catch (ex)
+            {
+                display(getMsg(MSG_INSTALL_PLUGIN_ERR_REMOVE_TEMP, ex),
+                        MT_ERROR);
+            }
+        }
+    };
+
+    if (!e.url)
+    {
+        window.openDialog(ipURL, "", "chrome,dialog", client);
+        return;
+    }
+
+    var urlMatches = e.url.match(/([^\/]+?)((\..{0,3}){0,2})$/);
+    if (!e.name)
+    {
+        if (urlMatches)
+        {
+            e.name = urlMatches[1];
+        }
+        else
+        {
+            display(MSG_INSTALL_PLUGIN_ERR_NO_NAME, MT_ERROR);
+            return;
+        }
+    }
+
+    // Do real install here.
+    switch (e.url.match(/^[^:]+/)[0])
+    {
+        case "file":
+            client.installPlugin(e.name, e.url);
+            break;
+
+        case "http":
+        case "https":
+            try
+            {
+                var channel = client.iosvc.newChannel(e.url, "UTF-8", null);
+                display(getMsg(MSG_INSTALL_PLUGIN_DOWNLOADING, e.url),
+                        MT_INFO);
+                channel.asyncOpen(pluginDownloader, { e: e });
+            }
+            catch (ex)
+            {
+                display(getMsg(MSG_INSTALL_PLUGIN_ERR_DOWNLOAD, ex), MT_ERROR);
+                return;
+            }
+            break;
+
+        default:
+            display(MSG_INSTALL_PLUGIN_ERR_PROTOCOL, MT_ERROR);
+    }
 }
 
 function cmdFind(e)

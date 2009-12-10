@@ -3201,6 +3201,273 @@ function client_securitychange (webProgress, request, state)
 {
 }
 
+client.installPlugin =
+function cli_installPlugin(name, source)
+{
+    function getZipEntry(reader, entryEnum)
+    {
+        // nsIZipReader was rewritten...
+        var itemName = entryEnum.getNext();
+        if (typeof itemName != "string")
+            name = itemName.QueryInterface(nsIZipEntry).name;
+        return itemName;
+    };
+    function checkZipMore(items)
+    {
+        return (("hasMoreElements" in items) && items.hasMoreElements()) ||
+               (("hasMore" in items) && items.hasMore());
+    };
+
+    const DIRECTORY_TYPE = Components.interfaces.nsIFile.DIRECTORY_TYPE;
+    const CZ_PI_ABORT = "CZ_PI_ABORT";
+    const nsIZipEntry = Components.interfaces.nsIZipEntry;
+
+    var dest;
+    // Find a suitable location if there was none specified.
+    var destList = client.prefs["initialScripts"];
+    if ((destList.length == 0) ||
+        ((destList.length == 1) && /^\s*$/.test(destList[0])))
+    {
+        // Reset to default because it is empty.
+        try
+        {
+            client.prefManager.clearPref("initialScripts");
+        }
+        catch(ex) {/* If this really fails, we're mostly screwed anyway */}
+        destList = client.prefs["initialScripts"];
+    }
+
+    // URLs for initialScripts can be relative (the default is):
+    var profilePath = getURLSpecFromFile(client.prefs["profilePath"]);
+    profilePath = client.iosvc.newURI(profilePath, null, null);
+    for (var i = 0; i < destList.length; i++)
+    {
+        var destURL = client.iosvc.newURI(destList[i], null, profilePath);
+        var file = new nsLocalFile(getFileFromURLSpec(destURL.spec).path);
+        if (file.exists() && file.isDirectory()) {
+            // A directory that exists! We'll take it!
+            dest = file.clone();
+            break;
+        }
+    }
+    if (!dest) {
+        display(MSG_INSTALL_PLUGIN_ERR_INSTALL_TO, MT_ERROR);
+        return;
+    }
+
+    try {
+        if (typeof source == "string")
+            source = getFileFromURLSpec(source);
+    }
+    catch (ex)
+    {
+        display(getMSg(MSG_INSTALL_PLUGIN_ERR_CHECK_SD, ex), MT_ERROR);
+        return;
+    }
+
+    display(getMsg(MSG_INSTALL_PLUGIN_INSTALLING, [source.path, dest.path]),
+            MT_INFO);
+
+    if (source.path.match(/\.(jar|zip)$/i))
+    {
+        try
+        {
+            var zipReader = newObject("@mozilla.org/libjar/zip-reader;1",
+                                      "nsIZipReader");
+            // Gah at changing APIs:
+            if ("init" in zipReader)
+            {   
+                zipReader.init(source);
+                zipReader.open();
+            }
+            else
+            {
+                zipReader.open(source);
+            }
+
+            // This is set to the base path found on ALL items in the zip file.
+            // when we extract, this WILL BE REMOVED from all paths.
+            var zipPathBase = "";
+            // This always points to init.js, even if we're messing with paths.
+            var initPath = "init.js";
+
+            // Look for init.js within a directory...
+            var items = zipReader.findEntries("*/init.js");
+            while (checkZipMore(items))
+            {
+                var itemName = getZipEntry(zipReader, items);
+                // Do we already have one?
+                if (zipPathBase)
+                {
+                    display(MSG_INSTALL_PLUGIN_ERR_MANY_INITJS, MT_WARN);
+                    throw CZ_PI_ABORT;
+                }
+                zipPathBase = itemName.match(/^(.*\/)init.js$/)[1];
+                initPath = itemName;
+            }
+
+            if (zipPathBase)
+            {
+                // We have a base for init.js, assert that all files are inside
+                // it. If not, we drop the path and install exactly as-is
+                // instead (which will probably cause it to not work because the
+                // init.js isn't in the right place).
+                items = zipReader.findEntries("*");
+                while (checkZipMore(items))
+                {
+                    itemName = getZipEntry(zipReader, items);
+                    if (itemName.substr(0, zipPathBase.length) != zipPathBase)
+                    {
+                        display(MSG_INSTALL_PLUGIN_ERR_MIXED_BASE, MT_WARN);
+                        zipPathBase = "";
+                        break;
+                    }
+                }
+            }
+
+            // Test init.js for a plugin ID.
+            var initJSFile = getTempFile(client.prefs["profilePath"],
+                                         "install-plugin.temp");
+            zipReader.extract(initPath, initJSFile);
+            var initJSFileH = fopen(initJSFile, "<");
+            var initJSData = initJSFileH.read();
+            initJSFileH.close();
+            initJSFile.remove(false);
+
+            //XXXgijs: this is fragile. Anyone got a better idea?
+            ary = initJSData.match(/plugin\.id\s*=\s*(['"])(.*?)(\1)/);
+            if (ary && (name != ary[2]))
+            {
+                display(getMsg(MSG_INSTALL_PLUGIN_WARN_NAME, [name, ary[2]]),
+                        MT_WARN);
+                name = ary[2];
+            }
+
+            dest.append(name);
+
+            if (dest.exists())
+            {
+                display(MSG_INSTALL_PLUGIN_ERR_ALREADY_INST, MT_ERROR);
+                throw CZ_PI_ABORT;
+            }
+            dest.create(DIRECTORY_TYPE, 0700);
+
+            // Actually extract files...
+            var destInit;
+            items = zipReader.findEntries("*");
+            while (checkZipMore(items))
+            {
+                itemName = getZipEntry(zipReader, items);
+                if (!itemName.match(/\/$/))
+                {
+                    var dirs = itemName;
+                    // Remove common path if there is one.
+                    if (zipPathBase)
+                        dirs = dirs.substring(zipPathBase.length);
+                    dirs = dirs.split("/");
+
+                    // Construct the full path for the extracted file...
+                    var zipFile = dest.clone();
+                    for (var i = 0; i < dirs.length - 1; i++)
+                    {
+                        zipFile.append(dirs[i]);
+                        if (!zipFile.exists())
+                            zipFile.create(DIRECTORY_TYPE, 0700);
+                    }
+                    zipFile.append(dirs[dirs.length - 1]);
+
+                    if (zipFile.leafName == "init.js")
+                        destInit = zipFile;
+
+                    zipReader.extract(itemName, zipFile);
+                }
+            }
+
+            var rv = dispatch("load ", {url: getURLSpecFromFile(destInit)});
+            if (rv)
+            {
+                display(getMsg(MSG_INSTALL_PLUGIN_DONE, name));
+            }
+            else
+            {
+                display(MSG_INSTALL_PLUGIN_ERR_REMOVING, MT_ERROR);
+                dest.remove(true);
+            }
+        }
+        catch (ex)
+        {
+            if (ex != CZ_PI_ABORT)
+                display(getMsg(MSG_INSTALL_PLUGIN_ERR_EXTRACT, ex), MT_ERROR);
+            zipReader.close();
+            return;
+        }
+        try
+        {
+            zipReader.close();
+        }
+        catch (ex)
+        {
+            display(getMsg(MSG_INSTALL_PLUGIN_ERR_EXTRACT, ex), MT_ERROR);
+        }
+    }
+    else if (source.path.match(/\.(js)$/i))
+    {
+        try
+        {
+            // Test init.js for a plugin ID.
+            var initJSFileH = fopen(source, "<");
+            var initJSData = initJSFileH.read();
+            initJSFileH.close();
+
+            ary = initJSData.match(/plugin\.id\s*=\s*(['"])(.*?)(\1)/);
+            if (ary && (name != ary[2]))
+            {
+                display(getMsg(MSG_INSTALL_PLUGIN_WARN_NAME, [name, ary[2]]),
+                        MT_WARN);
+                name = ary[2];
+            }
+
+            dest.append(name);
+
+            if (dest.exists()) {
+                display(MSG_INSTALL_PLUGIN_ERR_ALREADY_INST, MT_ERROR);
+                throw CZ_PI_ABORT;
+            }
+            dest.create(DIRECTORY_TYPE, 0700);
+
+            dest.append("init.js");
+
+            var destFile = fopen(dest, ">");
+            destFile.write(initJSData);
+            destFile.close();
+
+            var rv = dispatch("load", {url: getURLSpecFromFile(dest)});
+            if (rv)
+            {
+                display(getMsg(MSG_INSTALL_PLUGIN_DONE, name));
+            }
+            else
+            {
+                display(MSG_INSTALL_PLUGIN_ERR_REMOVING, MT_ERROR);
+                // We've appended "init.js" before, so go back up one level:
+                dest.parent.remove(true);
+            }
+        }
+        catch(ex)
+        {
+            if (ex != CZ_PI_ABORT)
+            {
+                display(getMSg(MSG_INSTALL_PLUGIN_ERR_INSTALLING, ex),
+                        MT_ERROR);
+            }
+        }
+    }
+    else
+    {
+        display(MSG_INSTALL_PLUGIN_ERR_FORMAT, MT_ERROR);
+    }
+}
+
 function syncOutputFrame(obj, nesting)
 {
     const nsIWebProgress = Components.interfaces.nsIWebProgress;

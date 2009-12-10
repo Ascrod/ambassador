@@ -1,3 +1,4 @@
+#!/usr/bin/python
 """
 Rewrite of ChatZilla's makexpi.sh into python
 
