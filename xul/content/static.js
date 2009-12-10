@@ -1899,104 +1899,96 @@ function gotoIRCURL(url, e)
         return;
     }
 
+    // Convert a request for a server to a network if we know it.
+    if (url.isserver)
+    {
+        for (var n in client.networks)
+        {
+            for (var s in client.networks[n].servers)
+            {
+                if ((client.networks[n].servers[s].hostname == url.host) &&
+                    (client.networks[n].servers[s].port == url.port))
+                {
+                    url.isserver = false;
+                    url.host = n;
+                    break;
+                }
+            }
+        }
+    }
+
     var network;
 
     if (url.isserver)
     {
-        var alreadyThere = false;
-        var gettingThere = false;
-        for (var n in client.networks)
+        var name = url.host.toLowerCase();
+        if (url.port != 6667)
+            name += ":" + url.port;
+        // There is no temporary network for this server:port, make one up.
+        if (!(name in client.networks))
         {
-            if ((client.networks[n].isConnected()) &&
-                (client.networks[n].primServ.hostname == url.host) &&
-                (client.networks[n].primServ.port == url.port))
-            {
-                /* already connected to this server/port */
-                network = client.networks[n];
-                gettingThere = true;
-                // Have we actually had the 001 reply yet?
-                alreadyThere = (client.networks[n].state == NET_ONLINE);
-                break;
-            }
+            var server = {name: url.host, port: url.port,
+                          isSecure: url.scheme == "ircs"};
+            client.addNetwork(name, [server], true);
         }
-
-        if (!alreadyThere)
-        {
-            if (!gettingThere)
-            {
-                /*
-                dd ("gotoIRCURL: not yet had connected to server" + url.host +
-                    " trying to connect...");
-                */
-
-                // Do we have a password, if needed?
-                var pass = "";
-                if (url.needpass)
-                {
-                    if (url.pass)
-                    {
-                        pass = url.pass;
-                    }
-                    else
-                    {
-                        pass = promptPassword(getMsg(MSG_HOST_PASSWORD,
-                                                     url.host));
-                    }
-                }
-
-                client.pendingViewContext = e;
-                var params = {hostname: url.host, port: url.port,
-                              password: pass};
-                var cmd = (url.scheme == "ircs" ? "sslserver" : "server");
-                network = dispatch(cmd, params);
-                delete client.pendingViewContext;
-            }
-
-            if (!url.target)
-                return;
-
-            if (!("pendingURLs" in network))
-                network.pendingURLs = new Array();
-            network.pendingURLs.unshift({ url: url, e: e });
-            return;
-        }
+        network = client.networks[name];
     }
     else
     {
-        /* parsed as a network name */
+        // There is no network called this, sorry.
         if (!(url.host in client.networks))
         {
             display(getMsg(MSG_ERR_UNKNOWN_NETWORK, url.host));
             return;
         }
-
         network = client.networks[url.host];
-        if (network.state != NET_ONLINE)
-        {
-            /*
-            dd ("gotoIRCURL: not already connected to " +
-                "network " + url.host + " trying to connect...");
-            */
-            var secure = (url.scheme == "ircs" ? true : false);
-            if (!network.isConnected())
-            {
-                client.pendingViewContext = e;
-                client.connectToNetwork(network, secure);
-                delete client.pendingViewContext;
-            }
-
-            if (!url.target)
-                return;
-
-            if (!("pendingURLs" in network))
-                network.pendingURLs = new Array();
-            network.pendingURLs.unshift({ url: url, e: e });
-            return;
-        }
     }
 
-    /* already connected, do whatever comes next in the url */
-    //dd ("gotoIRCURL: connected, time to finish parsing ``" + url + "''");
+    // We should only prompt for a password if we're not connected.
+    if ((network.state == NET_OFFLINE) && url.needpass && !url.pass)
+    {
+        url.pass = promptPassword(getMsg(MSG_HOST_PASSWORD,
+                                         network.unicodeName));
+    }
+
+    // Adjust secure setting for temporary networks (so user can override).
+    if (network.temporary)
+        network.serverList[0].isSecure = url.scheme == "ircs";
+
+    // Adjust password for all servers (so user can override).
+    if (url.pass)
+    {
+        for (var s in network.servers)
+            network.servers[s].password = url.pass;
+    }
+
+    // Start the connection and pend anything else if we're not ready.
+    if (network.state != NET_ONLINE)
+    {
+        client.pendingViewContext = e;
+        if (!network.isConnected())
+        {
+            client.connectToNetwork(network, url.scheme == "ircs");
+        }
+        else
+        {
+            if (!network.messages)
+                network.displayHere(getMsg(MSG_NETWORK_OPENED, network.unicodeName));
+            dispatch("set-current-view", { view: network });
+        }
+        delete client.pendingViewContext;
+
+        if (!url.target)
+            return;
+
+        // We're not completely online, so everything else is pending.
+        if (!("pendingURLs" in network))
+            network.pendingURLs = new Array();
+        network.pendingURLs.unshift({ url: url, e: e });
+        return;
+    }
+
+    // We're connected now, process the target.
     if (url.target)
     {
         var targetObject;

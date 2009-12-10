@@ -1402,31 +1402,8 @@ function cmdServer(e)
         e.hostname = ary[1];
     }
 
-    var name = e.hostname.toLowerCase();
-
-    if (!e.port)
-        e.port = 6667;
-    else if (e.port != 6667)
-        name += ":" + e.port;
-
-    if (!(name in client.networks))
-    {
-        /* if there wasn't already a network created for this server,
-         * make one. */
-        client.addNetwork(name, [{name: e.hostname, port: e.port,
-                                        password: e.password}], true);
-    }
-    else
-    {
-        // We are trying to connect without SSL, adjust for temporary networks
-        if (client.networks[name].temporary)
-            client.networks[name].serverList[0].isSecure = false;
-        // update password on existing server.
-        if (e.password)
-            client.networks[name].serverList[0].password = e.password;
-    }
-
-    return client.connectToNetwork(name, false);
+    gotoIRCURL({scheme: "irc", host: e.hostname, port: e.port || 6667,
+                pass: e.password, isserver: true});
 }
 
 function cmdSSLServer(e)
@@ -1440,31 +1417,8 @@ function cmdSSLServer(e)
         e.hostname = ary[1];
     }
 
-    var name = e.hostname.toLowerCase();
-
-    if (!e.port)
-        e.port = 9999;
-    if (e.port != 6667)
-        name += ":" + e.port;
-
-    if (!(name in client.networks))
-    {
-        /* if there wasn't already a network created for this server,
-         * make one. */
-        client.addNetwork(name, [{name: e.hostname, port: e.port,
-                                  password: e.password, isSecure: true}], true);
-    }
-    else
-    {
-        // We are trying to connect using SSL, adjust for temporary networks
-        if (client.networks[name].temporary)
-            client.networks[name].serverList[0].isSecure = true;
-        // update password on existing server.
-        if (e.password)
-            client.networks[name].serverList[0].password = e.password;
-    }
-
-    return client.connectToNetwork(name, true);
+    gotoIRCURL({scheme: "ircs", host: e.hostname, port: e.port || 9999,
+                pass: e.password, isserver: true});
 }
 
 function cmdSSLException(e)
