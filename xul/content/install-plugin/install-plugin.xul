@@ -23,15 +23,16 @@
                 <button id="btn-browse" label="&browse.label;"
                         accesskey="&browse.accesskey;"/>
             </row>
-            <row align="start">
+            <row align="center">
                 <label id="lbl-name" control="txt-name"
                        value="&name.label;" accesskey="&name.accesskey;"/>
-                <vbox>
-                    <textbox id="txt-name" disabled="true"/>
-                    <checkbox id="chk-name-auto" checked="true"
-                              label="&name.autopick.label;"
-                              accesskey="&name.autopick.accesskey;"/>
-                </vbox>
+                <textbox id="txt-name" disabled="true"/>
+            </row>
+            <row align="center">
+                <spacer/>
+                <checkbox id="chk-name-auto" checked="true"
+                          label="&name.autopick.label;"
+                          accesskey="&name.autopick.accesskey;"/>
             </row>
         </rows>
     </grid>
