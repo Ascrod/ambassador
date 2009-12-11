@@ -4,6 +4,7 @@ var plugin;
 function onLoad()
 {
     client = window.arguments[0];
+    client.installPluginDialog = window;
     window.getMsg = client.messageManager.getMsg;
 
     hookEvent("chk-name-auto",    "command", changeAutoName);
@@ -76,11 +77,13 @@ function doOK(event)
 
     client.dispatch("install-plugin", {name: pluginName.value,
                                        url: pluginSource.value});
+    delete client.installPluginDialog;
     window.close();
 }
 
 function doCancel(event)
 {
+    delete client.installPluginDialog;
     window.close();
 }
 

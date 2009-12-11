@@ -4532,6 +4532,9 @@ function cmdInstallPlugin(e)
 
     if (!e.url)
     {
+        if ("installPluginDialog" in client)
+            return client.installPluginDialog.focus();
+
         window.openDialog(ipURL, "", "chrome,dialog", client);
         return;
     }
