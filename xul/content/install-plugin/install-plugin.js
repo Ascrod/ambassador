@@ -6,6 +6,7 @@ function onLoad()
     client = window.arguments[0];
     client.installPluginDialog = window;
     window.getMsg = client.messageManager.getMsg;
+    window.MSG_ALERT = client.mainWindow.MSG_ALERT;
 
     hookEvent("chk-name-auto",    "command", changeAutoName);
     hookEvent("txt-source",       "input",   sourceChange);
@@ -65,26 +66,24 @@ function browseForSource(event)
     }
 }
 
-function doOK(event)
+function doOK()
 {
     var pluginName = document.getElementById("txt-name");
     var pluginSource = document.getElementById("txt-source");
     if (!pluginName.value)
     {
         alert(client.mainWindow.MSG_INSTALL_PLUGIN_ERR_SPEC_NAME);
-        return;
+        return false;
     }
 
     client.dispatch("install-plugin", {name: pluginName.value,
                                        url: pluginSource.value});
     delete client.installPluginDialog;
-    window.close();
 }
 
-function doCancel(event)
+function doCancel()
 {
     delete client.installPluginDialog;
-    window.close();
 }
 
 function hookEvent(id, event, handler)

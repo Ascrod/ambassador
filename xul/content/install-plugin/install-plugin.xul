@@ -8,8 +8,8 @@
 <dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad();"
         title="&windowtitle;"
-        ondialogaccept="doOK(event)"
-        ondialogcancel="doCancel(event)">
+        ondialogaccept="return doOK()"
+        ondialogcancel="doCancel()">
     <script src="install-plugin.js"/>
     <script src="../lib/js/file-utils.js"/>
     <script src="../lib/js/utils.js"/>
