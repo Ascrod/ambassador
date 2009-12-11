@@ -25,12 +25,12 @@ function changeAutoName(event)
     var pluginName = document.getElementById("txt-name");
     if (useAutoName.checked)
     {
-        pluginName.setAttribute("readonly", "true");
+        pluginName.setAttribute("disabled", "true");
         sourceChange(null);
     }
     else
     {
-        pluginName.removeAttribute("readonly");
+        pluginName.removeAttribute("disabled");
     }
 }
 
