@@ -1914,6 +1914,8 @@ function gotoIRCURL(url, e)
                     break;
                 }
             }
+            if (!url.isserver)
+                break;
         }
     }
 
