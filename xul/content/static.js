@@ -4014,7 +4014,7 @@ function deleteTab(tb)
         client.viewsArray[i].tb.setAttribute("viewKey", i - 1);
     arrayRemoveAt(client.viewsArray, key);
     client.tabs.removeChild(tb);
-    updateTabAttributes();
+    setTimeout(updateTabAttributes, 0);
 
     return key;
 }
