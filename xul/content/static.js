@@ -4673,7 +4673,7 @@ function __display(message, msgtype, sourceObj, destObj)
     msgRow.setAttribute("msg-dest", toAttr);
     msgRow.setAttribute("dest-type", toType);
     msgRow.setAttribute("view-type", viewType);
-    msgRow.setAttribute("statusText", statusString);
+    msgRow.setAttribute("status-text", statusString);
     msgRow.setAttribute("timestamp", Number(time));
     if (fromAttr)
     {

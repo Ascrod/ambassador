@@ -280,7 +280,7 @@ function onMouseOver (e)
         {
             status = target.getAttribute("href");
             if (!status)
-                status = target.getAttribute("statusText");
+                status = target.getAttribute("status-text");
         }
         ++i;
         target = target.parentNode;
