@@ -1448,6 +1448,10 @@ function playEventSounds(type, event)
     if (type.match(/^IRC/))
         type = type.substr(3, type.length).toLowerCase();
 
+    // DCC Chat sessions should act just like user views.
+    if (type == "dccchat")
+        type = "user";
+
     var ev = type + "." + event;
 
     if (ev in client.soundList)
