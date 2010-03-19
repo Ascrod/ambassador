@@ -1050,11 +1050,19 @@ function cmdChanUserMode(e)
     else if (e.nickname && (e.nickname == "*"))
     {
         var me = e.server.me;
-        for (user in e.channel.users)
+        var mode = modestr.substr(1, 1);
+        var adding = modestr[0] == "+";
+        for (userKey in e.channel.users)
         {
-            var user2 = e.channel.users[user];
-            if (user2.encodedName != me.encodedName)
-                nickList.push(user2.encodedName);
+            var user = e.channel.users[userKey];
+            /* Never change our own mode and avoid trying to change someone
+             * else in a no-op manner (e.g. voicing an already voiced user).
+             */
+            if ((user.encodedName != me.encodedName) &&
+                (arrayContains(user.modes, mode) ^ adding))
+            {
+                nickList.push(user.encodedName);
+            }
         }
         nicks = combineNicks(nickList);
     }
