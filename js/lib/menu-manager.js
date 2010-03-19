@@ -37,6 +37,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+//
 function MenuManager(commandManager, menuSpecs, contextFunction, commandStr)
 {
     var menuManager = this;

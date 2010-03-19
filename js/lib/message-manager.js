@@ -37,6 +37,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+//
 function MessageManager(entities)
 {
     const UC_CTRID = "@mozilla.org/intl/scriptableunicodeconverter";

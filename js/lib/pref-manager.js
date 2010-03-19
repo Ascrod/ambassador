@@ -97,6 +97,7 @@ PrefManager.prototype.PREF_SAVE_DELAY =  5000; // 5 seconds.
  */
 PrefManager.prototype.PREF_MAX_DELAY  = 15000; // 15 seconds.
 
+//
 PrefManager.prototype.destroy =
 function pm_destroy()
 {

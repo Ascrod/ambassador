@@ -37,7 +37,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-function getAccessKey (str)
+// @internal
+function getAccessKey(str)
 {
     var i = str.indexOf("&");
     if (i == -1)
@@ -45,6 +46,7 @@ function getAccessKey (str)
     return str[i + 1];
 }
 
+// @internal
 function CommandRecord(name, func, usage, help, label, accesskey, flags,
                        keystr, tip, format)
 {
@@ -98,7 +100,7 @@ function cr_getusage()
 }
 
 /**
- * Internal use only.
+ * @internal
  *
  * Scans the argument spec, in the format "<a1> <a2> [<o1> <o2>]", into an
  * array of strings.
@@ -169,7 +171,16 @@ function cr_getdocs(flagFormatter)
 
 CommandRecord.prototype.argNames = new Array();
 
-function CommandManager (defaultBundle)
+/**
+ * Manages commands, with accelerator keys, help text and argument processing.
+ *
+ * You should never need to create an instance of this prototype; access the
+ * command manager through |client.commandManager|.
+ *
+ * @param defaultBundle An |nsIStringBundle| object to load command parameters,
+ *                      labels a help text from.
+ */
+function CommandManager(defaultBundle)
 {
     this.commands = new Object();
     this.commandHistory = new Object();
@@ -179,10 +190,20 @@ function CommandManager (defaultBundle)
     this.dispatchUnwinding = false;
 }
 
+// @undocumented
 CommandManager.prototype.defaultFlags = 0;
 
+/**
+ * Adds multiple commands in a single call.
+ *
+ * @param cmdary |Array| containing commands to define; each item in the |Array|
+ *               is also an |Array|, with either 3 or 4 items - corresponding to
+ *               the first three or four arguments of |defineCommand|. An extra
+ *               property, |stringBundle|, may be set on the |cmdary| |Array|
+ *               to override the |defaultBundle| for all the commands.
+ */
 CommandManager.prototype.defineCommands =
-function cmgr_defcmds (cmdary)
+function cmgr_defcmds(cmdary)
 {
     var len = cmdary.length;
     var commands = new Object();
@@ -205,8 +226,23 @@ function cmgr_defcmds (cmdary)
     return commands;
 }
 
+/**
+ * Adds a single command.
+ *
+ * @param name The |String| name of the command to define.
+ * @param func A |Function| to call to handle dispatch of the new command.
+ * @param flags Optional. A |Number| indicating any special requirements for the
+ *              command. The |CommandManager| only checks for |CMD_NO_HELP|;
+ *              flags are stored unchanged.
+ * @param usage Optional. A |String| specifying the arguments to the command. If
+ *              not specified, the property string "cmd." + |name| + ".params"
+ *              is read from |bundle| or |defaultBundle|.
+ * @param bundle Optional. An |nsIStringBundle| to fetch parameters, labels,
+ *               accelerator keys and help from. If not specified, the
+ *               |defaultBundle| is used.
+ */
 CommandManager.prototype.defineCommand =
-function cmdmgr_defcmd (name, func, flags, usage, bundle)
+function cmdmgr_defcmd(name, func, flags, usage, bundle)
 {
     if (!bundle)
         bundle = this.defaultBundle;
@@ -255,8 +291,18 @@ function cmdmgr_defcmd (name, func, flags, usage, bundle)
     return command;
 }
 
+/**
+ * Installs accelerator keys for commands into an existing document.
+ *
+ * @internal
+ * @param document An |XULDocument| within which to install the accelerator
+ *                 keys. Each command's key is installed by |installKey|.
+ * @param commands Optional. An |Array| or |Object| continaing |CommandRecord|
+ *                 objects. If not specified, all commands in the
+ *                 |CommandManager| are installed.
+ */
 CommandManager.prototype.installKeys =
-function cmgr_instkeys (document, commands)
+function cmgr_instkeys(document, commands)
 {
     var parentElem = document.getElementById("dynamic-keys");
     if (!parentElem)
@@ -274,15 +320,18 @@ function cmgr_instkeys (document, commands)
 }
 
 /**
- * Create a <key> node relative to a DOM node.  Usually called once per command,
- * per document, so that accelerator keys work in all application windows.
+ * Installs the accelerator key for a single command.
  *
- * @param parentElem  A reference to the DOM node which should contain the new
- *                    <key> node.
- * @param command     reference to the CommandRecord to install.
+ * This creates a <key> XUL element inside |parentElem|.  It should usually be
+ * called once per command, per document, so that accelerator keys work in all
+ * application windows.
+ *
+ * @internal
+ * @param parentElem An |XULElement| to add the <key> too.
+ * @param command    The |CommandRecord| to install.
  */
 CommandManager.prototype.installKey =
-function cmgr_instkey (parentElem, command)
+function cmgr_instkey(parentElem, command)
 {
     if (!command.keystr)
         return;
@@ -311,8 +360,16 @@ function cmgr_instkey (parentElem, command)
     command.keyNodes.push(key);
 }
 
+/**
+ * Uninstalls accelerator keys for commands from a document.
+ *
+ * @internal
+ * @param commands Optional. An |Array| or |Object| continaing |CommandRecord|
+ *                 objects. If not specified, all commands in the
+ *                 |CommandManager| are uninstalled.
+ */
 CommandManager.prototype.uninstallKeys =
-function cmgr_uninstkeys (commands)
+function cmgr_uninstkeys(commands)
 {
     if (!commands)
         commands = this.commands;
@@ -321,8 +378,14 @@ function cmgr_uninstkeys (commands)
         this.uninstallKey (commands[c]);
 }
 
+/**
+ * Uninstalls the accelerator key for a single command.
+ *
+ * @internal
+ * @param command    The |CommandRecord| to uninstall.
+ */
 CommandManager.prototype.uninstallKey =
-function cmgr_uninstkey (command)
+function cmgr_uninstkey(command)
 {
     for (var i in command.keyNodes)
     {
@@ -339,10 +402,13 @@ function cmgr_uninstkey (command)
 }
 
 /**
- * Register a new command with the manager.
+ * Use |defineCommand|.
+ *
+ * @internal
+ * @param command The |CommandRecord| to add to the |CommandManager|.
  */
 CommandManager.prototype.addCommand =
-function cmgr_add (command)
+function cmgr_add(command)
 {
     if (objectContains(this.commands, command.name))
     {
@@ -356,8 +422,14 @@ function cmgr_add (command)
     this.commands[command.name] = command;
 }
 
+/**
+ * Removes multiple commands in a single call.
+ *
+ * @param cmdary An |Array| or |Object| containing |CommandRecord| objects.
+ *               Ideally use the value returned from |defineCommands|.
+ */
 CommandManager.prototype.removeCommands =
-function cmgr_removes (cmdary)
+function cmgr_removes(cmdary)
 {
     for (var i in cmdary)
     {
@@ -367,8 +439,14 @@ function cmgr_removes (cmdary)
     }
 }
 
+/**
+ * Removes a single command.
+ *
+ * @param command The |CommandRecord| to remove from the |CommandManager|.
+ *                Ideally use the value returned from |defineCommand|.
+ */
 CommandManager.prototype.removeCommand =
-function cmgr_remove (command)
+function cmgr_remove(command)
 {
     delete this.commands[command.name];
     if (objectContains(this.commandHistory, command.name))
@@ -383,12 +461,20 @@ function cmgr_remove (command)
 }
 
 /**
- * Register a hook for a particular command name.  |id| is a human readable
- * identifier for the hook, and can be used to unregister the hook.  If you
- * re-use a hook id, the previous hook function will be replaced.
- * If |before| is |true|, the hook will be called *before* the command executes,
- * if |before| is |false|, or not specified, the hook will be called *after*
- * the command executes.
+ * Registers a hook for a particular command.
+ *
+ * A command hook is uniquely identified by the pair |id|, |before|; only a
+ * single hook may exist for a given pair of |id| and |before| values. It is
+ * wise to use a unique |id|; plugins should construct an |id| using
+ * |plugin.id|, e.g. |plugin.id + "-my-hook-1"|.
+ *
+ * @param commandName A |String| command name to hook. The command named must
+ *                    already exist in the |CommandManager|; if it does not, no
+ *                    hook is added.
+ * @param func        A |Function| to handle the hook.
+ * @param id          A |String| identifier for the hook.
+ * @param before      A |Boolean| indicating whether the hook wishes to be
+ *                    called before or after the command executes.
  */
 CommandManager.prototype.addHook =
 function cmgr_hook (commandName, func, id, before)
@@ -415,6 +501,17 @@ function cmgr_hook (commandName, func, id, before)
     }
 }
 
+/**
+ * Registers multiple hooks for commands.
+ *
+ * @param hooks An |Object| containing |Function| objects to call for each
+ *              hook; the key of each item is the name of the command it
+ *              wishes to hook. Optionally, the |_before| property can be
+ *              added to a |function| to override the default |before| value
+ *              of |false|.
+ * @param prefix Optional. A |String| prefix to apply to each hook's command
+ *               name to compute an |id| for it.
+ */
 CommandManager.prototype.addHooks =
 function cmgr_hooks (hooks, prefix)
 {
@@ -428,6 +525,12 @@ function cmgr_hooks (hooks, prefix)
     }
 }
 
+/**
+ * Unregisters multiple hooks for commands.
+ *
+ * @param hooks An |Object| identical to the one passed to |addHooks|.
+ * @param prefix Optional. A |String| identical to the one passed to |addHooks|.
+ */
 CommandManager.prototype.removeHooks =
 function cmgr_remhooks (hooks, prefix)
 {
@@ -441,6 +544,17 @@ function cmgr_remhooks (hooks, prefix)
     }
 }
 
+/**
+ * Unregisters a hook for a particular command.
+ *
+ * The arguments to |removeHook| are the same as |addHook|, but without the
+ * hook function itself.
+ *
+ * @param commandName The |String| command name to unhook.
+ * @param id          The |String| identifier for the hook.
+ * @param before      A |Boolean| indicating whether the hook was to be
+ *                    called before or after the command executed.
+ */
 CommandManager.prototype.removeHook =
 function cmgr_unhook (commandName, id, before)
 {
@@ -453,12 +567,14 @@ function cmgr_unhook (commandName, id, before)
 }
 
 /**
- * Return an array of all CommandRecords which start with the string
- * |partialName|, sorted by |label| property.
+ * Gets a sorted |Array| of |CommandRecord| objects which match.
  *
- * @param   partialName Prefix to search for.
- * @param   flags       logical ANDed with command flags.
- * @returns array       Array of matching commands, sorted by |label| property.
+ * After filtering by |flags| (if specified), if an exact match for
+ * |partialName| is found, only that is returned; otherwise, all commands
+ * starting with |partialName| are returned in alphabetical order by |label|.
+ *
+ * @param partialName Optional. A |String| prefix to search for.
+ * @param flags Optional. Flags to logically AND with commands.
  */
 CommandManager.prototype.list =
 function cmgr_list (partialName, flags)
@@ -514,12 +630,10 @@ function cmgr_list (partialName, flags)
 }
 
 /**
- * Return a sorted array of the command names which start with the string
- * |partialName|.
+ * Gets a sorted |Array| of command names which match.
  *
- * @param   partialName Prefix to search for.
- * @param   flags       logical ANDed with command flags.
- * @returns array       Sorted Array of matching command names.
+ * |listNames| operates identically to |list|, except that only command names
+ * are returned, not |CommandRecord| objects.
  */
 CommandManager.prototype.listNames =
 function cmgr_listnames (partialName, flags)
@@ -542,6 +656,7 @@ function cmgr_listnames (partialName, flags)
  *
  * @params e  Event object to be processed.
  */
+// @undocumented
 CommandManager.prototype.parseArguments =
 function cmgr_parseargs (e)
 {
@@ -599,6 +714,7 @@ function cmgr_parseargs (e)
  * default.  You can alias argument types with code like...
  * commandManager.argTypes["my-integer-name"] = commandManager.argTypes["int"];
  */
+// @undocumented
 CommandManager.prototype.parseArgumentsRaw =
 function parse_parseargsraw (e)
 {
@@ -688,6 +804,7 @@ function parse_parseargsraw (e)
  * @param e        Event object to test against the command.
  * @param command  Command to test.
  */
+// @undocumented
 CommandManager.prototype.isCommandSatisfied =
 function cmgr_isok (e, command)
 {
@@ -726,6 +843,7 @@ function cmgr_isok (e, command)
  * @param e     event object.
  * @param name  property name to use for the parse result.
  */
+// @undocumented
 CommandManager.prototype.parseArgument =
 function cmgr_parsearg (e, name)
 {
@@ -743,12 +861,14 @@ function cmgr_parsearg (e, name)
     return parseResult;
 }
 
+// @undocumented
 CommandManager.prototype.argTypes = new Object();
 
 /**
  * Convenience function used to map a list of new types to an existing parse
  * function.
  */
+// @undocumented
 CommandManager.prototype.argTypes.__aliasTypes__ =
 function at_alias (list, type)
 {
@@ -763,6 +883,7 @@ function at_alias (list, type)
  *
  * Parses an integer, stores result in |e[name]|.
  */
+// @undocumented
 CommandManager.prototype.argTypes["int"] =
 function parse_int (e, name)
 {
@@ -781,6 +902,7 @@ function parse_int (e, name)
  *
  * Stores result in |e[name]|.
  */
+// @undocumented
 CommandManager.prototype.argTypes["word"] =
 function parse_word (e, name)
 {
@@ -800,6 +922,7 @@ function parse_word (e, name)
  *
  * Stores result in |e[name]|.
  */
+// @undocumented
 CommandManager.prototype.argTypes["state"] =
 function parse_state (e, name)
 {
@@ -824,6 +947,7 @@ function parse_state (e, name)
  *
  * Stores result in |e[name]|.
  */
+// @undocumented
 CommandManager.prototype.argTypes["toggle"] =
 function parse_toggle (e, name)
 {
@@ -849,6 +973,7 @@ function parse_toggle (e, name)
  *
  * Stores result in |e[name]|.
  */
+// @undocumented
 CommandManager.prototype.argTypes["rest"] =
 function parse_rest (e, name)
 {
@@ -866,6 +991,7 @@ function parse_rest (e, name)
  *
  * Stores result in |e[name]| or |e[lastName + "List"]|.
  */
+// @undocumented
 CommandManager.prototype.argTypes["..."] =
 function parse_repeat (e, name, cm)
 {

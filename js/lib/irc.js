@@ -90,9 +90,6 @@ const NET_DISCONNECTING = i++; // Disconnecting.
 
 delete window.i;
 
-/*
- * irc network
- */
 function CIRCNetwork (name, serverList, eventPump, temporary)
 {
     this.unicodeName = name;
@@ -138,6 +135,13 @@ CIRCNetwork.prototype.PROXY_TYPE_OVERRIDE = "";
 
 CIRCNetwork.prototype.TYPE = "IRCNetwork";
 
+/**
+ * Returns the IRC URL representation of this network.
+ *
+ * @param target A network-specific object to target the URL at. Instead of
+ *               passing it in here, call the target's |getURL| method.
+ * @param flags An |Object| with flags (as properties) to be applied to the URL.
+ */
 CIRCNetwork.prototype.getURL =
 function net_geturl(target, flags)
 {
@@ -182,7 +186,9 @@ function net_addsrv(host, port, isSecure, password)
     this.serverList.push(new CIRCServer(this, host, port, isSecure, password));
 }
 
-// Checks if a network has a secure server in its list.
+/**
+ * Returns |true| iif a network has a secure server in its list.
+ */
 CIRCNetwork.prototype.hasSecureServer =
 function net_hasSecure()
 {
@@ -195,6 +201,9 @@ function net_hasSecure()
     return false;
 }
 
+/**
+ * Returns |true| iif a network only has secure servers in its list.
+ */
 CIRCNetwork.prototype.hasOnlySecureServers =
 function net_hasOnlySecure()
 {
@@ -217,7 +226,9 @@ function net_clearserverlist()
     this.serverList = new Array();
 }
 
-/** Trigger an onDoConnect event after a delay. */
+/**
+ * Trigger an |onDoConnect| event after a delay.
+ */
 CIRCNetwork.prototype.delayedConnect =
 function net_delayedConnect(eventProperties)
 {
@@ -247,7 +258,7 @@ function net_delayedConnect(eventProperties)
 }
 
 /**
- * Immediately trigger an onDoConnect event. Use delayedConnect for automatic
+ * Immediately trigger an |onDoConnect| event. Use |delayedConnect| for automatic
  * repeat attempts, instead, to throttle the attempts to a reasonable pace.
  */
 CIRCNetwork.prototype.immediateConnect =
@@ -291,6 +302,9 @@ function net_connect(requireSecurity)
     return true;
 }
 
+/**
+ * Disconnects the network with a given reason.
+ */
 CIRCNetwork.prototype.quit =
 function net_quit (reason)
 {
@@ -298,6 +312,9 @@ function net_quit (reason)
         this.primServ.logout(reason);
 }
 
+/**
+ * Cancels the network's connection (whatever its current state).
+ */
 CIRCNetwork.prototype.cancel =
 function net_cancel()
 {
@@ -331,9 +348,6 @@ function net_cancel()
     }
 }
 
-/*
- * Handles a request to connect to a primary server.
- */
 CIRCNetwork.prototype.onDoConnect =
 function net_doconnect(e)
 {
@@ -438,11 +452,15 @@ function net_doconnect(e)
     return true;
 }
 
+/**
+ * Returns |true| iff this network has a socket-level connection.
+ */
 CIRCNetwork.prototype.isConnected =
 function net_connected (e)
 {
     return ("primServ" in this && this.primServ.isConnected);
 }
+
 
 CIRCNetwork.prototype.ignore =
 function net_ignore (hostmask)
@@ -470,9 +488,6 @@ function net_ignore (hostmask)
     return true;
 }
 
-/*
- * irc server
- */
 function CIRCServer (parent, hostname, port, isSecure, password)
 {
     var serverName = hostname + ":" + port;
@@ -633,6 +648,7 @@ function serv_tolowercase(str)
      return str;
 }
 
+// Returns the IRC URL representation of this server.
 CIRCServer.prototype.getURL =
 function serv_geturl(target, flags)
 {
@@ -2780,10 +2796,6 @@ function serv_dccsend (e)
     return true;
 }
 
-/*
- * channel
- */
-
 function CIRCChannel(parent, unicodeName, encodedName)
 {
     // Both unicodeName and encodedName are optional, but at least one must be
@@ -2829,6 +2841,7 @@ function CIRCChannel(parent, unicodeName, encodedName)
 CIRCChannel.prototype.TYPE = "IRCChannel";
 CIRCChannel.prototype.topic = "";
 
+// Returns the IRC URL representation of this channel.
 CIRCChannel.prototype.getURL =
 function chan_geturl()
 {
@@ -3026,8 +3039,13 @@ function chan_findUsers(mask)
     return { users: ary, unchecked: unchecked };
 }
 
-/*
- * channel mode
+/**
+ * Stores a channel's current mode settings.
+ *
+ * You should never need to create an instance of this prototype; access the
+ * channel mode information through the |CIRCChannel.mode| property.
+ *
+ * @param parent The |CIRCChannel| to which this mode belongs.
  */
 function CIRCChanMode (parent)
 {
@@ -3050,6 +3068,7 @@ function CIRCChanMode (parent)
 
 CIRCChanMode.prototype.TYPE = "IRCChanMode";
 
+// Returns the complete mode string, as constructed from its component parts.
 CIRCChanMode.prototype.getModeStr =
 function chan_modestr (f)
 {
@@ -3086,6 +3105,7 @@ function chan_modestr (f)
     return str;
 }
 
+// Sends the given mode string to the server with the channel pre-filled.
 CIRCChanMode.prototype.setMode =
 function chanm_mode (modestr)
 {
@@ -3095,6 +3115,7 @@ function chanm_mode (modestr)
     return true;
 }
 
+// Sets (|n| > 0) or clears (|n| <= 0) the user count limit.
 CIRCChanMode.prototype.setLimit =
 function chanm_limit (n)
 {
@@ -3112,6 +3133,7 @@ function chanm_limit (n)
     return true;
 }
 
+// Locks the channel with a given key.
 CIRCChanMode.prototype.lock =
 function chanm_lock (k)
 {
@@ -3120,6 +3142,7 @@ function chanm_lock (k)
     return true;
 }
 
+// Unlocks the channel with a given key.
 CIRCChanMode.prototype.unlock =
 function chan_unlock (k)
 {
@@ -3128,6 +3151,7 @@ function chan_unlock (k)
     return true;
 }
 
+// Sets or clears the moderation mode.
 CIRCChanMode.prototype.setModerated =
 function chan_moderate (f)
 {
@@ -3138,6 +3162,7 @@ function chan_moderate (f)
     return true;
 }
 
+// Sets or clears the allow public messages mode.
 CIRCChanMode.prototype.setPublicMessages =
 function chan_pmessages (f)
 {
@@ -3148,6 +3173,7 @@ function chan_pmessages (f)
     return true;
 }
 
+// Sets or clears the public topic mode.
 CIRCChanMode.prototype.setPublicTopic =
 function chan_ptopic (f)
 {
@@ -3158,6 +3184,7 @@ function chan_ptopic (f)
     return true;
 }
 
+// Sets or clears the invite-only mode.
 CIRCChanMode.prototype.setInvite =
 function chan_invite (f)
 {
@@ -3168,6 +3195,7 @@ function chan_invite (f)
     return true;
 }
 
+// Sets or clears the private channel mode.
 CIRCChanMode.prototype.setPvt =
 function chan_pvt (f)
 {
@@ -3178,6 +3206,7 @@ function chan_pvt (f)
     return true;
 }
 
+// Sets or clears the secret channel mode.
 CIRCChanMode.prototype.setSecret =
 function chan_secret (f)
 {
@@ -3187,10 +3216,6 @@ function chan_secret (f)
                                 modifier + "s\n");
     return true;
 }
-
-/*
- * user
- */
 
 function CIRCUser(parent, unicodeName, encodedName, name, host)
 {
@@ -3235,6 +3260,7 @@ function CIRCUser(parent, unicodeName, encodedName, name, host)
 
 CIRCUser.prototype.TYPE = "IRCUser";
 
+// Returns the IRC URL representation of this user.
 CIRCUser.prototype.getURL =
 function usr_geturl()
 {

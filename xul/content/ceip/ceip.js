@@ -22,6 +22,7 @@ function CEIP()
     setTimeout(function(self) { self.uploadLogs() }, 1000, this);
 }
 
+// @internal
 CEIP.prototype.destroy =
 function ceip_destroy()
 {
@@ -88,6 +89,7 @@ function ceip_getlogfile()
     return logFilePath;
 }
 
+// @internal
 CEIP.prototype.startLog =
 function ceip_startlog()
 {
@@ -131,6 +133,7 @@ function ceip_startlog()
     client.menuManager.onCallbackPopupHiding = hfn4;
 }
 
+// @internal
 CEIP.prototype.stopLog =
 function ceip_stoplog()
 {
@@ -226,6 +229,7 @@ function ceip_logevent(data)
     setTimeout(function(self) { self.uploadLogs() }, 1000, this);
 }
 
+// @internal
 CEIP.prototype.writeLogLine =
 function ceip_writelogline(line)
 {
@@ -240,6 +244,7 @@ function ceip_writelogline(line)
     {}
 }
 
+// @internal
 CEIP.prototype.uploadLogs =
 function ceip_uploadlogs()
 {
@@ -267,6 +272,7 @@ function ceip_uploadlogs()
     }
 }
 
+// @internal
 CEIP.prototype.uploadLog =
 function ceip_uploadlog(file)
 {
@@ -352,6 +358,7 @@ function ceip_uploadlog(file)
     }
 }
 
+// @internal
 CEIP.prototype.getCurrentViewType =
 function ceip_getcurrentviewtype()
 {
@@ -364,6 +371,7 @@ function ceip_getcurrentviewtype()
     return MSG_UNKNOWN;
 }
 
+// @internal
 CEIP.prototype.getEventViewType =
 function ceip_geteventviewtype(e)
 {
@@ -418,6 +426,7 @@ function ceip_getwintertimezoneoffset()
     return Math.max(d1.getTimezoneOffset(), d2.getTimezoneOffset());
 }
 
+// @internal
 CEIP.prototype.isCommandIgnored =
 function ceip_iscommandignored(e)
 {
@@ -430,6 +439,7 @@ function ceip_iscommandignored(e)
            (e.command.name == "describe");
 }
 
+// @internal
 CEIP.prototype.hookCommandBefore =
 function ceip_hookcommandbefore(e)
 {
@@ -462,6 +472,7 @@ function ceip_hookcommandbefore(e)
     }
 }
 
+// @internal
 CEIP.prototype.hookCommandAfter =
 function ceip_hookcommandafter(e)
 {
@@ -480,6 +491,7 @@ function ceip_hookcommandafter(e)
     }
 }
 
+// @internal
 CEIP.prototype.hookMenuOpen =
 function ceip_hookmenuopen(event, cx, popup)
 {
@@ -496,6 +508,7 @@ function ceip_hookmenuopen(event, cx, popup)
     }
 }
 
+// @internal
 CEIP.prototype.hookMenuClose =
 function ceip_hookmenuclose(event, cx, popup)
 {
