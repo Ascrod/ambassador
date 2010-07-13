@@ -484,3 +484,8 @@ function NSGetModule(compMgr, fileSpec)
 {
     return ChatzillaModule;
 }
+
+function NSGetFactory(cid)
+{
+    return ChatzillaModule.getClassObject(null, cid, null);
+}

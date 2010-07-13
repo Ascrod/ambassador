@@ -1,4 +1,10 @@
 chatzilla.jar:
+%       component {f21c35f4-1dd1-11b2-a503-9bf8a539ea39} components/chatzilla-service.js
+%       component {38a95514-1dd2-11b2-97e7-9da958640f2c} components/chatzilla-service.js
+%       contract @mozilla.org/network/protocol;1?name=irc {f21c35f4-1dd1-11b2-a503-9bf8a539ea39}
+%       contract @mozilla.org/network/protocol;1?name=ircs {f21c35f4-1dd1-11b2-a503-9bf8a539ea39}
+%       contract @mozilla.org/commandlinehandler/general-startup;1?type=chat {38a95514-1dd2-11b2-97e7-9da958640f2c}
+%       category command-line-handler m-irc @mozilla.org/commandlinehandler/general-startup;1?type=chat
 %       content chatzilla            %content/chatzilla/
 %       skin    chatzilla modern/1.0 %skin/modern/chatzilla/
 %       overlay chrome://browser/content/browser.xul chrome://chatzilla/content/browserOverlay.xul application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
