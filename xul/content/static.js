@@ -3043,7 +3043,7 @@ function getFrameForDOMWindow(window)
     for (var i = 0; i < client.deck.childNodes.length; i++)
     {
         frame = client.deck.childNodes[i];
-        if (getContentWindow(frame) == window)
+        if (frame.contentWindow == window)
             return frame;
     }
     return undefined;
