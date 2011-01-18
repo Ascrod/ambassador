@@ -96,7 +96,9 @@ repackage-zip: $(STAGEDIST)
 ifneq (en-US,$(AB_CD))
 	$(RM) -rf $(STAGEDIST)/extensions/$(INSTALL_EXTENSION_ID)
 	mkdir $(STAGEDIST)/extensions/$(INSTALL_EXTENSION_ID)
-	$(RM) -r $(DIST)/xpi-stage/$(XPI_NAME)/chrome/chatzilla
+	if test -d "$(DIST)/xpi-stage/$(XPI_NAME)/chrome/chatzilla.jar"; then \
+	  $(RM) -r $(DIST)/xpi-stage/$(XPI_NAME)/chrome/chatzilla;\
+	fi
 	# use tar for copying as cp doesn't portably preserve timestamps
 	cd $(DIST)/xpi-stage/$(XPI_NAME) && \
 	  tar $(TAR_CREATE_FLAGS) - * | ( cd $(STAGEDIST)/extensions/$(INSTALL_EXTENSION_ID) && tar -xf - )
