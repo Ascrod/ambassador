@@ -223,7 +223,7 @@ function initPrefs()
          ["networkHeader",      true,     "global.header"],
          ["networkLog",         false,    "global.log"],
          ["networkMaxLines",    200,      "global.maxLines"],
-         ["newTabLimit",        15,       "global"],
+         ["newTabLimit",        30,       "global"],
          ["notify.aggressive",  true,     "global"],
          ["nickCompleteStr",    ":",      "global"],
          ["nickname",           defaultNick, ".ident"],
