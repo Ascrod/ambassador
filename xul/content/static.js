@@ -1589,7 +1589,7 @@ function openQueryTab(server, nick)
             user.prefManager.prefRecords["charset"].defaultValue = value;
         }
 
-        user.displayHere (getMsg(MSG_QUERY_OPENED, user.unicodeName));
+        dispatch("create-tab-for-view", { view: user });
     }
     user.whois();
     return user;
@@ -1978,8 +1978,7 @@ function gotoIRCURL(url, e)
         }
         else
         {
-            if (!network.messages)
-                network.displayHere(getMsg(MSG_NETWORK_OPENED, network.unicodeName));
+            dispatch("create-tab-for-view", { view: network });
             dispatch("set-current-view", { view: network });
         }
         delete client.pendingViewContext;
@@ -2085,8 +2084,7 @@ function gotoIRCURL(url, e)
     else
     {
         client.pendingViewContext = e;
-        if (!network.messages)
-            network.displayHere(getMsg(MSG_NETWORK_OPENED, network.unicodeName));
+        dispatch("create-tab-for-view", { view: network });
         dispatch("set-current-view", { view: network });
         delete client.pendingViewContext;
     }
@@ -2149,6 +2147,14 @@ function updateSecurityIcon()
         default:
             securityButton.setAttribute("tooltiptext", MSG_SECURITY_INFO);
     }
+}
+
+function updateLoggingIcon()
+{
+    var state = client.currentObject.prefs["log"] ? "on" : "off";
+    var icon = window.document.getElementById("logging-status");
+    icon.setAttribute("loggingstate", state);
+    icon.setAttribute("tooltiptext", getMsg("msg.logging.icon." + state));
 }
 
 function initOfflineIcon()
@@ -2782,6 +2788,7 @@ function setCurrentObject (obj)
     updateTitle();
     updateProgress();
     updateSecurityIcon();
+    updateLoggingIcon();
 
     scrollDown(obj.frame, false);
 
@@ -4179,9 +4186,7 @@ function cli_connect(networkOrName, requireSecurity)
     }
     name = network.unicodeName;
 
-    if (!("messages" in network))
-        network.displayHere(getMsg(MSG_NETWORK_OPENED, name));
-
+    dispatch("create-tab-for-view", { view: network });
     dispatch("set-current-view", { view: network });
 
     if (network.isConnected())
@@ -5303,7 +5308,7 @@ function gettabmatch_usr (line, wordStart, wordEnd, word, cursorPos)
 }
 
 client.openLogFile =
-function cli_startlog (view)
+function cli_startlog(view, showMessage)
 {
     function getNextLogFileDate()
     {
@@ -5354,18 +5359,15 @@ function cli_startlog (view)
         return;
     }
 
-    if (!("logFileWrapping" in view) || !view.logFileWrapping)
+    if (showMessage)
         view.displayHere(getMsg(MSG_LOGFILE_OPENED, getLogPath(view)));
-    view.logFileWrapping = false;
 }
 
 client.closeLogFile =
-function cli_stoplog(view, wrapping)
+function cli_stoplog(view, showMessage)
 {
-    if ("frame" in view && !wrapping)
+    if (showMessage)
         view.displayHere(getMsg(MSG_LOGFILE_CLOSING, getLogPath(view)));
-
-    view.logFileWrapping = Boolean(wrapping);
 
     if (view.logFile)
     {
@@ -5386,14 +5388,14 @@ function checkLogFiles()
     {
         var net = client.networks[n];
         if (net.logFile && (d > net.nextLogFileDate))
-            client.closeLogFile(net, true);
+            client.closeLogFile(net);
         if (("primServ" in net) && net.primServ && ("channels" in net.primServ))
         {
             for (var c in net.primServ.channels)
             {
                 var chan = net.primServ.channels[c];
                 if (chan.logFile && (d > chan.nextLogFileDate))
-                    client.closeLogFile(chan, true);
+                    client.closeLogFile(chan);
             }
         }
         if ("users" in net)
@@ -5402,7 +5404,7 @@ function checkLogFiles()
             {
                 var user = net.users[u];
                 if (user.logFile && (d > user.nextLogFileDate))
-                    client.closeLogFile(user, true);
+                    client.closeLogFile(user);
             }
         }
     }
@@ -5411,18 +5413,18 @@ function checkLogFiles()
     {
         var dccChat = client.dcc.chats[dc];
         if (dccChat.logFile && (d > dccChat.nextLogFileDate))
-            client.closeLogFile(dccChat, true);
+            client.closeLogFile(dccChat);
     }
     for (var df in client.dcc.files)
     {
         var dccFile = client.dcc.files[df];
         if (dccFile.logFile && (d > dccFile.nextLogFileDate))
-            client.closeLogFile(dccFile, true);
+            client.closeLogFile(dccFile);
     }
 
     // Don't forget about the client tab:
     if (client.logFile && (d > client.nextLogFileDate))
-        client.closeLogFile(client, true);
+        client.closeLogFile(client);
 
     /* We need to calculate the correct time for the next check. This is
      * attempting to hit 2 seconds past the hour. We need the timezone offset

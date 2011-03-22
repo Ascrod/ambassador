@@ -111,6 +111,8 @@ function initHandlers()
     node.active = false;
     node = document.getElementById("security-button");
     node.addEventListener("dblclick", onSecurityIconDblClick, false);
+    node = document.getElementById("logging-status");
+    node.addEventListener("click", onLoggingIconClick, false);
 
     window.onkeypress = onWindowKeyPress;
 
@@ -294,6 +296,12 @@ function onSecurityIconDblClick(e)
 {
     if (e.button == 0)
         displayCertificateInfo();
+}
+
+function onLoggingIconClick(e)
+{
+    if (e.button == 0)
+        client.currentObject.dispatch("log", { state: "toggle" });
 }
 
 function onMultilineInputKeyPress (e)
@@ -2599,8 +2607,7 @@ function my_unkctcp (e)
 CIRCChannel.prototype.onJoin =
 function my_cjoin (e)
 {
-    if (!("messages" in this))
-        this.displayHere(getMsg(MSG_CHANNEL_OPENED, this.unicodeName), MT_INFO);
+    dispatch("create-tab-for-view", { view: e.channel });
 
     if (userIsMe(e.user))
     {

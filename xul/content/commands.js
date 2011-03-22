@@ -1218,9 +1218,10 @@ function cmdSync(e)
                       if (view.prefs["log"] ^ Boolean(view.logFile))
                       {
                           if (view.prefs["log"])
-                              client.openLogFile(view);
+                              client.openLogFile(view, true);
                           else
-                              client.closeLogFile(view);
+                              client.closeLogFile(view, true);
+                          updateLoggingIcon();
                       }
                   };
             break;
@@ -1358,9 +1359,7 @@ function cmdNetwork(e)
 
     var network = client.networks[e.networkName];
 
-    if (!("messages" in network))
-        network.displayHere(getMsg(MSG_NETWORK_OPENED, network.unicodeName));
-
+    dispatch("create-tab-for-view", { view: network });
     dispatch("set-current-view", { view: network });
 }
 
@@ -2405,10 +2404,7 @@ function cmdJoin(e)
      * replies (since the reply will have the appropriate prefix). */
     if (chan.unicodeName[0] != "!")
     {
-        var chanName = chan.unicodeName;
-        if (!("messages" in chan))
-            chan.displayHere(getMsg(MSG_CHANNEL_OPENED, chanName), MT_INFO);
-
+        dispatch("create-tab-for-view", { view: chan });
         dispatch("set-current-view", { view: chan });
     }
 
