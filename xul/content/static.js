@@ -3928,6 +3928,9 @@ function tabdnd_dexit(aEvent, aDragSession)
 tabsDropObserver.onDrop =
 function tabdnd_drop(aEvent, aXferData, aDragSession)
 {
+    // Dragging has finished.
+    client.tabDragBar.collapsed = true;
+
     // See comment above |var tabsDropObserver|.
     var url = transferUtils.retrieveURLFromData(aXferData.data,
                                                 aXferData.flavour.contentType);
