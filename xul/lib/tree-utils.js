@@ -803,10 +803,19 @@ function xtvr_remchild (index)
  * hide this record and all descendants.
  */
 XULTreeViewRecord.prototype.hide =
-function xtvr_hide ()
+function xtvr_hide()
 {
     if (this.isHidden)
         return;
+
+    var tree = this.findContainerTree();
+    if (tree && tree.frozen)
+    {
+        this.isHidden = true;
+        if ("parentRecord" in this)
+            this.parentRecord.onVisualFootprintChanged(0, -this.visualFootprint);
+        return;
+    }
 
     /* get the row before hiding */
     var row = this.calculateVisualRow();
@@ -815,23 +824,32 @@ function xtvr_hide ()
     /* go right to the parent so we don't muck with our own visualFootprint
      * record, we'll need it to be correct if we're ever unHidden. */
     if ("parentRecord" in this)
-        this.parentRecord.onVisualFootprintChanged (row, -this.visualFootprint);
+        this.parentRecord.onVisualFootprintChanged(row, -this.visualFootprint);
 }
 
 /*
  * unhide this record and all descendants.
  */
 XULTreeViewRecord.prototype.unHide =
-function xtvr_uhide ()
+function xtvr_uhide()
 {
     if (!this.isHidden)
         return;
+
+    var tree = this.findContainerTree();
+    if (tree && tree.frozen)
+    {
+        this.isHidden = false;
+        if ("parentRecord" in this)
+            this.parentRecord.onVisualFootprintChanged(0, this.visualFootprint);
+        return;
+    }
 
     this.isHidden = false;
     this.invalidateCache();
     var row = this.calculateVisualRow();
     if (this.parentRecord)
-        this.parentRecord.onVisualFootprintChanged (row, this.visualFootprint);
+        this.parentRecord.onVisualFootprintChanged(row, this.visualFootprint);
 }
 
 /*
@@ -1219,7 +1237,6 @@ function xtv_freeze ()
         this.changeStart = 0;
         this.changeAmount = 0;
     }
-    //dd ("freeze " + this.frozen);
 }
 
 /*
