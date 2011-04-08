@@ -132,8 +132,6 @@ CIRCUser.prototype.MAX_MESSAGES = 200;
 
 CIRCChannel.prototype.MAX_MESSAGES = 300;
 
-CIRCChanUser.prototype.MAX_MESSAGES = 200;
-
 function init()
 {
     if (("initialized" in client) && client.initialized)

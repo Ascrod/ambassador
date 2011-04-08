@@ -279,10 +279,9 @@ function initPrefs()
     CIRCNetwork.prototype.MAX_MESSAGES  = client.prefs["networkMaxLines"];
     CIRCNetwork.prototype.PROXY_TYPE_OVERRIDE = client.prefs["proxy.typeOverride"];
     CIRCChannel.prototype.MAX_MESSAGES  = client.prefs["channelMaxLines"];
-    CIRCChanUser.prototype.MAX_MESSAGES = client.prefs["userMaxLines"];
-    var dccUserMaxLines = client.prefs["dccUserMaxLines"];
-    CIRCDCCChat.prototype.MAX_MESSAGES  = dccUserMaxLines;
-    CIRCDCCFileTransfer.prototype.MAX_MESSAGES = dccUserMaxLines;
+    CIRCUser.prototype.MAX_MESSAGES     = client.prefs["userMaxLines"];
+    CIRCDCCChat.prototype.MAX_MESSAGES  = client.prefs["dccUserMaxLines"];
+    CIRCDCCFileTransfer.prototype.MAX_MESSAGES = client.prefs["dccUserMaxLines"];
     CIRCDCC.prototype.listenPorts       = client.prefs["dcc.listenPorts"];
     client.MAX_MESSAGES                 = client.prefs["clientMaxLines"];
     client.charset                      = client.prefs["charset"];
@@ -749,7 +748,7 @@ function onPrefChanged(prefName, newValue, oldValue)
             break;
 
         case "userMaxLines":
-            CIRCChanUser.prototype.MAX_MESSAGES = newValue;
+            CIRCUser.prototype.MAX_MESSAGES = newValue;
             break;
 
         case "userlistLeft":
