@@ -922,23 +922,9 @@ function processStartupURLs()
         }
     }
 
+    /* if we had nowhere else to go, connect to any default urls */
     if (!wentSomewhere)
-    {
-        /* if we had nowhere else to go, connect to any default urls */
-        var ary = client.prefs["initialURLs"];
-        for (var i = 0; i < ary.length; ++i)
-        {
-            if (ary[i] && ary[i] == "irc:///")
-            {
-                // Clean out "default network" entries, which we don't
-                // support any more; replace with the harmless irc:// URL.
-                ary[i] = "irc://";
-                client.prefs["initialURLs"].update();
-            }
-            if (ary[i] && ary[i] != "irc://")
-                gotoIRCURL(ary[i]);
-        }
-    }
+        openStartupURLs();
 
     if (client.viewsArray.length > 1 && !isStartupURL("irc://"))
         dispatch("delete-view", { view: client });
@@ -950,6 +936,23 @@ function processStartupURLs()
     {
         client.tabs.removeChild(client.tabs.firstChild);
         updateTabAttributes();
+    }
+}
+
+function openStartupURLs()
+{
+    var ary = client.prefs["initialURLs"];
+    for (var i = 0; i < ary.length; ++i)
+    {
+        if (ary[i] && ary[i] == "irc:///")
+        {
+            // Clean out "default network" entries, which we don't
+            // support any more; replace with the harmless irc:// URL.
+            ary[i] = "irc://";
+            client.prefs["initialURLs"].update();
+        }
+        if (ary[i] && ary[i] != "irc://")
+            gotoIRCURL(ary[i]);
     }
 }
 

@@ -119,6 +119,7 @@ function initCommands()
          ["font-family-other", cmdFont,                                      0],
          ["font-size",         cmdFont,                            CMD_CONSOLE],
          ["font-size-other",   cmdFont,                                      0],
+         ["goto-startup",      cmdGotoStartup,                     CMD_CONSOLE],
          ["goto-url",          cmdGotoURL,                                   0],
          ["goto-url-newwin",   cmdGotoURL,                                   0],
          ["goto-url-newtab",   cmdGotoURL,                                   0],
@@ -2190,6 +2191,11 @@ function cmdFocusInput(e)
         client.input.focus();
     else
         document.commandDispatcher.focusedElement = client.input;
+}
+
+function cmdGotoStartup(e)
+{
+    openStartupURLs();
 }
 
 function cmdGotoURL(e)
