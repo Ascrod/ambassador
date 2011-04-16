@@ -83,5 +83,9 @@
 				<em:skin>skin/modern/chatzilla/</em:skin>
 			</Description>
 		</em:file>
+
+		<!-- force unpack the xpi, otherwise window icons do not work
+		     on Gecko 2.0 and higher -->
+		<em:unpack>true</em:unpack>
 	</Description>
 </RDF>
