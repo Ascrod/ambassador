@@ -147,6 +147,13 @@ function onClose()
         return false;
     }
 
+    return true;
+}
+
+function onUnload()
+{
+    dd("Shutting down ChatZilla.");
+
     /* Disable every loaded & enabled plugin to give them all a chance to
      * clean up anything beyond the ChatZilla window (e.g. libraries). All
      * errors are disregarded as there's nothing we can do at this point.
@@ -164,12 +171,6 @@ function onClose()
         }
     }
     client.plugins = new Array();
-    return true;
-}
-
-function onUnload()
-{
-    dd("Shutting down ChatZilla.");
 
     // Close all dialogs.
     for (var net in client.networks)
