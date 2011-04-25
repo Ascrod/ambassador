@@ -707,10 +707,24 @@ function onWindowKeyPress(e)
 
     if ((0 <= idx) && (idx <= 8))
     {
-        if ((!isSuite && isMac && e.metaKey) ||
-            (!isSuite && (isLinux || isOS2) && e.altKey) ||
-            (!isSuite && (isWindows || isUnknown) && e.ctrlKey) ||
-            (isSuite && e.altKey))
+        var modifier = (e.altKey   ? 0x1 : 0) |
+                       (e.ctrlKey  ? 0x2 : 0) |
+                       (e.shiftKey ? 0x4 : 0) |
+                       (e.metaKey  ? 0x8 : 0);
+
+        var modifierMask;
+        if (client.prefs["tabGotoKeyModifiers"])
+            modifierMask = client.prefs["tabGotoKeyModifiers"];
+        else if (!isSuite && isMac)
+            modifierMask = 0x8; // meta
+        else if (!isSuite && (isLinux || isOS2))
+            modifierMask = 0x1; // alt
+        else if (!isSuite && (isWindows || isUnknown))
+            modifierMask = 0x2; // control
+        else if (isSuite)
+            modifierMask = 0x1; // alt
+
+        if ((modifier & modifierMask) == modifierMask)
         {
             // Pressing 1-8 takes you to that tab, while pressing 9 takes you
             // to the last tab always.

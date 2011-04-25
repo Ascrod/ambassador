@@ -253,6 +253,7 @@ function initPrefs()
          ["sound.user.start",    "beep beep", "global.soundEvts"],
          ["sound.user.stalk",    "beep",      "global.soundEvts"],
          ["inputSpellcheck",     true,                  "global"],
+         ["tabGotoKeyModifiers", 0,           "hidden"],
          ["timestamps",         false,        "appearance.timestamps"],
          ["timestamps.display", "[%H:%M]",    "appearance.timestamps"],
          ["timestamps.log",     "[%Y-%m-%d %H:%M:%S]", "hidden"],
