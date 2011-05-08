@@ -24,7 +24,7 @@
 			</Description>
 		</em:targetApplication>
 		
-		<!-- target: SeaMonkey, version 1.0 to 2.1.* -->
+		<!-- target: SeaMonkey, version 1.0 to 2.2.* -->
 		<em:targetApplication>
 			<Description>
 				<em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id>
