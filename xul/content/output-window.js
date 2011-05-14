@@ -102,7 +102,7 @@ function stock_initOutputWindow(newClient, newView, newClickHandler)
         updateHeader();
         var div = document.getElementById("messages-outer");
         div.removeAttribute("hidden");
-        window.scrollTo(0, window.document.height);
+        window.scrollTo(0, window.document.body.clientHeight);
     };
 
     client = newClient;
@@ -275,7 +275,7 @@ function changeCSS(url, id)
     }
 
     node.setAttribute("href", url);
-    window.scrollTo(0, window.document.height);
+    window.scrollTo(0, window.document.body.clientHeight);
 }
 
 function scrollToElement(element, position)

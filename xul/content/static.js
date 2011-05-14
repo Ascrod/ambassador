@@ -2812,7 +2812,7 @@ function checkScroll(frame)
     if (!window || !("document" in window))
         return false;
 
-    return (window.document.height - window.innerHeight -
+    return (window.document.body.clientHeight - window.innerHeight -
             window.pageYOffset) < 160;
 }
 
@@ -2820,7 +2820,7 @@ function scrollDown(frame, force)
 {
     var window = getContentWindow(frame);
     if (window && (force || checkScroll(frame)))
-        window.scrollTo(0, window.document.height);
+        window.scrollTo(0, window.document.body.clientHeight);
 }
 
 function advanceKeyboardFocus(amount)
