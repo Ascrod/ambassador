@@ -1552,8 +1552,7 @@ function cmdDeleteView(e)
             }
             delete e.view.messageCount;
             delete e.view.messages;
-            client.deck.removeChild(e.view.frame);
-            delete e.view.frame;
+            deleteFrame(e.view);
 
             var oldView = client.currentObject;
             if (client.currentObject == e.view)
@@ -1599,8 +1598,7 @@ function cmdHideView(e)
         var i = deleteTab (tb);
         if (i != -1)
         {
-            client.deck.removeChild(e.view.frame);
-            delete e.view.frame;
+            deleteFrame(e.view);
 
             var oldView = client.currentObject;
             if (client.currentObject == e.view)

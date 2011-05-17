@@ -2809,7 +2809,7 @@ function setCurrentObject (obj)
 function checkScroll(frame)
 {
     var window = getContentWindow(frame);
-    if (!window || !("document" in window))
+    if (!window || !("document" in window) || !("body" in window.document))
         return false;
 
     return (window.document.body.clientHeight - window.innerHeight -
@@ -3123,8 +3123,10 @@ function client_statechange (webProgress, request, stateFlags, status)
     const STOP = nsIWebProgressListener.STATE_STOP;
     const IS_NETWORK = nsIWebProgressListener.STATE_IS_NETWORK;
     const IS_DOCUMENT = nsIWebProgressListener.STATE_IS_DOCUMENT;
+    const IS_REQUEST = nsIWebProgressListener.STATE_IS_REQUEST;
 
     var frame;
+    //dd("progressListener.onStateChange(" + stateFlags.toString(16) + ")");
 
     // We only care about the initial start of loading, not the loading of
     // and page sub-components (IS_DOCUMENT, etc.).
@@ -3167,18 +3169,14 @@ function client_statechange (webProgress, request, stateFlags, status)
             var cwin = getContentWindow(frame);
             if (cwin && "initOutputWindow" in cwin)
             {
-                cwin.getMsg = getMsg;
-                cwin.initOutputWindow(client, frame.source, onMessageViewClick);
-                cwin.changeCSS(frame.source.getFontCSS("data"), "cz-fonts");
-                scrollDown(frame, true);
-
-                try
+                if (!("_called_initOutputWindow" in cwin))
                 {
-                    webProgress.removeProgressListener(this);
-                }
-                catch(ex)
-                {
-                    dd("Exception removing progress listener (done): " + ex);
+                    cwin._called_initOutputWindow = true;
+                    cwin.getMsg = getMsg;
+                    cwin.initOutputWindow(client, frame.source, onMessageViewClick);
+                    cwin.changeCSS(frame.source.getFontCSS("data"), "cz-fonts");
+                    scrollDown(frame, true);
+                    //dd("initOutputWindow(" + frame.source.getURL() + ")");
                 }
             }
             // XXX: For about:blank it won't find initOutputWindow. Cope.
@@ -3191,6 +3189,22 @@ function client_statechange (webProgress, request, stateFlags, status)
                    "function. This is BAD!");
             }
         }
+    }
+    // Requests stopping are either the page, or its components loading. We're
+    // interested in its components.
+    else if ((stateFlags & STOP) && (stateFlags & IS_REQUEST))
+    {
+        frame = getFrameForDOMWindow(webProgress.DOMWindow);
+        if (frame)
+        {
+            var cwin = getContentWindow(frame);
+            if (cwin && ("_called_initOutputWindow" in cwin))
+            {
+                scrollDown(frame, false);
+                //dd("scrollDown(" + frame.source.getURL() + ")");
+            }
+        }
+    
     }
 }
 
@@ -3505,6 +3519,17 @@ function syncOutputFrame(obj, nesting)
         return;
     }
 
+    /* We leave the progress listener attached so try to remove it first,
+     * should we be called on an already-set-up view.
+     */
+    try
+    {
+        iframe.removeProgressListener(client.progressListener, ALL);
+    }
+    catch (ex)
+    {
+    }
+
     try
     {
         if (getContentDocument(iframe) && ("webProgress" in iframe))
@@ -3632,7 +3657,6 @@ function getTabForObject(source, create)
         browser.setAttribute("type", "content");
         browser.setAttribute("flex", "1");
         browser.setAttribute("tooltip", "html-tooltip-node");
-        //browser.setAttribute("onload", "scrollDown(true);");
         browser.setAttribute("onclick",
                              "return onMessageViewClick(event)");
         browser.setAttribute("onmousedown",
@@ -4032,6 +4056,25 @@ function deleteTab(tb)
     setTimeout(updateTabAttributes, 0);
 
     return key;
+}
+
+function deleteFrame(view)
+{
+    const nsIWebProgress = Components.interfaces.nsIWebProgress;
+    const ALL = nsIWebProgress.NOTIFY_ALL;
+
+    // We leave the progress listener attached so try to remove it.
+    try
+    {
+        view.frame.removeProgressListener(client.progressListener, ALL);
+    }
+    catch (ex)
+    {
+        dd(formatException(ex));
+    }
+
+    client.deck.removeChild(view.frame);
+    delete view.frame;
 }
 
 function filterOutput(msg, msgtype, dest)
@@ -5116,12 +5159,7 @@ function addHistory (source, obj, mergeData)
     }
 
     if (needScroll)
-    {
         scrollDown(source.frame, true);
-        setTimeout(scrollDown, 500, source.frame, false);
-        setTimeout(scrollDown, 1000, source.frame, false);
-        setTimeout(scrollDown, 2000, source.frame, false);
-    }
 }
 
 function removeExcessMessages(source)
