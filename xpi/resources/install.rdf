@@ -6,59 +6,46 @@
 		<em:id>{59c81df5-4b7a-477b-912d-4e0fdf64e5f2}</em:id>
 		<em:version>@CHATZILLA_VERSION@</em:version>
 		
-		<!-- target: Mozilla, version 1.0 to 1.8 -->
-		<em:targetApplication>
-			<Description>
-				<em:id>{86c18b42-e466-45a9-ae7a-9b95ba6f5640}</em:id>
-				<em:minVersion>1.0</em:minVersion>
-				<em:maxVersion>1.8</em:maxVersion>
-			</Description>
-		</em:targetApplication>
+		<!-- BEGIN COPY BETWEEN /xpi/resources/install.rdf AND /locales/generic/install.rdf -->
+		<!-- ChatZilla supports Gecko 1.9.1 and later. All applications listed
+		     below are the subset of supported versions which also use an
+		     appropriate version of Gecko. -->
 		
-		<!-- target: Mozilla Firefox, version 1.0 to 4.0.* -->
+		<!-- target: Mozilla Firefox
+		     3.5 is Gecko 1.9.1
+		     3.6 is GEcko 1.9.2
+		     4.0 is Gecko 2.0 -->
 		<em:targetApplication>
 			<Description>
 				<em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
-				<em:minVersion>1.0</em:minVersion>
+				<em:minVersion>3.5</em:minVersion>
 				<em:maxVersion>4.0.*</em:maxVersion>
 			</Description>
 		</em:targetApplication>
 		
-		<!-- target: SeaMonkey, version 1.0 to 2.2.* -->
+		<!-- target: SeaMonkey
+		     2.0 is Gecko 1.9.1
+		     2.1 is Gecko 2.0
+		     2.2 is Gecko 2.0 -->
 		<em:targetApplication>
 			<Description>
 				<em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id>
-				<em:minVersion>1.0</em:minVersion>
+				<em:minVersion>2.0</em:minVersion>
 				<em:maxVersion>2.2.*</em:maxVersion>
 			</Description>
 		</em:targetApplication>
 		
-		<!-- target: Flock, version 0.4 to 1.0+ -->
-		<em:targetApplication>
-			<Description>
-				<em:id>{a463f10c-3994-11da-9945-000d60ca027b}</em:id>
-				<em:minVersion>0.4</em:minVersion>
-				<em:maxVersion>1.0+</em:maxVersion>
-			</Description>
-		</em:targetApplication>
-		
-		<!-- target: Netscape Navigator, version 9.0b1 to 9.0.* -->
-		<em:targetApplication>
-			<Description>
-				<em:id>{3db10fab-e461-4c80-8b97-957ad5f8ea47}</em:id>
-				<em:minVersion>9.0b1</em:minVersion>
-				<em:maxVersion>9.0.*</em:maxVersion>
-			</Description>
-		</em:targetApplication>
-		
-		<!-- target: Songbird, version 0.7 to 1.0 -->
+		<!-- target: Songbird
+		     1.9 is Gecko 1.9.2
+		     1.10 is Gecko 1.9.2 -->
 		<em:targetApplication>
 			<Description>
 				<em:id>songbird@songbirdnest.com</em:id>
-				<em:minVersion>0.7</em:minVersion>
-				<em:maxVersion>1.0</em:maxVersion>
+				<em:minVersion>1.9</em:minVersion>
+				<em:maxVersion>1.10.*</em:maxVersion>
 			</Description>
 		</em:targetApplication>
+		<!-- END COPY BETWEEN /xpi/resources/install.rdf AND /locales/generic/install.rdf -->
 		
 		<!-- front-end metadata -->
 		<em:name>ChatZilla</em:name>
