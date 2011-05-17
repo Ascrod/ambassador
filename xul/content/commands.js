@@ -2254,13 +2254,29 @@ function cmdGotoURL(e)
     }
 
     if (client.host == "Songbird")
-        var window = getWindowByType("Songbird:Main");
+        var browserWin = getWindowByType("Songbird:Main");
     else
-        window = getWindowByType("navigator:browser");
+        browserWin = getWindowByType("navigator:browser");
 
-    if (!window)
+    var location = browserWin ? browserWin.content.document.location : null;
+    var action = e.command.name;
+
+    // We don't want to replace ChatZilla running in a tab.
+    if ((action == "goto-url-newwin") ||
+        ((action == "goto-url") && browserWin &&
+         (location.href.indexOf("chrome://chatzilla/content/") == 0)))
     {
-        openTopWin(e.url);
+        try
+        {
+            if (typeof openUILinkIn == "function")
+                openUILinkIn(e.url, "window");
+            else
+                openTopWin(e.url);
+        }
+        catch (ex)
+        {
+            dd(formatException(ex));
+        }
         dispatch("focus-input");
         return;
     }
@@ -2269,23 +2285,24 @@ function cmdGotoURL(e)
     {
         try
         {
-            window.focus();
+            browserWin.focus();
         }
         catch (ex)
         {
             dd(formatException(ex));
         }
-
     }
 
-    if (e.command.name == "goto-url-newwin")
+    if (action == "goto-url-newtab")
     {
         try
         {
-            if (client.host == "Mozilla")
-                window.openNewWindowWith(e.url, false);
+            if (typeof browserWin.openUILinkIn == "function")
+                browserWin.openUILinkIn(e.url, "tab");
+            else if (client.host == "Mozilla")
+                browserWin.openNewTabWith(e.url, false, false);
             else
-                window.openNewWindowWith(e.url, null, null, null);
+                browserWin.openNewTabWith(e.url, null, null, null, null);
         }
         catch (ex)
         {
@@ -2295,31 +2312,6 @@ function cmdGotoURL(e)
         return;
     }
 
-    if (e.command.name == "goto-url-newtab")
-    {
-        try
-        {
-            if (client.host == "Mozilla")
-                window.openNewTabWith(e.url, false, false);
-            else
-                window.openNewTabWith(e.url, null, null, null, null);
-        }
-        catch (ex)
-        {
-            dd(formatException(ex));
-        }
-        dispatch("focus-input");
-        return;
-    }
-
-    var location = window.content.document.location;
-    if (location.href.indexOf("chrome://chatzilla/content/") == 0)
-    {
-        // don't replace chatzilla running in a tab
-        openTopWin(e.url);
-        dispatch("focus-input");
-        return;
-    }
     try
     {
         location.href = e.url;
