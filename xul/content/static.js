@@ -781,14 +781,24 @@ function processStartupScripts()
     var baseURL = client.iosvc.newURI(basePath, null, null);
     for (var i = 0; i < scripts.length; ++i)
     {
-        var url = client.iosvc.newURI(scripts[i], null, baseURL);
+        try
+        {
+            var url = client.iosvc.newURI(scripts[i], null, baseURL);
+            var path = getFileFromURLSpec(url.spec);
+        }
+        catch(ex)
+        {
+            var params = ["initialScripts", scripts[i]];
+            display(getMsg(MSG_ERR_INVALID_PREF, params), MT_ERROR);
+            dd(formatException(ex));
+            continue;
+        }
+
         if (url.scheme != "file" && url.scheme != "chrome")
         {
             display(getMsg(MSG_ERR_INVALID_SCHEME, scripts[i]), MT_ERROR);
             continue;
         }
-
-        var path = getFileFromURLSpec(url.spec);
 
         if (!path.exists())
         {
