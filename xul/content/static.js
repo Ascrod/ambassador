@@ -4648,6 +4648,19 @@ function __display(message, msgtype, sourceObj, destObj)
     else if (o.server && "me" in o.server)
         me = o.server.me;
 
+    /* Allow for matching (but not identical) user objects here. This tends to
+     * happen with bouncers and proxies, when they send channel messages
+     * pretending to be from the user; the sourceObj is a CIRCChanUser
+     * instead of a CIRCUser so doesn't == 'me'.
+     */
+    if (me)
+    {
+        if (sourceObj && (sourceObj.canonicalName == me.canonicalName))
+            sourceObj = me;
+        if (destObj && (destObj.canonicalName == me.canonicalName))
+            destObj = me;
+    }
+
     // Let callers get away with "ME!" and we have to substitute here.
     if (sourceObj == "ME!")
         sourceObj = me;
