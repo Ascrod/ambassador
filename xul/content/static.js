@@ -2819,7 +2819,7 @@ function setCurrentObject (obj)
 function checkScroll(frame)
 {
     var window = getContentWindow(frame);
-    if (!window || !("document" in window) || !("body" in window.document))
+    if (!window || !window.document || !window.document.body)
         return false;
 
     return (window.document.body.clientHeight - window.innerHeight -
@@ -2829,7 +2829,10 @@ function checkScroll(frame)
 function scrollDown(frame, force)
 {
     var window = getContentWindow(frame);
-    if (window && (force || checkScroll(frame)))
+    if (!window || !window.document || !window.document.body)
+        return;
+
+    if (force || checkScroll(frame))
         window.scrollTo(0, window.document.body.clientHeight);
 }
 
