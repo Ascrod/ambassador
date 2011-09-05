@@ -141,7 +141,7 @@ function initMenus()
         getContext: getDefaultContext,
         items:
         [
-         ["cmd-prefs",  {id: "menu_preferences"}],
+         ["cmd-prefs"],
          ["install-plugin"],
          ["goto-startup"],
          ["-"],
