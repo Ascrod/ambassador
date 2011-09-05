@@ -19,8 +19,14 @@
 
 <menupopup id="menu_ToolsPopup">
   <menuitem id="tb-chatzilla-menu" oncommand="toIRC()" 
-      insertafter="javascriptConsole,devToolsSeparator"
+      insertafter="menu_pageInfo,javascriptConsole,devToolsSeparator"
       label="&czMenu.label;" accesskey="&czMenu.accesskey;"/>
 </menupopup>
+
+<vbox id="appmenuSecondaryPane">
+  <menuitem id="tb-chatzilla-appmenu" oncommand="toIRC()" 
+      insertafter="appmenu_addons"
+      label="&czMenu.label;" accesskey="&czMenu.accesskey;"/>
+</vbox>
 
 </overlay>
