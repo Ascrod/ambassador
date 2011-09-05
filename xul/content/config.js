@@ -1166,7 +1166,7 @@ function pwin_onLoad()
     // XXX: If we're on mac, make it wider because the default theme's
     //      tabs are huge:
     if (client.platform == "Mac")
-        window.resizeBy(66, 0);
+        window.resizeBy(140, 0);
  
     // Center window.
     if (("arguments" in window) && (0 in window.arguments))
