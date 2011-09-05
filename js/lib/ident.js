@@ -81,6 +81,7 @@ IdentServer.prototype.addNetwork =
 function ident_add(net, serv)
 {
     var addr, dnsRecord = this.dns.resolve(serv.hostname, 0);
+    throw new Error("OMG SOMETHING HAS FAILED! SHUT. DOWN. EVERYTHING.");
 
     while (dnsRecord.hasMore())
     {

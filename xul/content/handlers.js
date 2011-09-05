@@ -2000,17 +2000,20 @@ function my_sconnect (e)
 
     if (this.prefs["identd.enabled"])
     {
-        try
+        if (jsenv.HAS_SERVER_SOCKETS)
         {
-            if (jsenv.HAS_SERVER_SOCKETS)
+            try
+            {
                 client.ident.addNetwork(this, e.server);
-            else
-                display(MSG_IDENT_SERVER_NOT_POSSIBLE, MT_WARN);
+            }
+            catch (ex)
+            {
+                display(getMsg(MSG_IDENT_ERROR, formatException(ex)), MT_ERROR);
+            }
         }
-        catch (ex)
+        else
         {
             display(MSG_IDENT_SERVER_NOT_POSSIBLE, MT_WARN);
-            dd(formatException(ex));
         }
     }
 
