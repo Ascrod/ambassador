@@ -3245,6 +3245,18 @@ function client_securitychange (webProgress, request, state)
 client.installPlugin =
 function cli_installPlugin(name, source)
 {
+    function checkPluginInstalled(name, path)
+    {
+        var installed = path.exists();
+        for (var i = 0; i < client.plugins.length; i++)
+            installed |= (client.plugins[i].id == name);
+
+        if (installed)
+        {
+            display(MSG_INSTALL_PLUGIN_ERR_ALREADY_INST, MT_ERROR);
+            throw CZ_PI_ABORT;
+        }
+    };
     function getZipEntry(reader, entryEnum)
     {
         // nsIZipReader was rewritten...
@@ -3385,12 +3397,8 @@ function cli_installPlugin(name, source)
             }
 
             dest.append(name);
+            checkPluginInstalled(name, dest);
 
-            if (dest.exists())
-            {
-                display(MSG_INSTALL_PLUGIN_ERR_ALREADY_INST, MT_ERROR);
-                throw CZ_PI_ABORT;
-            }
             dest.create(DIRECTORY_TYPE, 0700);
 
             // Actually extract files...
@@ -3469,11 +3477,8 @@ function cli_installPlugin(name, source)
             }
 
             dest.append(name);
+            checkPluginInstalled(name, dest);
 
-            if (dest.exists()) {
-                display(MSG_INSTALL_PLUGIN_ERR_ALREADY_INST, MT_ERROR);
-                throw CZ_PI_ABORT;
-            }
             dest.create(DIRECTORY_TYPE, 0700);
 
             dest.append("init.js");
