@@ -91,3 +91,19 @@ libs-%:
 	# XXX: it would be nice if we could just do nothing if no langpack is being done
 	#  currently, we just go and (re)build en-US if called with a non-supported locale
 	$(MAKE) libs AB_CD=$*
+
+repackage-zip: $(STAGEDIST)
+ifneq (en-US,$(AB_CD))
+	$(RM) -rf $(STAGEDIST)/extensions/$(INSTALL_EXTENSION_ID)
+	mkdir $(STAGEDIST)/extensions/$(INSTALL_EXTENSION_ID)
+	if test -d "$(DIST)/xpi-stage/$(XPI_NAME)/chrome/chatzilla.jar"; then \
+	  $(RM) -r $(DIST)/xpi-stage/$(XPI_NAME)/chrome/chatzilla;\
+	fi
+	# use tar for copying as cp doesn't portably preserve timestamps
+	cd $(DIST)/xpi-stage/$(XPI_NAME) && \
+	  tar $(TAR_CREATE_FLAGS) - * | ( cd $(STAGEDIST)/extensions/$(INSTALL_EXTENSION_ID) && tar -xf - )
+	@echo "$(AB_CD)"
+endif
+
+repackage-zip-%: $(STAGEDIST)
+	@$(MAKE) repackage-zip AB_CD=$* STAGEDIST=$(STAGEDIST)
