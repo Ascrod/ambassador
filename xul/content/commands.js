@@ -2253,8 +2253,10 @@ function cmdGotoURL(e)
         return;
     }
 
+    var browserWin;
+
     if (client.host == "Songbird")
-        var browserWin = getWindowByType("Songbird:Main");
+        browserWin = getWindowByType("Songbird:Main");
     else
         browserWin = getWindowByType("navigator:browser");
 
@@ -2263,6 +2265,8 @@ function cmdGotoURL(e)
 
     // We don't want to replace ChatZilla running in a tab.
     if ((action == "goto-url-newwin") ||
+        ((action == "goto-url-newtab") && !browserWin) ||
+        ((action == "goto-url") && !browserWin) ||
         ((action == "goto-url") && browserWin &&
          (location.href.indexOf("chrome://chatzilla/content/") == 0)))
     {
