@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
 chatzilla.jar:
 %       component {f21c35f4-1dd1-11b2-a503-9bf8a539ea39} components/chatzilla-service.js
 %       component {38a95514-1dd2-11b2-97e7-9da958640f2c} components/chatzilla-service.js
