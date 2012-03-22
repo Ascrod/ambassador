@@ -2181,12 +2181,8 @@ function cmdGotoURL(e)
     if (/^x-cz-command:/.test(e.url))
     {
         var ary = e.url.match(/^x-cz-command:(.*)$/i);
-        // Do the escaping dance:
-        var commandStr = decodeURI(ary[1]).quote();
-        var eventStr = uneval({isInteractive: true, source: e.source});
-        var jsStr = "void(view.dispatch(" + commandStr + "," + eventStr + "))";
-        var jsURI = "javascript:" + encodeURI(jsStr);
-        getContentWindow(e.sourceObject.frame).location.href = jsURI;
+        e.sourceObject.dispatch(decodeURI(ary[1]),
+                                {isInteractive: true, source: e.source});
         return;
     }
 
