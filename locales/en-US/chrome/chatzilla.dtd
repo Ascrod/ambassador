@@ -15,5 +15,5 @@
 <!ENTITY Bold.label                  "Bold">
 <!ENTITY Reverse.label               "Reverse video">
 <!ENTITY Normal.label                "Normal">
-<!ENTITY Color.label                 "Colour">
+<!ENTITY Color.label                 "Color">
 <!ENTITY ForeBack.label              "xx=Fore yy=Back">
