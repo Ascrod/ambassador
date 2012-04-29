@@ -411,6 +411,8 @@ function initMenus()
          ["disconnect",  {visibleif: NetConnected}],
          ["reconnect",   {visibleif: NetDisconnected}],
          ["-"],
+         ["rename"],
+         ["-"],
          ["toggle-text-dir"]
         ]
     };

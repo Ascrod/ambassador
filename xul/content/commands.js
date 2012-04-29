@@ -133,6 +133,7 @@ function initCommands()
          ["query",             cmdQuery,            CMD_NEED_SRV | CMD_CONSOLE],
          ["quit",              cmdQuit,                            CMD_CONSOLE],
          ["quote",             cmdQuote,            CMD_NEED_NET | CMD_CONSOLE],
+         ["rename",            cmdRename,                          CMD_CONSOLE],
          ["reload-plugin",     cmdReload,                          CMD_CONSOLE],
          ["rlist",             cmdRlist,            CMD_NEED_SRV | CMD_CONSOLE],
          ["reconnect",         cmdReconnect,        CMD_NEED_NET | CMD_CONSOLE],
@@ -1683,6 +1684,22 @@ function cmdRejoin(e)
 
     e.channel.join(e.channel.mode.key);
 }
+
+function cmdRename(e)
+{
+    var tab = getTabForObject(e.sourceObject);
+    if (!tab) {
+        feedback(e, getMsg(MSG_ERR_INTERNAL_DISPATCH, "rename"));
+        return;
+    }
+    var label = e.label || prompt(MSG_TAB_NAME_PROMPT, tab.label);
+    if (!label) {
+        return;
+    }
+    tab.label = label;
+    tab.setAttribute("tooltiptext", e.sourceObject.unicodeName);
+}
+
 
 function cmdTogglePref (e)
 {
