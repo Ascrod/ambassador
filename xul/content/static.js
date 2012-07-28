@@ -4165,7 +4165,7 @@ function c_checkURLScheme(url)
                 client.schemes[c.substr(len)] = true;
         }
     }
-    return (url in client.schemes);
+    return (url.toLowerCase() in client.schemes);
 }
 
 client.adoptNode =

@@ -204,7 +204,7 @@ function insertMailToLink(matchText, containerTag, eventData, mungerEntry)
 
     var href;
 
-    if (matchText.indexOf("mailto:") != 0)
+    if (matchText.toLowerCase().indexOf("mailto:") != 0)
         href = "mailto:" + matchText;
     else
         href = matchText;
