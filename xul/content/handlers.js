@@ -2374,7 +2374,7 @@ function net_autoperform()
 {
     if (("autoPerformSent" in this) && (this.autoPerformSent == false))
     {
-        var cmdary = this.prefs["autoperform"];
+        var cmdary = client.prefs["autoperform.network"].concat(this.prefs["autoperform"]);
         for (var i = 0; i < cmdary.length; ++i)
         {
             if (cmdary[i][0] == "/")
@@ -2643,6 +2643,8 @@ function my_cjoin (e)
          */
         if (e.channel.unicodeName[0] == "!")
             dispatch("set-current-view", { view: e.channel });
+
+        this.doAutoPerform();
     }
     else
     {
@@ -2872,6 +2874,19 @@ function my_cquit (e)
     this.removeFromList(e.user);
 
     this.updateHeader();
+}
+
+CIRCChannel.prototype.doAutoPerform =
+function my_cautoperform()
+{
+    var cmdary = client.prefs["autoperform.channel"].concat(this.prefs["autoperform"]);
+    for (var i = 0; i < cmdary.length; ++i)
+    {
+        if (cmdary[i][0] == "/")
+            this.dispatch(cmdary[i].substr(1));
+        else
+            this.dispatch(cmdary[i]);
+    }
 }
 
 CIRCChannel.prototype._clearUserList =
@@ -3128,6 +3143,19 @@ function my_dccreject(e)
     //e.set = "dcc-file";
     //e.destObject = f;
     //e.destMethod = "onGotReject";
+}
+
+CIRCUser.prototype.doAutoPerform =
+function my_autoperform()
+{
+    var cmdary = client.prefs["autoperform.user"].concat(this.prefs["autoperform"]);
+    for (var i = 0; i < cmdary.length; ++i)
+    {
+        if (cmdary[i][0] == "/")
+            this.dispatch(cmdary[i].substr(1));
+        else
+            this.dispatch(cmdary[i]);
+    }
 }
 
 CIRCDCCChat.prototype.onInit =

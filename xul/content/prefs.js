@@ -100,6 +100,10 @@ function initPrefs()
          ["aliases",            [],       "lists.aliases"],
          ["autoAwayCap",        300,      "global"],
          ["autoAwayPeriod",     2,        "appearance.misc"],
+         ["autoperform.channel", [],      "lists.autoperform"],
+         ["autoperform.client",  [],      "lists.autoperform"],
+         ["autoperform.network", [],      "lists.autoperform"],
+         ["autoperform.user",   ["whois"], "lists.autoperform"],
          ["autoRejoin",         false,    ".connect"],
          ["away",               "",       "hidden"],
          ["awayIdleMsg",        "",       ".ident"],
@@ -495,6 +499,7 @@ function getChannelPrefManager(channel)
 
     var prefs =
         [
+         ["autoperform",      [],    "lists.autoperform"],
          ["autoRejoin",       defer, ".connect"],
          ["bugURL",           defer, "appearance.misc"],
          ["bugURL.comment",   defer, "appearance.misc"],
@@ -554,6 +559,7 @@ function getUserPrefManager(user)
 
     var prefs =
         [
+         ["autoperform",      [],    "lists.autoperform"],
          ["charset",          defer, ".connect"],
          ["collapseActions",  defer, "appearance.misc"],
          ["collapseMsgs",     defer, "appearance.misc"],

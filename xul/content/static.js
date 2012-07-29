@@ -179,6 +179,7 @@ function init()
     client.ceip.logEvent({type: "client", event: "start"});
 
     setTimeout("dispatch('focus-input')", 0);
+    setTimeout(processStartupAutoperform, 0);
     setTimeout(processStartupURLs, 0);
 }
 
@@ -852,6 +853,18 @@ function getPluginIndexByURL(url)
     }
 
     return -1;
+}
+
+function processStartupAutoperform()
+{
+    var cmdary = client.prefs["autoperform.client"];
+    for (var i = 0; i < cmdary.length; ++i)
+    {
+        if (cmdary[i][0] == "/")
+            client.dispatch(cmdary[i].substr(1));
+        else
+            client.dispatch(cmdary[i]);
+    }
 }
 
 function processStartupURLs()
@@ -1564,8 +1577,9 @@ function openQueryTab(server, nick)
         }
 
         dispatch("create-tab-for-view", { view: user });
+
+        user.doAutoPerform();
     }
-    user.whois();
     return user;
 }
 
@@ -1636,7 +1650,7 @@ function getObjectDetails (obj, rv)
         case "IRCUser":
             rv.viewType = MSG_USER;
             rv.user = obj;
-            rv.userName = obj.unicodeName;
+            rv.userName = rv.nickname = obj.unicodeName;
             rv.server = rv.user.parent;
             rv.network = rv.server.parent;
             break;
@@ -1644,7 +1658,7 @@ function getObjectDetails (obj, rv)
         case "IRCChanUser":
             rv.viewType = MSG_USER;
             rv.user = obj;
-            rv.userName = obj.unicodeName;
+            rv.userName = rv.nickname = obj.unicodeName;
             rv.channel = rv.user.parent;
             rv.server = rv.channel.parent;
             rv.network = rv.server.parent;
