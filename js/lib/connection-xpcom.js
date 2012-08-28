@@ -229,6 +229,14 @@ function bc_connect(host, port, config, observer)
     this.host = host.toLowerCase();
     this.port = port;
 
+    /* The APIs below want either host:port or host and port seperately. For
+     * the combined case, we must preserve the square brackets around IPv6
+     * literals. For the split case, we must strip them.
+     */
+    var hostPort = host + ":" + port;
+    if (host[0] == '[' && host[host.length - 1] == ']')
+        host = host.substr(1, host.length - 2);
+
     if (typeof config != "object")
         config = {};
 
@@ -259,9 +267,9 @@ function bc_connect(host, port, config, observer)
          * force no proxy. Other values will get default treatment.
          */
         if (config.proxy == "http")
-            proxyInfo = getProxyFor("http://" + host + ":" + port);
+            proxyInfo = getProxyFor("http://" + hostPort);
         else if (config.proxy != "none")
-            proxyInfo = getProxyFor("irc://" + host + ":" + port);
+            proxyInfo = getProxyFor("irc://" + hostPort);
 
         /* Since the proxy info is opaque, we need to check that we got
          * something for our HTTP proxy - we can't just check proxyInfo.type.
@@ -270,7 +278,7 @@ function bc_connect(host, port, config, observer)
     }
     else
     {
-        proxyInfo = getProxyFor("irc://" + host + ":" + port);
+        proxyInfo = getProxyFor("irc://" + hostPort);
     }
 
     if (proxyInfo && ("type" in proxyInfo) && (proxyInfo.type == "unknown"))
@@ -364,7 +372,7 @@ function bc_connect(host, port, config, observer)
     // Bootstrap the connection if we're proxying via an HTTP proxy.
     if (usingHTTPCONNECT)
     {
-        this.sendData("CONNECT " + host + ":" + port + " HTTP/1.1\r\n\r\n");
+        this.sendData("CONNECT " + hostPort + " HTTP/1.1\r\n\r\n");
     }
 
     return true;

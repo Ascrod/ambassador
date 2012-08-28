@@ -1787,62 +1787,89 @@ function doCommandWithParams(command, params)
     }
 }
 
-var testURLs =
-    ["irc:", "irc://", "irc:///", "irc:///help", "irc:///help,needkey",
-    "irc://irc.foo.org", "irc://foo:6666",
-    "irc://foo", "irc://irc.foo.org/", "irc://foo:6666/", "irc://foo/",
-    "irc://irc.foo.org/,needpass", "irc://foo/,isserver",
-    "irc://moznet/,isserver", "irc://moznet/",
-    "irc://foo/chatzilla", "irc://foo/chatzilla/",
+var testURLs = [
+    "irc:",
+    "irc://",
+    "irc://foo",
+    "irc://foo/",
+    "irc://foo/,isserver",
+    "irc://foo/chatzilla",
+    "irc://foo/chatzilla/",
+    "irc://foo:6666",
+    "irc://foo:6666/",
+    "irc://irc.foo.org",
+    "irc://irc.foo.org/",
+    "irc://irc.foo.org/,needpass",
     "irc://irc.foo.org/?msg=hello%20there",
     "irc://irc.foo.org/?msg=hello%20there&ignorethis",
     "irc://irc.foo.org/%23mozilla,needkey?msg=hello%20there&ignorethis",
-    "invalids",
-    "irc://irc.foo.org/,isnick"];
+    "irc://moznet/",
+    "irc://moznet/,isserver",
+    "irc://[fe80::5d49:767b:4b68:1b17]",
+    "irc://[fe80::5d49:767b:4b68:1b17]/",
+    "irc://[fe80::5d49:767b:4b68:1b17]:6666",
+    "irc://[fe80::5d49:767b:4b68:1b17]:6666/"
+];
+
+var testFailURLs = [
+    "irc:///",
+    "irc:///help",
+    "irc:///help,needkey",
+    "irc://irc.foo.org/,isnick",
+    "invalids"
+];
 
 function doURLTest()
 {
-    for (var u in testURLs)
+    var passed = 0, total = testURLs.length + testFailURLs.length;
+    for (var i = 0; i < testURLs.length; i++)
     {
-        dd("testing url \"" + testURLs[u] + "\"");
-        var o = parseIRCURL(testURLs[u]);
+        var o = parseIRCURL(testURLs[i]);
         if (!o)
-            dd("PARSE FAILED!");
+            display("Parse of '" + testURLs[i] + "' failed.", MT_ERROR);
         else
-            dd(dumpObjectTree(o));
-        dd("---");
+            passed++;
     }
+    for (var i = 0; i < testFailURLs.length; i++)
+    {
+        var o = parseIRCURL(testFailURLs[i]);
+        if (o)
+            display("Parse of '" + testFailURLs[i] + "' unexpectedly succeeded.", MT_ERROR);
+        else
+            passed++;
+    }
+    display("Passed " + passed + " out of " + total + " tests (" +
+            passed / total * 100 + "%).", MT_INFO);
 }
 
-var testIRCURLObjects =
-    [
-     [{}, "irc://"],
-     [{host: "undernet"},                                    "irc://undernet/"],
-     [{host: "irc.undernet.org"},                    "irc://irc.undernet.org/"],
-     [{host: "irc.undernet.org", isserver: true},    "irc://irc.undernet.org/"],
-     [{host: "undernet", isserver: true},           "irc://undernet/,isserver"],
-     [{host: "irc.undernet.org", port: 6667},        "irc://irc.undernet.org/"],
-     [{host: "irc.undernet.org", port: 1},         "irc://irc.undernet.org:1/"],
-     [{host: "irc.undernet.org", port: 1, scheme: "ircs"},
-                                                  "ircs://irc.undernet.org:1/"],
-     [{host: "irc.undernet.org", port: 9999, scheme: "ircs"},
-                                                    "ircs://irc.undernet.org/"],
-     [{host: "undernet", needpass: true},           "irc://undernet/,needpass"],
-     [{host: "undernet", pass: "cz"},                "irc://undernet/?pass=cz"],
-     [{host: "undernet", charset: "utf-8"},    "irc://undernet/?charset=utf-8"],
-     [{host: "undernet", target: "#foo"},              "irc://undernet/%23foo"],
-     [{host: "undernet", target: "#foo", needkey: true},
-                                               "irc://undernet/%23foo,needkey"],
-     [{host: "undernet", target: "John", isnick: true},
-                                                  "irc://undernet/John,isnick"],
-     [{host: "undernet", target: "#foo", key: "cz"},
-                                                "irc://undernet/%23foo?key=cz"],
-     [{host: "undernet", charset: "utf-8"},    "irc://undernet/?charset=utf-8"],
-     [{host: "undernet", target: "John", msg: "spam!"},
-                                             "irc://undernet/John?msg=spam%21"],
-     [{host: "undernet", target: "foo", isnick: true, msg: "spam!", pass: "cz"},
-                               "irc://undernet/foo,isnick?msg=spam%21&pass=cz"]
-    ];
+var testIRCURLObjects = [
+    [{}, "irc://"],
+    [{host: "undernet"},                                    "irc://undernet/"],
+    [{host: "irc.undernet.org"},                    "irc://irc.undernet.org/"],
+    [{host: "irc.undernet.org", isserver: true},    "irc://irc.undernet.org/"],
+    [{host: "undernet", isserver: true},           "irc://undernet/,isserver"],
+    [{host: "irc.undernet.org", port: 6667},        "irc://irc.undernet.org/"],
+    [{host: "irc.undernet.org", port: 1},         "irc://irc.undernet.org:1/"],
+    [{host: "irc.undernet.org", port: 1, scheme: "ircs"},
+                                                 "ircs://irc.undernet.org:1/"],
+    [{host: "irc.undernet.org", port: 9999, scheme: "ircs"},
+                                                   "ircs://irc.undernet.org/"],
+    [{host: "undernet", needpass: true},           "irc://undernet/,needpass"],
+    [{host: "undernet", pass: "cz"},                "irc://undernet/?pass=cz"],
+    [{host: "undernet", charset: "utf-8"},    "irc://undernet/?charset=utf-8"],
+    [{host: "undernet", target: "#foo"},              "irc://undernet/%23foo"],
+    [{host: "undernet", target: "#foo", needkey: true},
+                                              "irc://undernet/%23foo,needkey"],
+    [{host: "undernet", target: "John", isnick: true},
+                                                 "irc://undernet/John,isnick"],
+    [{host: "undernet", target: "#foo", key: "cz"},
+                                               "irc://undernet/%23foo?key=cz"],
+    [{host: "undernet", charset: "utf-8"},    "irc://undernet/?charset=utf-8"],
+    [{host: "undernet", target: "John", msg: "spam!"},
+                                            "irc://undernet/John?msg=spam%21"],
+    [{host: "undernet", target: "foo", isnick: true, msg: "spam!", pass: "cz"},
+                              "irc://undernet/foo,isnick?msg=spam%21&pass=cz"]
+];
 
 function doObjectURLtest()
 {

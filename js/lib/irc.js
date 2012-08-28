@@ -3576,24 +3576,18 @@ function parseIRCURL(url)
     var rest = arrayHasElementAt(ary, 2) ? ary[2] : "";
 
     /* split <host> into server (or network) / port */
-    ary = host.match(/^([^\:]+)(\:\d+)?$/);
+    ary = host.match(/^([^\:]+|\[[^\]]+\])(\:\d+)?$/i);
     if (!ary)
     {
         dd("parseIRCURL: host/port split failed");
         return null;
     }
 
+    // 1 = hostname or IPv4 address, 2 = port.
     specifiedHost = rv.host = ary[1].toLowerCase();
+    rv.isserver = arrayHasElementAt(ary, 2) || /\.|:/.test(specifiedHost);
     if (arrayHasElementAt(ary, 2))
-    {
-        rv.isserver = true;
         rv.port = parseInt(ary[2].substr(1));
-    }
-    else
-    {
-        if (specifiedHost.indexOf(".") != -1)
-            rv.isserver = true;
-    }
 
     if (rest)
     {
