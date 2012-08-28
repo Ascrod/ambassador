@@ -22,64 +22,85 @@
   <script src="chrome://chatzilla/content/lib/js/file-utils.js"/>
   <script src="chrome://chatzilla/content/lib/xul/tree-utils.js"/>
   <script src="channels.js"/>
-  
-  <hbox flex="1">
-    <vbox flex="1" id="leftPanel">
-      <hbox align="center">
-        <label value="&qsearch.label;" accesskey="&qsearch.accesskey;" 
-            control="filterText"/>
-        <textbox id="filterText" flex="1" type="search" 
-            oncommand="onFilter()" onkeypress="onKeyPress(event)"/>
-      </hbox>
-      <checkbox id="searchTopics" oncommand="runFilter(); focusSearch()" 
-          label="&topics.label;" accesskey="&topics.accesskey;" 
-          checked="true"/>
-      <tree id="channelList" flex="1" hidecolumnpicker="true" seltype="single"
-          onselect="onSelectionChange()">
-        <treecols>
-          <treecol label="&col.name;"  width="100" id="chanColName"/>
-          <splitter class="tree-splitter"/>
-          <treecol label="&col.users;" width="50"  id="chanColUsers"/>
-          <splitter class="tree-splitter"/>
-          <treecol label="&col.topic;" flex="1"    id="chanColTopic"/>
-        </treecols>
-        <treechildren flex="1"/>
-      </tree>
-      <hbox id="loadContainer">
-        <label id="loadLabel" value="" flex="1" crop="right"/>
-        <deck id="loadBarDeck">
-          <progressmeter id="loadBar" mode="undetermined" />
-          <box/>
-        </deck>
-      </hbox>
-    </vbox>
-    <separator class="groove"/>
-    <vbox id="rightPanel">
-      <button disabled="true" id="joinBtn" label="&join.label;" 
-          accesskey="&join.accesskey;" default="true"
-          oncommand="if (joinChannel()) window.close()"/>
-      <separator class="groove"/>
-      <grid>
-        <columns><column/><column flex="1"/></columns>
+
+  <vbox flex="1">
+    <hbox id="topPanel">
+      <grid flex="1">
+        <columns>
+          <column/><column flex="1"/><column id="rightPanel"/>
+        </columns>
         <rows>
           <row align="center">
-            <label value="&minusers.label;" accesskey="&minusers.accesskey;" 
-                control="minUsers"/>
-            <textbox id="minUsers" type="search" 
-                oncommand="onFilter()"/>
-            </row>
-            <row align="center">
-            <label value="&maxusers.label;" accesskey="&maxusers.accesskey;"
-                control="maxUsers"/>
-            <textbox id="maxUsers" type="search" 
-                oncommand="onFilter()"/>
+            <label value="&network.label;" accesskey="&network.accesskey;"
+                control="network"/>
+            <menulist id="network" editable="true" tabindex="1"
+                oncommand="onFilter()" onblur="onFilter()"
+                onkeypress="onKeyPress(event)" onkeyup="update()">
+              <menupopup id="networks" onpopupshowing="onShowingNetworks()">
+              </menupopup>
+            </menulist>
+            <button id="join" disabled="true" default="true" tabindex="4"
+                label="&join.label;" accesskey="&join.accesskey;"
+                oncommand="if (joinChannel()) window.close()"/>
+          </row>
+          <row align="center">
+            <label value="&channel.label;" accesskey="&channel.accesskey;"
+                control="channel"/>
+            <textbox id="channel" type="search" tabindex="2"
+                oncommand="onFilter()" onkeypress="onKeyPress(event)"/>
+            <hbox align="center">
+              <label value="&minusers.label;" accesskey="&minusers.accesskey;"
+                  control="minUsers"/>
+              <textbox id="minUsers" type="search" flex="1" tabindex="5"
+                  oncommand="onFilter()"/>
+            </hbox>
+          </row>
+          <row align="center">
+            <spacer/>
+            <checkbox id="includeTopic" checked="true" tabindex="3"
+                label="&topics.label;" accesskey="&topics.accesskey;"
+                oncommand="onFilter(); focusSearch()"/>
+            <hbox align="center">
+              <label value="&maxusers.label;" accesskey="&maxusers.accesskey;"
+                  control="maxUsers"/>
+              <textbox id="maxUsers" type="search" flex="1" tabindex="6"
+                  oncommand="onFilter()"/>
+            </hbox>
+          </row>
+          <row align="center">
+            <spacer/>
+            <label id="lastUpdated"/>
+            <button id="refresh" tabindex="7"
+                label="&refresh.label;" accesskey="&refresh.accesskey;"
+                oncommand="refreshList(); focusSearch()"/>
           </row>
         </rows>
       </grid>
-      <separator/>
-      <button id="refreshNow" label="&refresh.label;" 
-          accesskey="&refresh.accesskey;" 
-          oncommand="refreshList(); focusSearch()"/>
-    </vbox>
-  </hbox>
+    </hbox>
+    <deck id="bottomPanel" flex="1" selectedindex="0">
+      <hbox pack="center" align="center">
+        <label value="&network.hint.label;"/>
+      </hbox>
+      <vbox>
+        <tree id="channels" flex="1" hidecolumnpicker="true" seltype="single" tabindex="8"
+            onselect="onSelectionChange()">
+          <treecols>
+            <treecol label="&col.name;" width="100" id="chanColName"/>
+            <splitter class="tree-splitter"/>
+            <treecol label="&col.users;" width="50" id="chanColUsers"/>
+            <splitter class="tree-splitter"/>
+            <treecol label="&col.topic;" flex="1" id="chanColTopic"/>
+          </treecols>
+          <treechildren flex="1"/>
+        </tree>
+        <hbox id="loadContainer">
+          <label id="loadLabel" flex="1" crop="right"/>
+          <deck id="loadBarDeck">
+            <progressmeter id="loadBar" mode="undetermined" />
+          <box/>
+          </deck>
+        </hbox>
+      </vbox>
+    </deck>
+  </vbox>
 </dialog>

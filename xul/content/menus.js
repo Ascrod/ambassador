@@ -128,7 +128,6 @@ function initMenus()
         [
          ["join"],
          // Planned future menu items, not implemented yet.
-         //["attach"],
          //["-"],
          //["manage-networks"],
          ["-"],

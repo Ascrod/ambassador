@@ -720,10 +720,8 @@ function xtvr_appchild (child)
 XULTreeViewRecord.prototype.appendChildren =
 function xtvr_appchild (children)
 {
-    var idx = this.childData.length;
     var delta = 0;
-    var len = children.length;
-    for (var i = 0; i <  len; ++i)
+    for (var i = 0; i < children.length; ++i)
     {
         var child = children[i];
         child.isHidden = false;
@@ -745,25 +743,54 @@ function xtvr_appchild (children)
 }
 
 /*
- * remove a child from this record. updates the tree too.  DONT call this with
- * an index not actually contained by this record.
+ * Removes a single child from this record by index.
+ * @param index Index of the child record to remove.
  */
 XULTreeViewRecord.prototype.removeChildAtIndex =
-function xtvr_remchild (index)
+function xtvr_remchild(index)
 {
-    if (!ASSERT(this.childData.length, "removing from empty childData"))
+    var len = this.childData.length;
+    if (!ASSERT(index >= 0 && index < len, "index out of bounds"))
         return;
-    
+
     var orphan = this.childData[index];
-    var fpDelta = -orphan.visualFootprint;
+    var delta = -orphan.visualFootprint;
     var changeStart = orphan.calculateVisualRow();
     delete orphan.parentRecord;
-    arrayRemoveAt (this.childData, index);
-    
+    arrayRemoveAt(this.childData, index);
+
     if (!orphan.isHidden && "isContainerOpen" in this && this.isContainerOpen)
+        this.onVisualFootprintChanged(changeStart, delta);
+}
+
+/*
+ * Removes a range of children from this record by index. Faster than multiple
+ * removeChildAtIndex() calls.
+ * @param index Index of the first child record to remove.
+ * @param count Number of child records to remove.
+ */
+XULTreeViewRecord.prototype.removeChildrenAtIndex =
+function xtvr_remchildren(index, count)
+{
+    var len = this.childData.length;
+    if (!ASSERT(index >= 0 && index < len, "index out of bounds"))
+        return;
+    if (!ASSERT(count > 0 && index + count <= len, "count out of bounds"))
+        return;
+
+    var delta = 0;
+    var changeStart = this.childData[index].calculateVisualRow();
+    for (var i = 0; i < count; ++i)
     {
-        this.onVisualFootprintChanged (changeStart, fpDelta);
+        var orphan = this.childData[index + i];
+        if (!orphan.isHidden)
+            delta -= orphan.visualFootprint;
+        delete orphan.parentRecord;
     }
+    this.childData.splice(index, count);
+
+    if ("isContainerOpen" in this && this.isContainerOpen)
+        this.onVisualFootprintChanged(changeStart, delta);
 }
 
 /*

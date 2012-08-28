@@ -4,8 +4,11 @@
 
 <!ENTITY window.title  "Join Channel">
 
-<!ENTITY qsearch.label     "Quick Search:">
-<!ENTITY qsearch.accesskey "S">
+<!ENTITY network.label     "Network:">
+<!ENTITY network.accesskey "N">
+
+<!ENTITY channel.label     "Channel:">
+<!ENTITY channel.accesskey "C">
 
 <!ENTITY topics.label     "Search topics as well as channel names">
 <!ENTITY topics.accesskey "t">
@@ -14,7 +17,7 @@
 <!ENTITY join.accesskey "J">
 
 <!ENTITY minusers.label     "Min users:">
-<!ENTITY minusers.accesskey "n">
+<!ENTITY minusers.accesskey "M">
 
 <!ENTITY maxusers.label     "Max users:">
 <!ENTITY maxusers.accesskey "x">
@@ -22,6 +25,9 @@
 <!ENTITY refresh.label     "Refresh Now">
 <!ENTITY refresh.accesskey "">
 
+<!ENTITY network.hint.label "Enter any network or server name (you can include a port) and a channel to join.">
+
+<!ENTITY col.network "Network">
 <!ENTITY col.name  "Name">
 <!ENTITY col.users "Users">
 <!ENTITY col.topic "Topic">

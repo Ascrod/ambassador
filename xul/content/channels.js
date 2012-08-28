@@ -5,13 +5,8 @@
 var client;
 var network;
 var channels = new Array();
-var createChannelItem;
-var serverChannelPrefixes;
-
-var channelTreeShare = new Object();
-var channelTreeView, channelTreeBoxObject, channelLoadLabel, channelLoadBar,
-    channelLoadBarDesk, channelFilterText, channelSearchTopics, channelMinUsers,
-    channelMaxUsers, channelJoinBtn, channelRefreshBtn;
+var tree = { view: null, newItem: null, share: new Object() };
+var xul = new Object();
 
 
 // Create list of operations. These are handled by common code.
@@ -66,10 +61,10 @@ const sortKeyToColID = { name: "chanColName",
 
 function onLoad()
 {
-    function ondblclick(event) { channelTreeView.onRouteDblClick(event); };
-    function onkeypress(event) { channelTreeView.onRouteKeyPress(event); };
-    function onfocus(event)    { channelTreeView.onRouteFocus(event); };
-    function onblur(event)     { channelTreeView.onRouteBlur(event); };
+    function ondblclick(event) { tree.view.onRouteDblClick(event); };
+    function onkeypress(event) { tree.view.onRouteKeyPress(event); };
+    function onfocus(event)    { tree.view.onRouteFocus(event); };
+    function onblur(event)     { tree.view.onRouteBlur(event); };
 
     function doJoin()
     {
@@ -78,12 +73,9 @@ function onLoad()
     };
 
     client = window.arguments[0].client;
-    network = window.arguments[0].network;
-    network.joinDialog = window;
+    client.joinDialog = window;
 
     client.ceip.logEvent({type: "dialog", dialog: "channels", event: "open"});
-
-    serverChannelPrefixes = network.primServ.channelTypes;
 
     window.dd = client.mainWindow.dd;
     window.ASSERT = client.mainWindow.ASSERT;
@@ -100,54 +92,47 @@ function onLoad()
             window[m] = client.mainWindow[m];
     }
 
+    // Cache all the XUL DOM elements.
+    var elements = ["network", "networks", "channel", "includeTopic",
+                    "lastUpdated", "join", "minUsers", "maxUsers", "refresh",
+                    "bottomPanel", "channels", "loadContainer", "loadLabel",
+                    "loadBarDeck", "loadBar"];
+    for (var i = 0; i < elements.length; i++)
+        xul[elements[i]] = document.getElementById(elements[i]);
+
     // Set the <dialog>'s class so we can do platform-specific CSS.
     var dialog = document.getElementById("chatzilla-window");
     dialog.className = "platform-" + client.platform;
 
-    var tree = document.getElementById("channelList");
-    channelTreeBoxObject = tree.treeBoxObject;
-
-    channelTreeView = new XULTreeView(channelTreeShare);
-    channelTreeView.onRowCommand = doJoin;
-    channelTreeView.cycleHeader = changeSort;
-    channelTreeBoxObject.view = channelTreeView;
-
-    channelLoadLabel = document.getElementById("loadLabel");
-    channelLoadBar = document.getElementById("loadBar");
-    channelLoadBarDesk = document.getElementById("loadBarDeck");
-    channelFilterText = document.getElementById("filterText");
-    channelSearchTopics = document.getElementById("searchTopics");
-    channelMinUsers = document.getElementById("minUsers");
-    channelMaxUsers = document.getElementById("maxUsers");
-    channelJoinBtn = document.getElementById("joinBtn");
-    channelRefreshBtn = document.getElementById("refreshNow");
+    // Set up the channel tree view.
+    tree.view = new XULTreeView(tree.share);
+    tree.view.onRowCommand = doJoin;
+    tree.view.cycleHeader = changeSort;
+    xul.channels.treeBoxObject.view = tree.view;
 
     // If the new "search" binding is not working (i.e. doesn't exist)...
-    if (!("searchButton" in channelFilterText))
+    if (!("searchButton" in xul.channel))
     {
         // ...restore the text boxes to their former selves.
-        channelFilterText.setAttribute("timeout", "500");
-        channelFilterText.setAttribute("type", "timed");
-        channelMinUsers.setAttribute("timeout", "500");
-        channelMinUsers.setAttribute("type", "timed");
-        channelMaxUsers.setAttribute("timeout", "500");
-        channelMaxUsers.setAttribute("type", "timed");
+        xul.channel.setAttribute("timeout", "500");
+        xul.channel.setAttribute("type", "timed");
+        xul.minUsers.setAttribute("timeout", "500");
+        xul.minUsers.setAttribute("type", "timed");
+        xul.maxUsers.setAttribute("timeout", "500");
+        xul.maxUsers.setAttribute("type", "timed");
     }
 
-    // Sort by user count, decending.
+    // Sort by user count, descending.
     changeSort("chanColUsers");
 
-    tree.addEventListener("dblclick", ondblclick, false);
-    tree.addEventListener("keypress", onkeypress, false);
-    tree.addEventListener("focus", onfocus, false);
-    tree.addEventListener("blur", onblur, false);
+    xul.channels.addEventListener("dblclick", ondblclick, false);
+    xul.channels.addEventListener("keypress", onkeypress, false);
+    xul.channels.addEventListener("focus", onfocus, false);
+    xul.channels.addEventListener("blur", onblur, false);
 
-    createChannelItem = new ChannelEntry("", "", MSG_CD_CREATE);
-    createChannelItem.first = true;
-    channelTreeView.childData.appendChild(createChannelItem);
-
-    document.title = getMsg(MSG_CD_TITLE, [network.unicodeName,
-                                           network.getURL()]);
+    tree.newItem = new ChannelEntry("", "", MSG_CD_CREATE);
+    tree.newItem.first = true;
+    tree.view.childData.appendChild(tree.newItem);
 
     var opener = window.arguments[0].opener;
     if (opener)
@@ -161,21 +146,24 @@ function onLoad()
         window.moveTo(opener.screenX + sx, opener.screenY + sy);
     }
 
+    setNetwork(window.arguments[0].network);
     setTimeout(updateOperations, PROCESS_DELAY);
-    startOperation(OP_LOAD);
+    if (network)
+        xul.channel.focus();
+    else
+        xul.network.focus();
 }
 
 function onUnload()
 {
     client.ceip.logEvent({type: "dialog", dialog: "channels", event: "close"});
-    delete network.joinDialog;
+    delete client.joinDialog;
 }
 
 function onKeyPress(event)
 {
     if (event.keyCode == event.DOM_VK_RETURN)
     {
-        startOperation(OP_FILTER);
         if (joinChannel())
             window.close();
         event.stopPropagation();
@@ -183,48 +171,111 @@ function onKeyPress(event)
     }
     else if (event.keyCode == event.DOM_VK_UP)
     {
-        if (channelTreeView.selectedIndex > 0)
+        if (tree.view.selectedIndex > 0)
         {
-            channelTreeView.selectedIndex = channelTreeView.selectedIndex - 1;
+            tree.view.selectedIndex = tree.view.selectedIndex - 1;
             ensureRowIsVisible();
         }
         event.preventDefault();
     }
     else if (event.keyCode == event.DOM_VK_DOWN)
     {
-        if (channelTreeView.selectedIndex < channelTreeView.rowCount - 1)
+        if (tree.view.selectedIndex < tree.view.rowCount - 1)
         {
-            channelTreeView.selectedIndex = channelTreeView.selectedIndex + 1;
+            tree.view.selectedIndex = tree.view.selectedIndex + 1;
             ensureRowIsVisible();
         }
         event.preventDefault();
     }
 }
 
+function onShowingNetworks()
+{
+    while (xul.networks.lastChild)
+        xul.networks.removeChild(xul.networks.lastChild);
+
+    /* Show any network meeting at least 1 requirement:
+     *   - Non-temporary (i.e. real network).
+     *   - Currently connected.
+     *   - Has visible tab in main window.
+     */
+    var networks = new Array();
+    for (var n in client.networks)
+    {
+        if (!client.networks[n].temporary
+            || client.networks[n].isConnected()
+            || client.mainWindow.getTabForObject(client.networks[n]))
+        {
+            networks.push(client.networks[n].unicodeName);
+        }
+    }
+    networks.sort();
+    for (var i = 0; i < networks.length; i++)
+    {
+        var menuitem = document.createElement("menuitem");
+        menuitem.setAttribute("label",  networks[i]);
+        xul.networks.appendChild(menuitem);
+    }
+}
+
 function onSelectionChange()
 {
-    var index = channelTreeView.selectedIndex;
-    if (index == -1)
-    {
-        channelJoinBtn.disabled = true;
-        return;
-    }
-    var row = channelTreeView.childData.locateChildByVisualRow(index);
-    channelJoinBtn.disabled = ((index == 0) && !row.name);
+    update();
 }
 
 function onFilter()
 {
-    startOperation(OP_FILTER);
+    update();
+    if (network)
+        startOperation(OP_FILTER);
+}
+
+function setNetwork(newNetwork, noUpdate)
+{
+    xul.network.value = newNetwork ? newNetwork.unicodeName : "";
+    update();
+}
+
+function update()
+{
+    var newNetwork = client.networks[xul.network.value] || null;
+    if (network != newNetwork)
+    {
+        network = newNetwork;
+        if (network)
+            startOperation(OP_LOAD);
+    }
+
+    if (network)
+    {
+        var index = tree.view.selectedIndex;
+        var rows = tree.view.childData;
+        var row = index == -1 ? null : rows.locateChildByVisualRow(index);
+        var listFile = getListFile();
+        var listMod = 0;
+        if (listFile.exists() && (listFile.fileSize > 0))
+            listMod = listFile.lastModifiedTime;
+
+        xul.join.disabled = network.isConnected() && (!row || !row.name);
+        xul.lastUpdated.value = listMod ? getMsg(MSG_CD_UPDATED, [strftime(MSG_CD_UPDATED_FORMAT, new Date(listMod))]) : MSG_CD_UPDATED_NEVER;
+        xul.refresh.disabled = !network.isConnected() ||
+                               (getOperationState(OP_LIST) == STATE_START) ||
+                               (getOperationState(OP_LIST) == STATE_RUN);
+        xul.bottomPanel.selectedIndex = 1;
+    }
+    else
+    {
+        xul.join.disabled = !xul.network.value;
+        xul.lastUpdated.value = "";
+        xul.refresh.disabled = true;
+        xul.bottomPanel.selectedIndex = 0;
+    }
 }
 
 function joinChannel()
 {
-    var index = channelTreeView.selectedIndex;
-    if (index == -1)
-        return false;
-    var row = channelTreeView.childData.locateChildByVisualRow(index);
-    if ((index == 0) && !row.name)
+    update();
+    if (xul.join.disabled)
         return false;
 
     /* Calculate the row index AS IF the 'create' row is visible. We're going
@@ -232,18 +283,20 @@ function joinChannel()
      * whatever the visibility of the 'create' row - an index of 0 is ALWAYS
      * the 'create' row, and >= 1 is ALWAYS the searched rows.
      */
-    var realIndex = index + (createChannelItem.isHidden ? 1 : 0);
+    var index = tree.view.selectedIndex;
+    var row = tree.view.childData.locateChildByVisualRow(index);
+    var realIndex = index + (tree.newItem.isHidden ? 1 : 0);
     client.ceip.logEvent({type: "dialog", dialog: "channels", event: "join",
                           index: realIndex});
 
-    network.dispatch("join", { channelName: row.name });
+    client.dispatch("attach", { ircUrl: xul.network.value + "/" + row.name });
 
     return true;
 }
 
 function focusSearch()
 {
-    channelFilterText.focus();
+    xul.channel.focus();
 }
 
 function refreshList()
@@ -255,27 +308,26 @@ function updateProgress(label, pro)
 {
     if (label)
     {
-        channelLoadLabel.value = label;
+        xul.loadLabel.value = label;
     }
     else
     {
         var msg = getMsg(MSG_CD_SHOWING,
-             [(channelTreeView.rowCount - (createChannelItem.isHidden ? 0 : 1)),
+             [(tree.view.rowCount - (tree.newItem.isHidden ? 0 : 1)),
               channels.length]);
-        channelLoadLabel.value = msg;
+        xul.loadLabel.value = msg;
     }
 
-    var loadBarDeckIndex = ((typeof pro == "undefined") ? 1 : 0);
-    channelLoadBarDesk.selectedIndex = loadBarDeckIndex;
+    xul.loadBarDeck.selectedIndex = (typeof pro == "undefined") ? 1 : 0;
 
     if ((typeof pro == "undefined") || (pro == -1))
     {
-        channelLoadBar.mode = "undetermined";
+        xul.loadBar.mode = "undetermined";
     }
     else
     {
-        channelLoadBar.mode = "determined";
-        channelLoadBar.value = pro;
+        xul.loadBar.mode = "determined";
+        xul.loadBar.value = pro;
     }
 }
 
@@ -285,13 +337,13 @@ function changeSort(col)
         col = col.id;
 
     col = colIDToSortKey[col];
-    // Users default to decending, others accending.
+    // Users default to descending, others ascending.
     var dir = (col == "users" ? -1 : 1);
 
-    if (col == channelTreeShare.sortColumn)
-        dir = -channelTreeShare.sortDirection;
+    if (col == tree.share.sortColumn)
+        dir = -tree.share.sortDirection;
 
-    var colID = sortKeyToColID[channelTreeShare.sortColumn];
+    var colID = sortKeyToColID[tree.share.sortColumn];
     var colNode = document.getElementById(colID);
     if (colNode)
     {
@@ -299,9 +351,9 @@ function changeSort(col)
         colNode.removeAttribute("sortDirection");
     }
 
-    channelTreeView.childData.setSortColumn(col, dir);
+    tree.view.childData.setSortColumn(col, dir);
 
-    colID = sortKeyToColID[channelTreeShare.sortColumn];
+    colID = sortKeyToColID[tree.share.sortColumn];
     colNode = document.getElementById(colID);
     if (colNode)
     {
@@ -412,8 +464,8 @@ function processOperation(op)
     }
     catch(ex)
     {
-        /* If an error has occured, we display it (updateProgress) and then
-         * halt our opperations to prevent further damage.
+        /* If an error has occurred, we display it (updateProgress) and then
+         * halt our operations to prevent further damage.
          */
         dd("Exception in channels.js: " + dbg + ": " + fn + ": " + formatException(ex));
         updateProgress(formatException(ex));
@@ -451,8 +503,11 @@ function stopOperation(op)
 
 function processOpListStart(opData)
 {
-    // Doing the list should disable the refresh button.
-    channelRefreshBtn.disabled = true;
+    ASSERT(network, "No network");
+    ASSERT(network.isConnected(), "Network is disconnected");
+
+    // Updates the refresh button.
+    update();
 
     // Show a general message until we get some data.
     updateProgress(MSG_CD_FETCHING, -1);
@@ -475,10 +530,10 @@ function processOpListRun(opData)
 
 function processOpListStop(opData)
 {
-    // Reset refresh button.
-    channelRefreshBtn.disabled = false;
+    // Updates the refresh button.
+    update();
 
-    // Check that /list finished ok if we're just doing a list.
+    // Check that /list finished okay if we're just doing a list.
     if ("error" in network._list)
     {
         updateProgress(MSG_CD_ERROR_LIST);
@@ -495,6 +550,13 @@ function processOpListStop(opData)
 
 function processOpLoadStart(opData)
 {
+    ASSERT(network, "No network");
+
+    // Nuke contents.
+    tree.view.selectedIndex = -1;
+    if (tree.view.childData.childData.length > 1)
+        tree.view.childData.removeChildrenAtIndex(1, tree.view.childData.childData.length - 1);
+
     var file = getListFile();
     if (!file.exists())
     {
@@ -506,13 +568,6 @@ function processOpLoadStart(opData)
         if (!file.exists())
             return STATE_IDLE;
     }
-
-    // Nuke contents.
-    channelTreeView.selectedIndex = -1;
-    channelTreeView.freeze();
-    while (channelTreeView.childData.childData.length > 1)
-        channelTreeView.childData.removeChildAtIndex(1);
-    channelTreeView.thaw();
 
     // Nuke more stuff.
     channels = new Array();
@@ -551,7 +606,7 @@ function processOpLoadRun(opData)
 
         line = toUnicode(line, "UTF-8");
         var ary = line.match(/^([^ ]+) ([^ ]+) (.*)$/);
-        if (ary && (ary[1] != "*"))
+        if (ary)
         {
             var chan = new ChannelEntry(ary[1], ary[2], ary[3]);
             channels.push(chan);
@@ -580,7 +635,7 @@ function processOpLoadRun(opData)
 function processOpLoadStop(opData)
 {
     if (channels.length > 0)
-        channelTreeView.childData.appendChildren(channels);
+        tree.view.childData.appendChildren(channels);
     opData.loadFile.close();
     delete opData.loadFile;
     delete opData.loadPendingData;
@@ -597,11 +652,12 @@ function processOpLoadStop(opData)
 function processOpFilterStart(opData)
 {
     // Catch filtering with the same options on the same channels:
-    var newOptions = {text: channelFilterText.value.toLowerCase(),
-                      min: channelMinUsers.value * 1,
-                      max: channelMaxUsers.value * 1,
+    var newOptions = {network: xul.network.value.toLowerCase(),
+                      text: xul.channel.value.toLowerCase(),
+                      min: xul.minUsers.value * 1,
+                      max: xul.maxUsers.value * 1,
                       listLen: channels.length,
-                      searchTopics: channelSearchTopics.checked};
+                      searchTopics: xul.includeTopic.checked};
 
     if (("filterOptions" in window) &&
         equalsObject(window.filterOptions, newOptions))
@@ -631,10 +687,9 @@ function processOpFilterStart(opData)
         filters.push("max-users");
 
     if (opData.channelText &&
-        (arrayIndexOf(["#", "&", "+", "!"], opData.channelText[0]) == -1) &&
-        (arrayIndexOf(serverChannelPrefixes, opData.channelText[0]) == -1))
+        (arrayIndexOf(["#", "&", "+", "!"], opData.channelText[0]) == -1))
     {
-        opData.channelText = serverChannelPrefixes[0] + opData.channelText;
+        opData.channelText = "#" + opData.channelText;
     }
     else
     {
@@ -646,13 +701,13 @@ function processOpFilterStart(opData)
                           filters: filters.join(",")});
 
     // Update special "create channel" row, and select it.
-    createChannelItem.name = opData.channelText;
-    createChannelItem.unHide();
+    tree.newItem.name = opData.channelText;
+    tree.newItem.unHide();
 
     // Scroll to the top and select the "create channel" row.
-    channelTreeView.selectedIndex = 0;
-    channelTreeBoxObject.invalidateRow(0);
-    channelTreeBoxObject.scrollToRow(0);
+    tree.view.selectedIndex = 0;
+    xul.channels.treeBoxObject.invalidateRow(0);
+    xul.channels.treeBoxObject.scrollToRow(0);
     ensureRowIsVisible();
 
     updateProgress(getMsg(MSG_CD_FILTERING, [0, channels.length]), 0);
@@ -667,12 +722,12 @@ function processOpFilterRun(opData)
 
     // Save selection because freeze/thaw screws it up.
     // Note that we only save the item if it isn't the "create channel" row.
-    var index = channelTreeView.selectedIndex;
+    var index = tree.view.selectedIndex;
     var item = null;
     if (index > 0)
-        item = channelTreeView.childData.locateChildByVisualRow(index);
+        item = tree.view.childData.locateChildByVisualRow(index);
 
-    channelTreeView.freeze();
+    tree.view.freeze();
     for (var i = opData.currentIndex; i < channels.length; i++)
     {
         var c = channels[i];
@@ -701,7 +756,7 @@ function processOpFilterRun(opData)
             break;
         }
     }
-    channelTreeView.thaw();
+    tree.view.thaw();
 
     // No item selected by user, so use our exact match instead.
     if (!item && opData.exactMatch)
@@ -709,9 +764,9 @@ function processOpFilterRun(opData)
 
     // Restore selected item.
     if (item)
-        channelTreeView.selectedIndex = item.calculateVisualRow();
+        tree.view.selectedIndex = item.calculateVisualRow();
     else
-        channelTreeView.selectedIndex = 0;
+        tree.view.selectedIndex = 0;
 
     ensureRowIsVisible();
 
@@ -726,12 +781,12 @@ function processOpFilterStop(opData)
 {
     if (opData.exactMatch)
     {
-        createChannelItem.hide();
+        tree.newItem.hide();
     }
     // If nothing is selected, select the "create channel" row.
-    else if (channelTreeView.selectedIndex < 0)
+    else if (tree.view.selectedIndex < 0)
     {
-        channelTreeView.selectedIndex = 0;
+        tree.view.selectedIndex = 0;
     }
 
     ensureRowIsVisible();
@@ -754,14 +809,15 @@ function processOpFilterStop(opData)
 
 function ensureRowIsVisible()
 {
-    if (channelTreeView.selectedIndex >= 0)
-        channelTreeBoxObject.ensureRowIsVisible(channelTreeView.selectedIndex);
+    if (tree.view.selectedIndex >= 0)
+        xul.channels.treeBoxObject.ensureRowIsVisible(tree.view.selectedIndex);
     else
-        channelTreeBoxObject.ensureRowIsVisible(0);
+        xul.channels.treeBoxObject.ensureRowIsVisible(0);
 }
 
 function getListFile(temp)
 {
+    ASSERT(network, "No network");
     var file = new LocalFile(network.prefs["logFileName"]);
     if (temp)
         file.localFile.leafName = "list.temp";
@@ -790,7 +846,7 @@ function ChannelEntry(name, users, topic)
     this.topicLC = this.topic.toLowerCase();
 }
 
-ChannelEntry.prototype = new XULTreeViewRecord(channelTreeShare);
+ChannelEntry.prototype = new XULTreeViewRecord(tree.share);
 
 ChannelEntry.prototype.sortCompare =
 function chanentry_sortcmp(a, b)

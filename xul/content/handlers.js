@@ -137,11 +137,8 @@ function onUnload()
     client.plugins = new Array();
 
     // Close all dialogs.
-    for (var net in client.networks)
-    {
-        if ("joinDialog" in client.networks[net])
-            client.networks[net].joinDialog.close();
-    }
+    if ("joinDialog" in client)
+        client.joinDialog.close();
     if ("configWindow" in client)
         client.configWindow.close();
     if ("installPluginDialog" in client)

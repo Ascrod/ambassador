@@ -96,7 +96,7 @@ function initCommands()
          ["input-text-direction", cmdInputTextDirection,                     0],
          ["install-plugin",    cmdInstallPlugin,                   CMD_CONSOLE],
          ["invite",            cmdInvite,           CMD_NEED_SRV | CMD_CONSOLE],
-         ["join",              cmdJoin,             CMD_NEED_SRV | CMD_CONSOLE],
+         ["join",              cmdJoin,                            CMD_CONSOLE],
          ["join-charset",      cmdJoin,             CMD_NEED_SRV | CMD_CONSOLE],
          ["jump-to-anchor",    cmdJumpToAnchor,                   CMD_NEED_NET],
          ["kick",              cmdKick,            CMD_NEED_CHAN | CMD_CONSOLE],
@@ -2319,12 +2319,16 @@ function cmdJoin(e)
     if ((!e.hasOwnProperty("channelName") || !e.channelName) &&
         !e.channelToJoin)
     {
-        if (e.network.joinDialog)
-            return e.network.joinDialog.focus();
+        if (client.joinDialog)
+        {
+            client.joinDialog.setNetwork(e.network);
+            client.joinDialog.focus();
+            return;
+        }
 
         window.openDialog("chrome://chatzilla/content/channels.xul", "",
                           "resizable=yes",
-                          { client: client, network: e.network,
+                          { client: client, network: e.network || null,
                             opener: window });
         return null;
     }
