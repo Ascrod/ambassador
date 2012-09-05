@@ -737,7 +737,7 @@ function importFromFrame(method)
 
 function processStartupScripts()
 {
-    client.plugins = new Array();
+    client.plugins = new Object();
     var scripts = client.prefs["initialScripts"];
     var basePath = getURLSpecFromFile(client.prefs["profilePath"]); 
     var baseURL = client.iosvc.newURI(basePath, null, null);
@@ -807,51 +807,22 @@ function loadLocalFile(localFile)
 
 function getPluginById(id)
 {
-    for (var i = 0; i < client.plugins.length; ++i)
-    {
-        if (client.plugins[i].id == id)
-            return client.plugins[i];
-
-    }
-
-    return null;
+    return client.plugins[id] || null;
 }
 
-function getPluginIndexById(id)
-{
-    for (var i = 0; i < client.plugins.length; ++i)
-    {
-        if (client.plugins[i].id == id)
-            return i;
-
-    }
-
-    return -1;
-}
 
 function getPluginByURL(url)
 {
-    for (var i = 0; i < client.plugins.length; ++i)
+    for (var k in client.plugins)
     {
-        if (client.plugins[i].url == url)
-            return client.plugins[i];
+        if (client.plugins[k].url == url)
+            return client.plugins[k];
 
     }
 
     return null;
 }
 
-function getPluginIndexByURL(url)
-{
-    for (var i = 0; i < client.plugins.length; ++i)
-    {
-        if (client.plugins[i].url == url)
-            return i;
-
-    }
-
-    return -1;
-}
 
 function processStartupAutoperform()
 {
@@ -3260,8 +3231,7 @@ function cli_installPlugin(name, source)
     function checkPluginInstalled(name, path)
     {
         var installed = path.exists();
-        for (var i = 0; i < client.plugins.length; i++)
-            installed |= (client.plugins[i].id == name);
+        installed |= (name in client.plugins);
 
         if (installed)
         {

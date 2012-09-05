@@ -123,18 +123,18 @@ function onUnload()
      * errors are disregarded as there's nothing we can do at this point.
      * Wipe the plugin list afterwards for safety.
      */
-    for (var i = 0; i < client.plugins.length; ++i)
+    for (var k in client.plugins)
     {
-        if ((client.plugins[i].API > 0) && client.plugins[i].enabled)
+        if ((client.plugins[k].API > 0) && client.plugins[k].enabled)
         {
             try
             {
-                client.plugins[i].disable();
+                client.plugins[k].disable();
             }
             catch(ex) {}
         }
     }
-    client.plugins = new Array();
+    client.plugins = new Object();
 
     // Close all dialogs.
     if ("joinDialog" in client)

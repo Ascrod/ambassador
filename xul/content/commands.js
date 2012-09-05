@@ -764,7 +764,7 @@ function dispatchCommand (command, e, flags)
 /* parse function for <plugin> parameters */
 function parsePlugin(e, name)
 {
-    var ary = e.unparsedData.match (/(?:(\d+)|(\S+))(?:\s+(.*))?$/);
+    var ary = e.unparsedData.match(/(?:(\S+))(?:\s+(.*))?$/);
     if (!ary)
         return false;
 
@@ -772,21 +772,13 @@ function parsePlugin(e, name)
 
     if (ary[1])
     {
-        var i = parseInt(ary[1]);
-        if (!(i in client.plugins))
-            return false;
-
-        plugin = client.plugins[i];
-    }
-    else
-    {
-        plugin = getPluginById(ary[2]);
+        plugin = getPluginById(ary[1]);
         if (!plugin)
             return false;
 
     }
 
-    e.unparsedData = arrayHasElementAt(ary, 3) ? ary[3] : "";
+    e.unparsedData = ary[2] || "";
     e[name] = plugin;
     return true;
 }
@@ -1975,15 +1967,12 @@ function cmdListPlugins(e)
         return;
     }
 
-    if (client.plugins.length > 0)
-    {
-        for (var i = 0; i < client.plugins.length; ++i)
-            listPlugin(client.plugins[i], i);
-    }
-    else
-    {
+    var i = 0;
+    for (var k in client.plugins)
+        listPlugin(client.plugins[k], i++);
+
+    if (i == 0)
         display(MSG_NO_PLUGINS);
-    }
 }
 
 function cmdRlist(e)
@@ -2494,11 +2483,10 @@ function cmdLoad(e)
     {
         var oldPlugin;
 
-        var i = getPluginIndexByURL(url);
-        if (i == -1)
-            return -1;
+        var oldPlugin = getPluginByURL(url);
+        if (!oldPlugin)
+            return;
 
-        oldPlugin = client.plugins[i];
         if (oldPlugin.enabled)
         {
             if (oldPlugin.API > 0)
@@ -2524,8 +2512,6 @@ function cmdLoad(e)
             }
             display(getMsg(MSG_PLUGIN_DISABLED, oldPlugin.id));
         }
-
-        return i;
     }
 
     if (!e.scope)
@@ -2546,10 +2532,7 @@ function cmdLoad(e)
     {
         var rvStr;
         var rv = rvStr = client.load(e.url, e.scope);
-        var index = removeOldPlugin(e.url);
-
-        if (index == null)
-            return null;
+        removeOldPlugin(e.url);
 
         if ("init" in plugin)
         {
@@ -2598,15 +2581,15 @@ function cmdLoad(e)
         if (typeof rv == "function")
             rvStr = "function";
 
-        if (index != -1)
-            client.plugins[index] = plugin;
-        else
-            index = client.plugins.push(plugin) - 1;
+        if (!plugin.id)
+            plugin.id = 'plugin' + randomString(8);
+
+        client.plugins[plugin.id] = plugin;
 
         feedback(e, getMsg(MSG_SUBSCRIPT_LOADED, [e.url, rvStr]), MT_INFO);
 
         if ((plugin.API > 0) && plugin.prefs["enabled"])
-            dispatch("enable-plugin " + index);
+            dispatch("enable-plugin " + plugin.id);
         return {rv: rv};
     }
     catch (ex)
