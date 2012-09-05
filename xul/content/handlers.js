@@ -1150,8 +1150,7 @@ function my_showtonet (e)
 
             // Update everything.
             // Welcome to history.
-            if (client.globalHistory)
-                client.globalHistory.addPage(this.getURL());
+            addURLToHistory(this.getURL());
             updateTitle(this);
             this.updateHeader();
             client.updateHeader();
@@ -2624,8 +2623,7 @@ function my_cjoin (e)
          */
         if (this.prefs["conference.enabled"])
             this.display(MSG_CONF_MODE_STAYON);
-        if (client.globalHistory)
-            client.globalHistory.addPage(this.getURL());
+        addURLToHistory(this.getURL());
 
         if ("joinTimer" in this)
         {

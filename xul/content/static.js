@@ -212,10 +212,8 @@ function initStatic()
 
     try
     {
-        const nsIGlobalHistory = Components.interfaces.nsIGlobalHistory;
-        const GHIST_CONTRACTID = "@mozilla.org/browser/global-history;1";
-        client.globalHistory =
-            Components.classes[GHIST_CONTRACTID].getService(nsIGlobalHistory);
+        const GHIST_CONTRACTID = "@mozilla.org/browser/global-history;2";
+        client.globalHistory = getService(GHIST_CONTRACTID, "nsIGlobalHistory2");
     }
     catch (ex)
     {
@@ -947,6 +945,17 @@ function destroy()
     destroyPrefs();
 }
 
+
+function addURLToHistory(url, referer)
+{
+    if (client.globalHistory)
+    {
+        referer = referer ? client.iosvc.newURI(referer, "UTF-8", null) : null;
+        url = client.iosvc.newURI(url, "UTF-8", null);
+        client.globalHistory.addURI(url, false, true, referer);
+    }
+}
+
 function addStatusMessage(message)
 {
     const DELAY_SCALE = 100;
@@ -1546,8 +1555,7 @@ function mainStep()
 function openQueryTab(server, nick)
 {
     var user = server.addUser(nick);
-    if (client.globalHistory)
-        client.globalHistory.addPage(user.getURL());
+    addURLToHistory(user.getURL());
     if (!("messages" in user))
     {
         var value = "";
