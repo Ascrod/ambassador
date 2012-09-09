@@ -102,7 +102,7 @@ function initCommands()
          ["kick",              cmdKick,            CMD_NEED_CHAN | CMD_CONSOLE],
          ["kick-ban",          cmdKick,            CMD_NEED_CHAN | CMD_CONSOLE],
          ["knock",             cmdKnock,            CMD_NEED_SRV | CMD_CONSOLE],
-         ["leave",             cmdLeave,           CMD_NEED_CHAN | CMD_CONSOLE],
+         ["leave",             cmdLeave,            CMD_NEED_SRV | CMD_CONSOLE],
          ["links",             cmdSimpleCommand,    CMD_NEED_SRV | CMD_CONSOLE],
          ["list",              cmdList,             CMD_NEED_SRV | CMD_CONSOLE],
          ["list-plugins",      cmdListPlugins,                     CMD_CONSOLE],
@@ -2391,6 +2391,13 @@ function cmdLeave(e)
 
     if (e.hasOwnProperty("channelName"))
     {
+        if (!e.channelName)
+        {
+            // No channel specified and command not sent from a channel view
+            display(getMsg(MSG_ERR_NEED_CHANNEL, e.command.name), MT_ERROR);
+            return;
+        }
+
         if (arrayIndexOf(e.server.channelTypes, e.channelName[0]) == -1)
         {
             // No valid prefix character. Check they really meant a channel...
