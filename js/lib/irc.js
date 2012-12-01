@@ -2751,6 +2751,8 @@ function serv_dccsend (e)
     e.id   = ary[2];
     // Cheeky longword --> dotted IP conversion.
     var host = Number(e.id).toString(16);
+    while (host.length < 8)
+        host = '0' + host;
     e.host = Number("0x" + host.substr(0, 2)) + "." +
              Number("0x" + host.substr(2, 2)) + "." +
              Number("0x" + host.substr(4, 2)) + "." +
