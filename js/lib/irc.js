@@ -2720,12 +2720,12 @@ function serv_dccchat (e)
         return false;
 
     e.id = ary[2];
-    // Checky longword --> dotted IP conversion.
-    var host = Number(e.id).toString(16);
-    e.host = Number("0x" + host.substr(0, 2)) + "." +
-             Number("0x" + host.substr(2, 2)) + "." +
-             Number("0x" + host.substr(4, 2)) + "." +
-             Number("0x" + host.substr(6, 2));
+    // Longword --> dotted IP conversion.
+    var host = Number(e.id);
+    e.host = ((host >> 24) & 0xFF) + "." +
+             ((host >> 16) & 0xFF) + "." +
+             ((host >> 8) & 0xFF) + "." +
+             (host & 0xFF);
     e.port = Number(ary[3]);
     e.destObject = e.replyTo;
     e.set = (e.replyTo == e.user) ? "user" : "channel";
@@ -2749,14 +2749,12 @@ function serv_dccsend (e)
 
     e.file = ary[1];
     e.id   = ary[2];
-    // Cheeky longword --> dotted IP conversion.
-    var host = Number(e.id).toString(16);
-    while (host.length < 8)
-        host = '0' + host;
-    e.host = Number("0x" + host.substr(0, 2)) + "." +
-             Number("0x" + host.substr(2, 2)) + "." +
-             Number("0x" + host.substr(4, 2)) + "." +
-             Number("0x" + host.substr(6, 2));
+    // Longword --> dotted IP conversion.
+    var host = Number(e.id);
+    e.host = ((host >> 24) & 0xFF) + "." +
+             ((host >> 16) & 0xFF) + "." +
+             ((host >> 8) & 0xFF) + "." +
+             (host & 0xFF);
     e.port = Number(ary[3]);
     e.size = Number(ary[4]);
     e.destObject = e.replyTo;
