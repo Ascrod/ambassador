@@ -2008,29 +2008,18 @@ function gotoIRCURL(url, e)
         {
             /* url points to a channel */
             var key;
-            if (url.needkey)
-            {
-                if (url.key)
-                    key = url.key;
-                else
-                    key = window.promptPassword(getMsg(MSG_URL_KEY, url.spec));
-            }
-
+            var serv = network.primServ;
+            var target = url.target;
             if (url.charset)
             {
-                client.pendingViewContext = e;
-                var d = { channelName: url.target, key: key,
-                          charset: url.charset };
-                targetObject = network.dispatch("join", d);
-                delete client.pendingViewContext;
+                var chan = new CIRCChannel(serv, target, fromUnicode(target, url.charset));
+                chan.prefs["charset"] = url.charset;
             }
             else
             {
                 // Must do this the hard way... we have the server's format
                 // for the channel name here, and all our commands only work
                 // with the Unicode forms.
-                var serv = network.primServ;
-                var target = url.target;
 
                 /* If we don't have a valid prefix, stick a "#" on it.
                  * NOTE: This is always a "#" so that URLs may be compared
@@ -2043,12 +2032,19 @@ function gotoIRCURL(url, e)
                 }
 
                 var chan = new CIRCChannel(serv, null, target);
-
-                client.pendingViewContext = e;
-                d = {channelToJoin: chan, key: key};
-                targetObject = network.dispatch("join", d);
-                delete client.pendingViewContext;
             }
+
+            if (url.needkey && !chan.joined)
+            {
+                if (url.key)
+                    key = url.key;
+                else
+                    key = window.promptPassword(getMsg(MSG_URL_KEY, url.spec));
+            }
+            client.pendingViewContext = e;
+            d = {channelToJoin: chan, key: key};
+            targetObject = network.dispatch("join", d);
+            delete client.pendingViewContext;
 
             if (!targetObject)
                 return;
