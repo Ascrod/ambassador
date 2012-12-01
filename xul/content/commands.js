@@ -102,7 +102,7 @@ function initCommands()
          ["kick",              cmdKick,            CMD_NEED_CHAN | CMD_CONSOLE],
          ["kick-ban",          cmdKick,            CMD_NEED_CHAN | CMD_CONSOLE],
          ["knock",             cmdKnock,            CMD_NEED_SRV | CMD_CONSOLE],
-         ["leave",             cmdLeave,            CMD_NEED_SRV | CMD_CONSOLE],
+         ["leave",             cmdLeave,            CMD_NEED_NET | CMD_CONSOLE],
          ["links",             cmdSimpleCommand,    CMD_NEED_SRV | CMD_CONSOLE],
          ["list",              cmdList,             CMD_NEED_SRV | CMD_CONSOLE],
          ["list-plugins",      cmdListPlugins,                     CMD_CONSOLE],
@@ -2385,7 +2385,7 @@ function cmdLeave(e)
 {
     if (!e.server)
     {
-        display(MSG_ERR_IMPROPER_VIEW, MT_ERROR);
+        display(getMsg(MSG_ERR_IMPROPER_VIEW, e.command.name), MT_ERROR);
         return;
     }
 
