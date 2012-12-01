@@ -1334,8 +1334,8 @@ function serv_onRawData(e)
     e.decodeParam = decodeParam;
     e.code = e.params[0].toUpperCase();
 
-    // Ignore all Privmsg and Notice messages here.
-    if (e.ignored && ((e.code == "PRIVMSG") || (e.code == "NOTICE")))
+    // Ignore all private (inc. channel) messages, notices and invites here.
+    if (e.ignored && ((e.code == "PRIVMSG") || (e.code == "NOTICE") || (e.code == "INVITE") ))
         return true;
 
     e.type = "parseddata";
