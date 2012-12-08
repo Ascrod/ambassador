@@ -3641,11 +3641,11 @@ function getTabForObject(source, create)
         // This wouldn't be here if there was a supported CSS property for it.
         tb.setAttribute("crop", "center");
         tb.setAttribute("context", "context:tab");
-        tb.setAttribute("tooltip", "xul-tooltip-node");
         tb.setAttribute("class", "tab-bottom view-button");
         tb.setAttribute("id", id);
         tb.setAttribute("state", "normal");
         tb.setAttribute("label", name + (matches > 1 ? "<" + matches + ">" : ""));
+        tb.setAttribute("tooltiptext", name);
         tb.view = source;
 
         var browser = document.createElement("browser");
