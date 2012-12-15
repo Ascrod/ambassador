@@ -1113,7 +1113,9 @@ function cmdDelayed(e)
 {
     function _dispatch()
     {
-        dispatch(e.rest, null, e.isInteractive);
+        // Clear inputData so that commands without arguments work properly
+        e.inputData = "";
+        dispatch(e.rest, e, e.isInteractive);
     }
     setTimeout(_dispatch, e.delay * 1000);
 }
