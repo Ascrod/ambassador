@@ -209,6 +209,7 @@ function initPrefs()
                                           "hidden"],
          ["proxy.typeOverride", "",       ".connect"],
          ["reconnect",          true,     ".connect"],
+         ["websearch.url",      "",       "global"],
          ["showModeSymbols",    false,    "appearance.userlist"],
          ["sortUsersByMode",    true,     "appearance.userlist"],
          // Chat  == "Activity" activity.

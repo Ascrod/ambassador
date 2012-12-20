@@ -370,6 +370,7 @@ function initMenus()
          ["cmd-copy-link-url", {visibleif: urlenabled}],
          ["cmd-copy", {visibleif: "!" + urlenabled, enabledif: textselected }],
          ["cmd-selectall", {visibleif: "!" + urlenabled }],
+         ["websearch", {visibleif: textselected}],
          ["-", {visibleif: "cx.nickname"}],
          ["label-user", {visibleif: "cx.nickname", header: true}],
          [">popup:opcommands", {visibleif: "cx.channel && cx.nickname",

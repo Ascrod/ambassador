@@ -177,6 +177,7 @@ function initCommands()
          ["user-motif",        cmdMotif,           CMD_NEED_USER | CMD_CONSOLE],
          ["user-pref",         cmdPref,            CMD_NEED_USER | CMD_CONSOLE],
          ["version",           cmdVersion,          CMD_NEED_SRV | CMD_CONSOLE],
+         ["websearch",         cmdWebSearch,                       CMD_CONSOLE],
          ["who",               cmdWho,              CMD_NEED_SRV | CMD_CONSOLE],
          ["whois",             cmdWhoIs,            CMD_NEED_SRV | CMD_CONSOLE],
          ["whowas",            cmdWhoWas,           CMD_NEED_SRV | CMD_CONSOLE],
@@ -247,7 +248,8 @@ function initCommands()
 
     var restList = ["reason", "action", "text", "message", "params", "font",
                     "expression", "ircCommand", "prefValue", "newTopic", "file",
-                    "password", "commandList", "commands", "description"];
+                    "password", "commandList", "commands", "description",
+                    "selectedText"];
     var stateList = ["connect"];
 
     client.commandManager.argTypes.__aliasTypes__(restList, "rest");
@@ -4615,4 +4617,34 @@ function cmdURLs(e)
 
         client.urlLogger = logger;
     }
+}
+
+function cmdWebSearch(e)
+{
+    var searchText = e.selectedText;
+    var searchURL;
+    const SEARCH_SVC = "@mozilla.org/browser/search-service;1";
+    var nibss = getService(SEARCH_SVC, "nsIBrowserSearchService");
+    var engine = nibss.currentEngine;
+    
+    if (client.prefs["websearch.url"])
+    {
+        searchText = encodeURIComponent(searchText).replace(/%20/g, "+");
+        var baseURL = client.prefs["websearch.url"];
+        
+        if (baseURL.indexOf("%s") != -1)
+            searchURL = baseURL.replace(/%s/g, searchText);
+        else
+            searchURL = baseURL + searchText;
+    }
+    else if (engine)
+    {
+        searchURL = engine.getSubmission(searchText).uri.asciiSpec;
+    }
+    else
+    {
+        searchText = encodeURIComponent(searchText).replace(/%20/g, "+");
+        searchURL = "https://www.google.com/search?q=" + searchText;
+    }
+    dispatch(client.prefs["messages.click"], {url: searchURL});
 }

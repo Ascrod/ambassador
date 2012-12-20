@@ -1615,6 +1615,8 @@ function getObjectDetails (obj, rv)
     rv.channel = null;
     rv.server = null;
     rv.network = null;
+    if (window && window.content && window.content.getSelection() != "")
+        rv.selectedText = window.content.getSelection();
 
     switch (obj.TYPE)
     {
