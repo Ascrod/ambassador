@@ -294,13 +294,16 @@ function net_cancel()
     else if (this.state == NET_CONNECTING)
     {
         this.state = NET_CANCELLING;
+        if ("primServ" in this && this.primServ.isConnected)
+        {
         this.primServ.connection.disconnect();
-        // Throw the necessary error events:
-        ev = new CEvent ("network", "error", this, "onError");
-        ev.server = this;
-        ev.debug = "Connect sequence was cancelled.";
+
+            var ev = new CEvent("network", "error", this, "onError");
+            ev.server = this.primServ;
+            ev.debug = "Connect sequence was canceled.";
         ev.errorCode = JSIRC_ERR_CANCELLED;
         this.eventPump.addEvent(ev);
+    }
     }
     // We're waiting for onDoConnect, so try a reconnect (which will fail us)
     else if (this.state == NET_WAITING)
@@ -332,14 +335,14 @@ function net_doconnect(e)
 
     if (this.state == NET_CANCELLING)
     {
-        if ("primServ" in this && this.primServ.connection)
+        if ("primServ" in this && this.primServ.isConnected)
             this.primServ.connection.disconnect();
         else
             this.state = NET_OFFLINE;
 
-        ev = new CEvent ("network", "error", this, "onError");
-        ev.server = this;
-        ev.debug = "Connect sequence was cancelled.";
+        ev = new CEvent("network", "error", this, "onError");
+        ev.server = this.primServ;
+        ev.debug = "Connect sequence was canceled.";
         ev.errorCode = JSIRC_ERR_CANCELLED;
         this.eventPump.addEvent(ev);
 
@@ -377,11 +380,7 @@ function net_doconnect(e)
 
         try
         {
-            if (!this.serverList[host].connect(null))
-            {
-                /* connect failed, try again  */
-                this.delayedConnect();
-            }
+            this.serverList[host].connect();
         }
         catch(ex)
         {
@@ -668,36 +667,40 @@ function chan_getchannel(name)
 }
 
 CIRCServer.prototype.connect =
-function serv_connect (password)
+function serv_connect()
 {
-    try
-    {
-        this.connection = new CBSConnection();
-    }
-    catch (ex)
-    {
-        ev = new CEvent ("server", "error", this, "onError");
-        ev.server = this;
-        ev.debug = "Couldn't create socket :" + ex;
-        ev.errorCode = JSIRC_ERR_NO_SOCKET;
-        ev.exception = ex;
-        this.parent.eventPump.addEvent (ev);
-        return false;
-    }
+    if (this.connection != null)
+        throw "Server already has a connection pending or established";
 
     var config = { isSecure: this.isSecure };
     if (this.parent.PROXY_TYPE_OVERRIDE)
         config.proxy = this.parent.PROXY_TYPE_OVERRIDE;
 
-    if (this.connection.connect(this.hostname, this.port, config))
+    this.connection = new CBSConnection();
+    this.connection.connect(this.hostname, this.port, config, this);
+}
+
+// This may be called synchronously or asynchronously by CBSConnection.connect.
+CIRCServer.prototype.onSocketConnection =
+function serv_onsocketconnection(host, port, config, exception)
+{
+    if (this.parent.state == NET_CANCELLING)
+    {
+        this.connection.disconnect();
+        this.connection = null;
+        this.parent.state = NET_OFFLINE;
+
+        var ev = new CEvent("network", "error", this.parent, "onError");
+        ev.server = this;
+        ev.debug = "Connect sequence was canceled.";
+        ev.errorCode = JSIRC_ERR_CANCELLED;
+        this.parent.eventPump.addEvent(ev);
+    }
+    else if (!exception)
     {
         var ev = new CEvent("server", "connect", this, "onConnect");
-
-        if (password)
-            this.password = password;
-
         ev.server = this;
-        this.parent.eventPump.addEvent (ev);
+        this.parent.eventPump.addEvent(ev);
         this.isConnected = true;
 
         if (jsenv.HAS_NSPR_EVENTQ)
@@ -706,8 +709,15 @@ function serv_connect (password)
             this.parent.eventPump.addEvent(new CEvent("server", "poll", this,
                                                       "onPoll"));
     }
-
-    return true;
+    else
+    {
+        var ev = new CEvent("server", "disconnect", this, "onDisconnect");
+        ev.server = this;
+        ev.reason = "error";
+        ev.exception = exception;
+        ev.disconnectStatus = NS_ERROR_ABORT;
+        this.parent.eventPump.addEvent(ev);
+    }
 }
 
 /*

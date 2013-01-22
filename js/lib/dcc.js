@@ -531,15 +531,10 @@ function CIRCDCCChat(parent, user, port)
     this.viewName = "DCC: " + user.unicodeName;
 
     // Set up the initial state.
-    this.state = DCC_STATE_INIT;
-    this.dir = DCC_DIR_UNKNOWN;
     this.requested = null;
     this.connection = null;
-
     this.savedLine = "";
-
     this.state = new CIRCDCCState(parent, this, "dcc-chat");
-
     this.parent.chats.push(this);
 
     // Give ourselves a "me" object for the purposes of displaying stuff.
@@ -608,7 +603,16 @@ function dchat_accept()
     this.state.sendAccept();
 
     this.connection = new CBSConnection();
-    if (this.connection.connect(this.remoteIP, this.port))
+    this.connection.connect(this.remoteIP, this.port, null, this);
+
+    return true;
+}
+
+// This may be called synchronously or asynchronously by CBSConnection.connect.
+CIRCDCCChat.prototype.onSocketConnection =
+function dchat_onsocketconnection(host, port, config, exception)
+{
+    if (!exception)
     {
         this.state.socketConnected();
 
@@ -622,8 +626,6 @@ function dchat_accept()
     {
         this.state.failed();
     }
-
-    return (this.state == DCC_STATE_ACCEPTED);
 }
 
 // Call to make this end decline DCC Chat with target user.
@@ -925,13 +927,9 @@ function CIRCDCCFileTransfer(parent, user, port, file, size)
     this.viewName = "File: " + this.filename;
 
     // Set up the initial state.
-    this.state = DCC_STATE_INIT;
-    this.dir = DCC_DIR_UNKNOWN;
     this.requested = null;
     this.connection = null;
-
     this.state = new CIRCDCCState(parent, this, "dcc-file");
-
     this.parent.files.push(this);
 
     // Give ourselves a "me" object for the purposes of displaying stuff.
@@ -1040,10 +1038,18 @@ function dfile_accept(localFile)
     this.filestream = this.filestream.createInstance(nsIBinaryOutputStream);
     this.filestream.setOutputStream(this.localFile.outputStream);
 
-    this.connection = new CBSConnection(true);
     this.position = 0;
+    this.connection = new CBSConnection(true);
+    this.connection.connect(this.remoteIP, this.port, null, this);
 
-    if (this.connection.connect(this.remoteIP, this.port))
+    return true;
+}
+
+// This may be called synchronously or asynchronously by CBSConnection.connect.
+CIRCDCCFileTransfer.prototype.onSocketConnection =
+function dfile_onsocketconnection(host, port, config, exception)
+{
+    if (!exception)
     {
         this.state.socketConnected();
 
@@ -1058,8 +1064,6 @@ function dfile_accept(localFile)
         this.state.failed();
         this.dispose();
     }
-
-    return (this.state == DCC_STATE_ACCEPTED);
 }
 
 // Call to make this end decline DCC File from target user.

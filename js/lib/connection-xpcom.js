@@ -229,57 +229,93 @@ function bc_connect(host, port, config, observer)
     this.host = host.toLowerCase();
     this.port = port;
 
-    /* The APIs below want either host:port or host and port seperately. For
-     * the combined case, we must preserve the square brackets around IPv6
-     * literals. For the split case, we must strip them.
+    /* The APIs below want host:port. Later on, we also reformat the host to
+     * strip IPv6 literal brackets.
      */
     var hostPort = host + ":" + port;
-    if (host[0] == '[' && host[host.length - 1] == ']')
-        host = host.substr(1, host.length - 2);
 
-    if (typeof config != "object")
+    if (!config)
         config = {};
 
+    if (!("proxyInfo" in config))
+    {
     // Lets get a transportInfo for this
     var pps = getService("@mozilla.org/network/protocol-proxy-service;1",
                          "nsIProtocolProxyService");
-    if (!pps)
-        throw ("Couldn't get protocol proxy service");
+        var ios = getService("@mozilla.org/network/io-service;1",
+                             "nsIIOService");
 
-    var ios = getService("@mozilla.org/network/io-service;1", "nsIIOService");
-
-    function getProxyFor(uri)
-    {
-        uri = ios.newURI(uri, null, null);
-        // As of 2005-03-25, 'examineForProxy' was replaced by 'resolve'.
-        if ("resolve" in pps)
-            return pps.resolve(uri, 0);
-        if ("examineForProxy" in pps)
-            return pps.examineForProxy(uri);
-        return null;
-    };
-
-    var proxyInfo = null;
-    var usingHTTPCONNECT = false;
-    if ("proxy" in config)
-    {
         /* Force Necko to supply the HTTP proxy info if desired. For none,
          * force no proxy. Other values will get default treatment.
          */
+        var uri = "irc://" + hostPort;
+        if ("proxy" in config)
+        {
         if (config.proxy == "http")
-            proxyInfo = getProxyFor("http://" + hostPort);
-        else if (config.proxy != "none")
-            proxyInfo = getProxyFor("irc://" + hostPort);
+                uri = "http://" + hostPort;
+            else if (config.proxy == "none")
+                uri = "";
+        }
+
+        var self = this;
+        function continueWithProxy(proxyInfo)
+        {
+            config.proxyInfo = proxyInfo;
+            try
+            {
+                self.connect(host, port, config, observer);
+            }
+            catch (ex)
+            {
+                if ("onSocketConnection" in observer)
+                    observer.onSocketConnection(host, port, config, ex);
+                return;
+            }
+            if ("onSocketConnection" in observer)
+                observer.onSocketConnection(host, port, config);
+        }
+
+        if (uri)
+        {
+            uri = ios.newURI(uri, null, null);
+            if ("asyncResolve" in pps)
+            {
+                pps.asyncResolve(uri, 0, {
+                    onProxyAvailable: function(request, uri, proxyInfo, status) {
+                        continueWithProxy(proxyInfo);
+                    }
+                });
+            }
+            else if ("resolve" in pps)
+            {
+                continueWithProxy(pps.resolve(uri, 0));
+            }
+            else if ("examineForProxy" in pps)
+            {
+                continueWithProxy(pps.examineForProxy(uri));
+            }
+            else
+            {
+                throw "Unable to find method to resolve proxies";
+            }
+        }
+        else
+        {
+            continueWithProxy(null);
+        }
+        return true;
+    }
+
+    // Strip the IPv6 literal brackets; all the APIs below don't want them.
+    if (host[0] == '[' && host[host.length - 1] == ']')
+        host = host.substr(1, host.length - 2);
 
         /* Since the proxy info is opaque, we need to check that we got
          * something for our HTTP proxy - we can't just check proxyInfo.type.
          */
-        usingHTTPCONNECT = ((config.proxy == "http") && proxyInfo);
-    }
-    else
-    {
-        proxyInfo = getProxyFor("irc://" + hostPort);
-    }
+    var proxyInfo = config.proxyInfo || null;
+    var usingHTTPCONNECT = ("proxy" in config) && (config.proxy == "http")
+                           && proxyInfo;
 
     if (proxyInfo && ("type" in proxyInfo) && (proxyInfo.type == "unknown"))
         throw JSIRC_ERR_PAC_LOADING;
@@ -302,7 +338,7 @@ function bc_connect(host, port, config, observer)
 
         if (jsenv.HAS_NSPR_EVENTQ)
         {   /* we've got an event queue, so start up an async write */
-            this._streamProvider = new StreamProvider (observer);
+            this._streamProvider = new StreamProvider();
             this._write_req =
                 this._transport.asyncWrite (this._streamProvider, this,
                                             0, -1, 0);
@@ -371,9 +407,7 @@ function bc_connect(host, port, config, observer)
 
     // Bootstrap the connection if we're proxying via an HTTP proxy.
     if (usingHTTPCONNECT)
-    {
         this.sendData("CONNECT " + hostPort + " HTTP/1.1\r\n\r\n");
-    }
 
     return true;
 
