@@ -3161,7 +3161,7 @@ function my_dccinit(e)
 CIRCDCCChat.prototype._getParams =
 function my_dccgetparams()
 {
-    return [this.user.unicodeName, this.localIP, this.port];
+    return [this.unicodeName, this.remoteIP, this.port];
 }
 
 CIRCDCCChat.prototype.onPrivmsg =
@@ -3233,8 +3233,8 @@ function my_dccfilegetparams()
     if (this.state.dir == DCC_DIR_SENDING)
         dir = MSG_DCCLIST_TO;
 
-    return [this.filename, dir, this.user.unicodeName,
-            this.localIP/*FIXME*/, this.port/*FIXME?*/];
+    return [this.filename, dir, this.unicodeName,
+            this.remoteIP, this.port];
 }
 
 CIRCDCCFileTransfer.prototype.onConnect =
