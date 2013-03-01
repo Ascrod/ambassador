@@ -7,3 +7,6 @@ DIRS += [
     'ff',
     'sm',
 ]
+
+CONFIGURE_SUBST_FILES += ['locales/Makefile']
+
