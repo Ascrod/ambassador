@@ -34,8 +34,6 @@ ifneq (,$(filter $(AB_CD),$(shell cat $(srcdir)/locales/all-locales)))
 BUILD_LOCALES += $(AB_CD)
 endif
 
-DIRS += ff sm
-
 DEFINES += -DCHATZILLA_VERSION=$(CHATZILLA_VERSION)
 
 include $(topsrcdir)/config/rules.mk
