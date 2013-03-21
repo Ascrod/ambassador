@@ -10,7 +10,6 @@ VPATH		= @srcdir@
 
 include $(DEPTH)/config/autoconf.mk
 
-MODULE       = chatzilla
 PACKAGE_FILE = chatzilla.pkg
 
 NO_JS_MANIFEST = 1

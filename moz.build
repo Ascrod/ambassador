@@ -10,3 +10,5 @@ DIRS += [
 
 CONFIGURE_SUBST_FILES += ['locales/Makefile']
 
+MODULE = 'chatzilla'
+
