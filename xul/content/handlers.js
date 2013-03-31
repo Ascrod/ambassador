@@ -642,9 +642,23 @@ function onWindowKeyPress(e)
             break;
     }
 
-    // Code is zero if we have an alphanumeric being given to us in the event.
+    // Code is zero if we have a typeable character triggering the event.
     if (code != 0)
       return;
+
+    // OS X only: Command-{ and Command-}
+    // Newer geckos seem to only provide these keys in charCode, not keyCode
+    if (isMac && e.metaKey && e.shiftKey && !e.altKey && !e.ctrlKey)
+    {
+        if (e.charCode == 123 || e.charCode == 125)
+        {
+            cycleView(e.charCode - 124);
+            e.preventDefault();
+            return;
+        }
+    }
+
+    // Numeric shortcuts
 
     // The following code is copied from:
     //   /mozilla/browser/base/content/browser.js
