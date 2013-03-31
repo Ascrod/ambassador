@@ -145,16 +145,19 @@ BasicOView.prototype.rowCount = 0;
 BasicOView.prototype.getCellProperties =
 function bov_cellprops (row, col, properties)
 {
+    return "";
 }
 
 BasicOView.prototype.getColumnProperties =
 function bov_colprops (col, properties)
 {
+    return "";
 }
 
 BasicOView.prototype.getRowProperties =
 function bov_rowprops (index, properties)
 {
+    return "";
 }
 
 BasicOView.prototype.isContainer =
@@ -1480,17 +1483,23 @@ function xtv_getcelltxt (index, col)
 // @internal
 XULTreeView.prototype.getCellProperties =
 function xtv_cellprops (row, col, properties)
-{}
+{
+    return "";
+}
 
 // @internal
 XULTreeView.prototype.getColumnProperties =
 function xtv_colprops (col, properties)
-{}
+{
+    return "";
+}
 
 // @internal
 XULTreeView.prototype.getRowProperties =
 function xtv_rowprops (index, properties)
-{}
+{
+    return "";
+}
 
 // @internal
 XULTreeView.prototype.isSorted =

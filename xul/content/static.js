@@ -3778,38 +3778,52 @@ function updateTabAttributes()
 // Properties getter for user list tree view
 function ul_getrowprops(index, properties)
 {
-    if ((index < 0) || (index >= this.childData.childData.length) ||
-        !properties)
+    if ((index < 0) || (index >= this.childData.childData.length))
     {
-        return;
+        return "";
     }
 
     // See bug 432482 - work around Gecko deficiency.
     if (!this.selection.isSelected(index))
+    {
+        if (!properties)
+            return "unselected";
+
         properties.AppendElement(client.atomCache["unselected"]);
+    }
+
+    return "";
 }
 
 // Properties getter for user list tree view
 function ul_getcellprops(index, column, properties)
 {
-    if ((index < 0) || (index >= this.childData.childData.length) ||
-        !properties)
+    if ((index < 0) || (index >= this.childData.childData.length))
     {
-        return;
+        return "";
     }
+
+    var resultProps = [];
 
     // See bug 432482 - work around Gecko deficiency.
     if (!this.selection.isSelected(index))
-        properties.AppendElement(client.atomCache["unselected"]);
+        resultProps.push("unselected");
 
     var userObj = this.childData.childData[index]._userObj;
 
-    properties.AppendElement(client.atomCache["voice-" + userObj.isVoice]);
-    properties.AppendElement(client.atomCache["op-" + userObj.isOp]);
-    properties.AppendElement(client.atomCache["halfop-" + userObj.isHalfOp]);
-    properties.AppendElement(client.atomCache["admin-" + userObj.isAdmin]);
-    properties.AppendElement(client.atomCache["founder-" + userObj.isFounder]);
-    properties.AppendElement(client.atomCache["away-" + userObj.isAway]);
+    resultProps.push("voice-" + userObj.isVoice);
+    resultProps.push("op-" + userObj.isOp);
+    resultProps.push("halfop-" + userObj.isHalfOp);
+    resultProps.push("admin-" + userObj.isAdmin);
+    resultProps.push("founder-" + userObj.isFounder);
+    resultProps.push("away-" + userObj.isAway);
+
+    if (!properties)
+        return resultProps.join(" ");
+
+    resultProps.forEach(function (element) {
+        properties.AppendElement(client.atomCache[element]);
+    });
 }
 
 var contentDropObserver = new Object();
