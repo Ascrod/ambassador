@@ -3831,7 +3831,7 @@ var contentDropObserver = new Object();
 contentDropObserver.onDragOver =
 function cdnd_dover(aEvent, aFlavour, aDragSession)
 {
-    if (aEvent.getPreventDefault())
+    if (isDefaultPrevented(aEvent))
         return;
 
     if (aDragSession.sourceDocument == aEvent.view.document)
@@ -3895,7 +3895,7 @@ var tabsDropObserver = new Object();
 tabsDropObserver.canDrop =
 function tabdnd_candrop(aEvent, aDragSession)
 {
-    if (aEvent.getPreventDefault())
+    if (isDefaultPrevented(aEvent))
         return false;
 
     // See comment above |var tabsDropObserver|.
@@ -3911,7 +3911,7 @@ function tabdnd_candrop(aEvent, aDragSession)
 tabsDropObserver.onDragOver =
 function tabdnd_dover(aEvent, aFlavour, aDragSession)
 {
-    if (aEvent.getPreventDefault())
+    if (isDefaultPrevented(aEvent))
         return;
 
     // See comment above |var tabsDropObserver|.
@@ -3953,7 +3953,7 @@ function tabdnd_dover(aEvent, aFlavour, aDragSession)
 tabsDropObserver.onDragExit =
 function tabdnd_dexit(aEvent, aDragSession)
 {
-    if (aEvent.getPreventDefault())
+    if (isDefaultPrevented(aEvent))
         return;
 
     /* We've either stopped being part of a drag operation, or the dragging is

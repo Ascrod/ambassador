@@ -1252,6 +1252,13 @@ function isinstance(inst, base)
              (inst.constructor && (inst.constructor.name == base.name))));
 }
 
+function isDefaultPrevented(ev)
+{
+    if ("defaultPrevented" in ev)
+        return ev.defaultPrevented;
+    return ev.getPreventDefault();
+}
+
 function scaleNumberBy1024(number)
 {
     var scale = 0;
