@@ -2344,7 +2344,7 @@ client.idleObserver = {
             client.dispatch("idle-away", {reason: client.prefs["awayIdleMsg"]});
             client.isIdleAway = true;
         }
-        else if ((topic == "back") && client.isIdleAway)
+        else if ((topic == "back" || topic == "active") && client.isIdleAway)
         {
             client.dispatch("idle-back");
             client.isIdleAway = false;
