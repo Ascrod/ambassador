@@ -32,6 +32,7 @@ a.chatzilla-link:visited {
     background-color: #333333;
 /*    opacity: 0.9;  causes memory leak? */
     -moz-border-radius: 7px;
+    border-radius: 7px;
 }
 
 .progress-fg {

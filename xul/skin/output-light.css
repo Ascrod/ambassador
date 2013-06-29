@@ -30,6 +30,7 @@ a.chatzilla-link {
 /*    opacity: 0.9;*/
     border: 1px #777499 solid;
     -moz-border-radius: 7px;
+    border-radius: 7px;
 }
 
 #splash {
@@ -134,6 +135,7 @@ a.chatzilla-link {
     background-color: #c3f7c3; 
     font-weight: bold;
     -moz-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px;
     /*border: thin darkblue solid;*/
 }
 
@@ -142,18 +144,21 @@ a.chatzilla-link {
     color: #ff8d02;
     font-weight: bold;
     -moz-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px;
 }
 
 .msg[msg-type="HELLO"] .msg-data {
     background: #1342a5;
     color: white;
     -moz-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px;
     font-weight: bold;
 }
 
 .msg[msg-type="ERROR"] .msg-data,
 .msg[msg-type="DISCONNECT"] .msg-data {
     -moz-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px;
     background: #a8221e;
     color: white;
 }
@@ -188,6 +193,7 @@ a.chatzilla-link {
     background: #ffdbcc;
     font-weight: bold;
     -moz-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px;
 }
 
 /* important="true" means that the message has text from your /stalk list in
@@ -196,6 +202,7 @@ a.chatzilla-link {
 .msg[important="true"] .msg-user {
     background: #d4d8d4;
     -moz-border-radius: 5px 0px 0px 5px;
+    border-radius: 5px 0px 0px 5px;
 }
 
 .msg[important="true"] .msg-data {
