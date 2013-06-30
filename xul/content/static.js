@@ -2418,6 +2418,7 @@ function updateAppMotif(motifURL)
         else
         {
             node.data = dataStr;
+            document.insertBefore(node, node.nextSibling);
         }
     }
     catch (ex)
