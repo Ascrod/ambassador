@@ -2415,7 +2415,7 @@ function updateAppMotif(motifURL)
             node = document.createProcessingInstruction("xml-stylesheet", dataStr);
             document.insertBefore(node, document.firstChild);
         }
-        else
+        else if (node.data != dataStr)
         {
             node.data = dataStr;
             document.insertBefore(node, node.nextSibling);
