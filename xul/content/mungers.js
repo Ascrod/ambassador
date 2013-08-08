@@ -395,7 +395,7 @@ function insertQuote (matchText, containerTag)
     containerTag.appendChild(document.createElementNS(XHTML_NS, "html:wbr"));
 }
 
-function insertSmiley(emoticon, containerTag)
+function insertSmiley(emoticon, containerTag, eventData, mungerEntry)
 {
     var type = "error";
 
@@ -446,7 +446,9 @@ function insertSmiley(emoticon, containerTag)
     {
         // We didn't actually match anything, so it'll be a too-generic match
         // from the munger RegExp.
-        containerTag.appendChild(document.createTextNode(emoticon));
+        mungerEntry.enabled = false;
+        client.munger.munge(emoticon, containerTag, eventData);
+        mungerEntry.enabled = true;
         return;
     }
 
