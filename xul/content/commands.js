@@ -2390,6 +2390,101 @@ function cmdJoin(e)
 
 function cmdLeave(e)
 {
+    function leaveChannel(channelName)
+    {
+        var channelToLeave;
+        // This function will return true if we should continue processing
+        // channel names. If we discover that we were passed an invalid channel
+        // name, but have a channel on the event, we'll just leave that channel
+        // with the full message (including what we thought was a channel name)
+        // and return false in order to not process the rest of what we thought
+        // was a channel name. If there's a genuine error, e.g. because the user
+        // specified a non-existing channel and isn't in a channel either, we
+        // will also return a falsy value
+        var shouldContinue = true;
+        if (arrayIndexOf(e.server.channelTypes, channelName[0]) == -1)
+        {
+            // No valid prefix character. Check they really meant a channel...
+            var valid = false;
+            for (var i = 0; i < e.server.channelTypes.length; i++)
+            {
+                // Hmm, not ideal...
+                var chan = e.server.getChannel(e.server.channelTypes[i] +
+                                               channelName);
+                if (chan)
+                {
+                    // Yes! They just missed that single character.
+                    channelToLeave = chan;
+                    valid = true;
+                    break;
+                }
+            }
+
+            // We can only let them get away here if we've got a channel.
+            if (!valid)
+            {
+                if (e.channel)
+                {
+                    /* Their channel name was invalid, but we have a channel
+                     * view, so we'll assume they did "/leave part msg".
+                     * NB: we use e.channelName here to get the full channel
+                     * name before we (may have) split it.
+                     */
+                    e.reason = e.channelName + (e.reason ? " " + e.reason : "");
+                    channelToLeave = e.channel;
+                    shouldContinue = false;
+                }
+                else
+                {
+                    display(getMsg(MSG_ERR_UNKNOWN_CHANNEL, channelName),
+                            MT_ERROR);
+                    return;
+                }
+            }
+        }
+        else
+        {
+            // Valid prefix, so get real channel (if it exists...).
+            channelToLeave = e.server.getChannel(channelName);
+            if (!channelToLeave)
+            {
+                display(getMsg(MSG_ERR_UNKNOWN_CHANNEL, channelName),
+                        MT_ERROR);
+                return;
+            }
+        }
+
+        if (!("deleteWhenDone" in e))
+            e.deleteWhenDone = client.prefs["deleteOnPart"];
+
+        /* If it's not active, we're not actually in it, even though the view is
+         * still here.
+         */
+        if (channelToLeave.active)
+        {
+            channelToLeave.deleteWhenDone = e.deleteWhenDone;
+
+            if (!e.reason)
+                e.reason = "";
+
+            e.server.sendData("PART " + channelToLeave.encodedName + " :" +
+                              fromUnicode(e.reason, channelToLeave) + "\n");
+        }
+        else
+        {
+            /* We can leave the channel when not active
+             * this will close the view and prevent rejoin after a reconnect
+             */
+            if (channelToLeave.joined)
+                channelToLeave.joined = false;
+
+            if (e.deleteWhenDone)
+                channelToLeave.dispatch("delete-view");
+        }
+
+        return shouldContinue;
+    }
+
     if (!e.server)
     {
         display(getMsg(MSG_ERR_IMPROPER_VIEW, e.command.name), MT_ERROR);
@@ -2405,81 +2500,19 @@ function cmdLeave(e)
             return;
         }
 
-        if (arrayIndexOf(e.server.channelTypes, e.channelName[0]) == -1)
+
+        var channels = e.channelName.split(",");
+        for (var i = 0; i < channels.length; i++)
         {
-            // No valid prefix character. Check they really meant a channel...
-            var valid = false;
-            for (var i = 0; i < e.server.channelTypes.length; i++)
-            {
-                // Hmm, not ideal...
-                var chan = e.server.getChannel(e.server.channelTypes[i] +
-                                               e.channelName);
-                if (chan)
-                {
-                    // Yes! They just missed that single character.
-                    e.channel = chan;
-                    valid = true;
-                    break;
-                }
-            }
+            // Skip empty channel names:
+            if (!channels[i])
+                continue;
 
-            // We can only let them get away here if we've got a channel.
-            if (!valid)
-            {
-                if (e.channel)
-                {
-                    /* Their channel name was invalid, but we have a channel
-                     * view, so we'll assume they did "/leave part msg".
-                     */
-                    e.reason = e.channelName + (e.reason ? " " + e.reason : "");
-                }
-                else
-                {
-                    display(getMsg(MSG_ERR_UNKNOWN_CHANNEL, e.channelName),
-                            MT_ERROR);
-                    return;
-                }
-            }
+            // If we didn't successfully leave, stop processing the
+            // rest of the channels:
+            if (!leaveChannel(channels[i]))
+                break;
         }
-        else
-        {
-            // Valid prefix, so get real channel (if it exists...).
-            e.channel = e.server.getChannel(e.channelName);
-            if (!e.channel)
-            {
-                display(getMsg(MSG_ERR_UNKNOWN_CHANNEL, e.channelName),
-                        MT_ERROR);
-                return;
-            }
-        }
-    }
-
-    if (!("deleteWhenDone" in e))
-        e.deleteWhenDone = client.prefs["deleteOnPart"];
-
-    /* If it's not active, we're not actually in it, even though the view is
-     * still here.
-     */
-    if (e.channel.active)
-    {
-        e.channel.deleteWhenDone = e.deleteWhenDone;
-
-        if (!e.reason)
-            e.reason = "";
-
-        e.server.sendData("PART " + e.channel.encodedName + " :" +
-                          fromUnicode(e.reason, e.channel) + "\n");
-    }
-    else
-    {
-        /* We can leave the channel when not active
-         * this will close the view and prevent rejoin after a reconnect
-         */
-        if (e.channel.joined)
-            e.channel.joined = false;
-
-        if (e.deleteWhenDone)
-            e.channel.dispatch("delete-view");
     }
 }
 
