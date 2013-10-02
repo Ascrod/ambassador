@@ -1684,16 +1684,17 @@ function cmdRejoin(e)
 function cmdRename(e)
 {
     var tab = getTabForObject(e.sourceObject);
-    if (!tab) {
+    if (!tab)
+    {
         feedback(e, getMsg(MSG_ERR_INTERNAL_DISPATCH, "rename"));
         return;
     }
     var label = e.label || prompt(MSG_TAB_NAME_PROMPT, tab.label);
-    if (!label) {
+    if (!label)
+    {
         return;
     }
-    tab.label = label;
-    tab.setAttribute("tooltiptext", e.sourceObject.unicodeName);
+    e.sourceObject.prefs["tabLabel"] = label;
 }
 
 

@@ -226,6 +226,7 @@ function initPrefs()
          ["sound.user.start",    "beep beep", "global.soundEvts"],
          ["stalkWholeWords",    true,     "lists.stalkWords"],
          ["stalkWords",         [],       "lists.stalkWords"],
+         ["tabLabel",           "",       "hidden"],
          ["tabGotoKeyModifiers", 0,       "hidden"],
          ["timestamps",         false,    "appearance.timestamps"],
          ["timestamps.display", "[%H:%M]", "appearance.timestamps"],
@@ -431,6 +432,7 @@ function getNetworkPrefManager(network)
          ["outputWindowURL",  defer, "hidden"],
          ["proxy.typeOverride", defer, ".connect"],
          ["reconnect",        defer, ".connect"],
+         ["tabLabel",         "",     "hidden"],
          ["timestamps",         defer, "appearance.timestamps"],
          ["timestamps.display", defer, "appearance.timestamps"],
          ["timestamps.log",     defer, "hidden"],
@@ -517,6 +519,7 @@ function getChannelPrefManager(channel)
          ["logFileName",      makeLogNameChannel, "hidden"],
          ["motif.current",    defer, "appearance.motif"],
          ["outputWindowURL",  defer, "hidden"],
+         ["tabLabel",         "",    "hidden"],
          ["timestamps",         defer, "appearance.timestamps"],
          ["timestamps.display", defer, "appearance.timestamps"],
          ["timestamps.log",     defer, "hidden"]
@@ -572,6 +575,7 @@ function getUserPrefManager(user)
          ["logFileName",      makeLogNameUser, "hidden"],
          ["motif.current",    defer, "appearance.motif"],
          ["outputWindowURL",  defer, "hidden"],
+         ["tabLabel",         "",    "hidden"],
          ["timestamps",         defer, "appearance.timestamps"],
          ["timestamps.display", defer, "appearance.timestamps"],
          ["timestamps.log",     defer, "hidden"]
@@ -618,6 +622,7 @@ function getDCCUserPrefManager(user)
          ["logFileName",      makeLogNameUser, "hidden"],
          ["motif.current",    defer, "appearance.motif"],
          ["outputWindowURL",  defer, "hidden"],
+         ["tabLabel",         "",    "hidden"],
          ["timestamps",         defer, "appearance.timestamps"],
          ["timestamps.display", defer, "appearance.timestamps"],
          ["timestamps.log",     defer, "hidden"]
@@ -771,6 +776,10 @@ function onPrefChanged(prefName, newValue, oldValue)
             client.dispatch("sync-header");
             break;
 
+        case "tabLabel":
+            onTabLabelUpdate(client, newValue);
+            break;
+
         case "timestamps":
         case "timestamps.display":
         case "collapseActions":
@@ -873,6 +882,10 @@ function onNetworkPrefChanged(network, prefName, newValue, oldValue)
             network.dispatch("sync-header");
             break;
 
+        case "tabLabel":
+            onTabLabelUpdate(network, newValue);
+            break;
+
         case "timestamps":
         case "timestamps.display":
         case "collapseActions":
@@ -942,6 +955,10 @@ function onChannelPrefChanged(channel, prefName, newValue, oldValue)
             channel.dispatch("sync-header");
             break;
 
+        case "tabLabel":
+            onTabLabelUpdate(channel, newValue);
+            break;
+
         case "timestamps":
         case "timestamps.display":
         case "collapseActions":
@@ -992,6 +1009,10 @@ function onUserPrefChanged(user, prefName, newValue, oldValue)
             user.dispatch("sync-header");
             break;
 
+        case "tabLabel":
+            onTabLabelUpdate(user, newValue);
+            break;
+
         case "timestamps":
         case "timestamps.display":
         case "collapseActions":
@@ -1037,6 +1058,10 @@ function onDCCUserPrefChanged(user, prefName, newValue, oldValue)
 
             case "displayHeader":
                 view.dispatch("sync-header");
+                break;
+
+            case "tabLabel":
+                onTabLabelUpdate(user, newValue);
                 break;
 
             case "timestamps":
@@ -1105,3 +1130,14 @@ function updateAliases()
         }
     }
 }
+
+function onTabLabelUpdate(sourceObject, newValue)
+{
+    var tab = getTabForObject(sourceObject);
+    if (tab)
+    {
+        tab.label = newValue || sourceObject.viewName;
+        tab.setAttribute("tooltiptext", sourceObject.viewName);
+    }
+}
+

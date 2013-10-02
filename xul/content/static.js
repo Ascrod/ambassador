@@ -3647,8 +3647,9 @@ function getTabForObject(source, create)
         tb.setAttribute("class", "tab-bottom view-button");
         tb.setAttribute("id", id);
         tb.setAttribute("state", "normal");
+        name = source.prefs["tabLabel"] || name;
         tb.setAttribute("label", name + (matches > 1 ? "<" + matches + ">" : ""));
-        tb.setAttribute("tooltiptext", name);
+        tb.setAttribute("tooltiptext", source.viewName);
         tb.view = source;
 
         var browser = document.createElement("browser");
