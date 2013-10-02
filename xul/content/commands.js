@@ -2349,7 +2349,9 @@ function cmdJoin(e)
                 keys = e.key.split(",");
             for (var c in chans)
             {
-                chan = dispatch("join", { charset: e.charset,
+                chan = dispatch("join", { network: e.network,
+                                          server: e.server,
+                                          charset: e.charset,
                                           channelName: chans[c],
                                           key: keys.shift() });
             }
