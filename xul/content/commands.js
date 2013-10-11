@@ -2483,13 +2483,16 @@ function cmdLeave(e)
         }
 
         return shouldContinue;
-    }
+    };
 
     if (!e.server)
     {
         display(getMsg(MSG_ERR_IMPROPER_VIEW, e.command.name), MT_ERROR);
         return;
     }
+
+    if (!e.hasOwnProperty("channelName") && e.channel)
+        e.channelName = e.channel.unicodeName;
 
     if (e.hasOwnProperty("channelName"))
     {
