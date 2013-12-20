@@ -10,7 +10,9 @@ srcdir=@srcdir@
 VPATH=@srcdir@
 relativesrcdir = extensions/irc/locales
 
+EXTERNALLY_MANAGED_MAKE_FILE := 1
 STANDALONE_MAKEFILE := 1
+JAR_MANIFEST := $(srcdir)/jar.mn
 
 CHATZILLA_VERSION=$(shell grep "const __cz_version" "$(srcdir)/../xul/content/static.js" | sed "s|.*\"\([^\"]\{1,\}\)\".*|\1|")
 CHATZILLA_BASE_VERSION=$(shell echo "$(CHATZILLA_VERSION)" | sed "s|\([0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}\).*|\1|")

@@ -12,3 +12,5 @@ CONFIGURE_SUBST_FILES += ['locales/Makefile']
 
 XPI_NAME = 'chatzilla'
 export('XPI_NAME')
+
+JAR_MANIFESTS += ['jar.mn']
