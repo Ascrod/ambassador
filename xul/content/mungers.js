@@ -330,9 +330,9 @@ function insertBugzillaLink (matchText, containerTag, eventData, mungerEntry)
         var idOrAlias = matchText.match(new RegExp("(?:"+client.prefs["bugKeyword"]+")\\s+#?(\\d+|[^\\s,]{1,20})","i"))[1];
         bugURL = bugURL.replace("%s", idOrAlias);
 
-        if (matchText.indexOf("comment") != -1)
+        var commentNum = matchText.match(/comment\s+#?(\d+)/i);
+        if (commentNum)
         {
-            var commentNum = matchText.match(/comment\s+#?(\d+)/i)[1];
             /* If the comment is a complete URL, use only that, replacing %1$s
              * and %2$s with the bug number and comment number, respectively.
              * Otherwise, append the comment preference to the main one,
@@ -342,11 +342,11 @@ function insertBugzillaLink (matchText, containerTag, eventData, mungerEntry)
             {
                 bugURL = bugURLcomment;
                 bugURL = bugURL.replace("%1$s", idOrAlias);
-                bugURL = bugURL.replace("%2$s", commentNum);
+                bugURL = bugURL.replace("%2$s", commentNum[1]);
             }
             else
             {
-                bugURL += bugURLcomment.replace("%s", commentNum);
+                bugURL += bugURLcomment.replace("%s", commentNum[1]);
             }
         }
 
