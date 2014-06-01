@@ -109,6 +109,7 @@ function initPrefs()
          ["awayIdleMsg",        "",       ".ident"],
          ["awayIdleTime",       0,        ".ident"],
          ["awayNick",           "",       ".ident"],
+         ["bugKeyword",         "bug",    "appearance.misc"],
          ["bugURL",           "https://bugzilla.mozilla.org/show_bug.cgi?id=%s",
                                           "appearance.misc"],
          ["bugURL.comment",     "#c%s",   "appearance.misc"],
@@ -660,6 +661,11 @@ function onPrefChanged(prefName, newValue, oldValue)
         case "awayIdleTime":
             uninitIdleAutoAway(oldValue);
             initIdleAutoAway(newValue);
+            break;
+
+        case "bugKeyword":
+            client.munger.delRule("bugzilla-link");
+            addBugzillaLinkMungerRule(newValue, 10, 10);
             break;
 
         case "channelMaxLines":

@@ -71,9 +71,9 @@ function initMunger()
     munger.addRule(".mailto",
        /(?:\W|^)((mailto:)?[^:;\\<>\[\]()\'\"\s\u201d]+@[^.<>\[\]()\'\"\s\u201d]+\.[^<>\[\]()\'\"\s\u201d]+)/i,
                    insertMailToLink, NORMAL_PRIORITY, HIGHER_PRIORITY, false);
-    munger.addRule("bugzilla-link",
-                   /(?:\W|^)(bug\s+(?:#?\d+|#[^\s,]{1,20})(?:\s+comment\s+#?\d+)?)/i,
-                   insertBugzillaLink, NORMAL_PRIORITY, NORMAL_PRIORITY);
+    
+    addBugzillaLinkMungerRule(client.prefs["bugKeyword"], NORMAL_PRIORITY, NORMAL_PRIORITY);
+
     munger.addRule("channel-link",
                 /(?:[^\w#]|^)[@%+]?(#[^<>,\[\](){}\"\s\u201d]*[^:,.<>\[\](){}\'\"\s\u201d])/i,
                    insertChannelLink, NORMAL_PRIORITY, NORMAL_PRIORITY);
@@ -110,6 +110,14 @@ function initMunger()
             }
         }
     }
+}
+
+function addBugzillaLinkMungerRule(keywords, priority, startPriority)
+{
+    client.munger.addRule("bugzilla-link",
+        new RegExp("(?:\\W|^)(("+keywords+")\\s+(?:#?\\d+|#[^\\s,]{1,20})(?:\\s+comment\\s+#?\\d+)?)","i"),
+        insertBugzillaLink, priority, startPriority);
+    
 }
 
 function insertLink(matchText, containerTag, data, mungerEntry)
@@ -319,7 +327,7 @@ function insertBugzillaLink (matchText, containerTag, eventData, mungerEntry)
 
     if (bugURL.length > 0)
     {
-        var idOrAlias = matchText.match(/bug\s+#?(\d+|[^\s,]{1,20})/i)[1];
+        var idOrAlias = matchText.match(new RegExp("(?:"+client.prefs["bugKeyword"]+")\\s+#?(\\d+|[^\\s,]{1,20})","i"))[1];
         bugURL = bugURL.replace("%s", idOrAlias);
 
         if (matchText.indexOf("comment") != -1)
