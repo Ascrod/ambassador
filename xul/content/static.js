@@ -166,6 +166,7 @@ function init()
     client.busy = false;
     updateProgress();
     initOfflineIcon();
+    updateAlertIcon();
     client.isIdleAway = false;
     initIdleAutoAway(client.prefs["awayIdleTime"]);
 
@@ -208,6 +209,23 @@ function initStatic()
     catch (ex)
     {
         dd("Sound failed to initialize: " + ex);
+    }
+
+    try
+    {
+        const nsIAlertsService = Components.interfaces.nsIAlertsService;
+        client.alert = new Object();
+        client.alert.service =
+          Components.classes["@mozilla.org/alerts-service;1"].getService(nsIAlertsService);
+        client.alert.alertList = new Object();
+        client.alert.floodProtector = new FloodProtector(
+            client.prefs['alert.floodDensity'],
+            client.prefs['alert.floodDispersion']);
+    }
+    catch (ex)
+    {
+        dd("Alert service failed to initialize: " + ex);
+        client.alert = null;
     }
 
     try
@@ -2149,6 +2167,14 @@ function updateLoggingIcon()
     var icon = window.document.getElementById("logging-status");
     icon.setAttribute("loggingstate", state);
     icon.setAttribute("tooltiptext", getMsg("msg.logging.icon." + state));
+}
+
+function updateAlertIcon()
+{
+    var state = client.prefs["alert.globalEnabled"] ? "on" : "off";
+    var icon = window.document.getElementById("alert-status");
+    icon.setAttribute("alertstate", state);
+    icon.setAttribute("tooltiptext", getMsg("msg.alert.icon." + state));
 }
 
 function initOfflineIcon()
@@ -5078,6 +5104,33 @@ function __display(message, msgtype, sourceObj, destObj)
                              "ERROR");
         }
     }
+    
+    /* We want to show alerts if they're from a non-current view (optional),
+    * or we don't have focus at all.
+    */
+    if (client.prefs["alert.globalEnabled"]
+        && this.prefs["alert.enabled"] && client.alert &&
+        (!window.isFocused
+          || (!client.prefs['alert.nonFocusedOnly'] &&
+               !("currentObject" in client && client.currentObject == this)
+             )
+        )
+     )
+     {
+         if (isImportant)
+         {
+           showEventAlerts(this.TYPE, "stalk", message, nick, o, this, msgtype);
+         }
+         else if (isSuperfluous)
+         {
+           showEventAlerts(this.TYPE, "event", message, nick, o, this, msgtype);
+         }
+         else
+         {
+           showEventAlerts(this.TYPE, "chat" , message, nick, o, this, msgtype);
+         }
+     }
+
 }
 
 function addHistory (source, obj, mergeData)
@@ -5598,4 +5651,193 @@ function gettabmatch_other (line, wordStart, wordEnd, word, cursorpos, lcFn)
     }
 
     return list;
+}
+
+/*
+ *   290miliseconds for 1st derive is allowing about 3-4 events per
+ *   second. 200ms for 2nd derivative allows max 200ms difference of
+ *   frequency. This means when the flood is massive, this value is
+ *   very closed to zero. But runtime issues should cause some delay
+ *   in the core js, so zero value is not too good. We need increase
+ *   this with a small, to make more strict. And when flood is done,
+ *   we need detect it - based on arithmetic medium. When doesn't happen
+ *   anything for a long time, perhaps for 2seconds the
+ *   value - based on last 10 events - the 2nd value goes
+ *   over 200ms average, so event should start again.
+ */
+
+function FloodProtector (density, dispersion)
+{
+    this.lastHit = Number(new Date());
+
+    if (density)
+        this.floodDensity = density;
+
+    if (dispersion)
+        this.floodDispersion = dispersion;
+}
+
+FloodProtector.prototype.requestedTotal = 0;
+FloodProtector.prototype.acceptedTotal = 0;
+FloodProtector.prototype.firedTotal = 0;
+FloodProtector.prototype.lastHit = 0;
+FloodProtector.prototype.derivative1 = 100;
+FloodProtector.prototype.derivative1Count = 100;
+FloodProtector.prototype.derivative2 = 0;
+FloodProtector.prototype.derivative2Count = 0;
+FloodProtector.prototype.floodDensity = 290;
+FloodProtector.prototype.floodDispersion = 200;
+
+FloodProtector.prototype.request = function ()
+{
+    this.requestedTotal++;
+    var current = Number(new Date());
+    var oldDerivative1 = this.derivative1;
+    this.derivative1 = current - this.lastHit;
+    this.derivative1Count = ((this.derivative1Count * 9) + this.derivative1) / 10;
+    this.derivative2 = Math.abs(this.derivative1 - oldDerivative1);
+    this.derivative2Count = ((this.derivative2Count * 9) + this.derivative2) / 10;
+    this.lastHit = current;
+}
+
+FloodProtector.prototype.accept = function ()
+{
+    this.acceptedTotal++;
+}
+
+FloodProtector.prototype.fire = function ()
+{
+    // There is no activity for 10 seconds - flood is possibly done.
+    // No need more recall. In other way the first normal activity
+    // overwrites it automatically earlier, if nessesary.
+    if ((Number(new Date()) - this.lastHit) > 10000)
+        return false;
+
+    // The activity is not too frequent or not massive so should not be fire.
+    if ((this.derivative1Count > this.floodDensity)
+        || (this.derivative2Count > this.floodDispersion))
+    {
+        return false;
+    }
+
+    this.firedTotal++;
+    return true;
+
+}
+
+
+function toasterPopupOverlapDelayReset (eventType)
+{
+    // it smells like a flood attack so rather wait more...
+    if (client.alert.floodProtector.fire())
+    {
+        setTimeout(
+            toasterPopupOverlapDelayReset,
+            client.prefs['alert.overlapDelay'], eventType);
+    }
+    else
+    {
+        delete client.alert.alertList[eventType];
+    }
+}
+
+var alertClickerObserver = {
+    observe: function(subject, topic, data)
+    {
+        if (topic == "alertclickcallback")
+        {
+            var tb = document.getElementById(data);
+            if (tb && tb.view)
+            {
+                tb.view.dispatch("set-current-view", {view: tb.view});
+                window.focus();
+            }
+        }
+    },
+
+    // Gecko 1.7.* rulez
+    onAlertClickCallback: function(data)
+    {
+        var tb = document.getElementById(data);
+        if (tb && tb.view)
+        {
+            tb.view.dispatch("set-current-view", {view: tb.view});
+            window.focus();
+        }
+    },
+
+    onAlertFinished: function(data)
+    {
+    }
+};
+
+
+// Show the alert for a particular event on a type of object.
+function showEventAlerts (type, event, message, nick, o, thisp, msgtype)
+{
+
+    // Converts .TYPE values into the event object names.
+    // IRCChannel => channel, IRCUser => user, etc.
+    type = type.replace(/^IRC/i,'').toLowerCase();
+  
+    var source = type;
+    // DCC Chat sessions should act just like user views.
+    if (type == "dccchat") type = "user";
+  
+    var ev = type + "." + event;
+    if (!(("alert."+ev) in thisp.prefs))
+        return;
+    if (!thisp.prefs["alert."+ev])
+        return;
+  
+    client.alert.floodProtector.request();
+    if (ev in client.alert.alertList)
+        return;
+  
+    client.alert.floodProtector.accept();
+    if(client.prefs['alert.overlapDelay'] > 0)
+    {
+        client.alert.alertList[ev] = true;
+        setTimeout(toasterPopupOverlapDelayReset,
+            client.prefs['alert.overlapDelay'], ev);
+    }
+  
+    var clickable = client.prefs['alert.clickable'];
+    var tabId = clickable ? getTabForObject(thisp,false).id : "";
+    var listener = clickable ? alertClickerObserver : null;
+  
+    message = removeColorCodes(message);
+    if (nick)
+    {
+        if (msgtype == "ACTION")
+        {
+            message = "* " + nick + " " + message;
+        }
+        else
+        {
+            message = "<" + nick + "> " + message;
+        }
+    }
+
+    if ((source == "channel") && o.channel)
+    {
+        source = o.channel.viewName;
+    }
+    else if ((source == "user") && o.network)
+    {
+        source = o.network.viewName;
+    }
+  
+    // We can't be sure if it is a MAC OS X and Growl is now turned off or not
+    try
+    {
+        client.alert.service.showAlertNotification(
+            "chrome://chatzilla/skin/images/logo.png",
+            "ChatZilla - " + source + " - " + event,
+            message, clickable, tabId, listener);
+    }
+    catch(ex)
+    {
+        // yup. it is probably a MAC or NsIAlertsService is not initialized
+    }
 }

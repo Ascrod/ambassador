@@ -302,6 +302,14 @@ progressmeter[mode="undetermined"] {
     display: none;
 }
 
+#alert-status[alertstate="off"] {
+    list-style-image: url("chrome://chatzilla/skin/images/spbubble-off.png");
+}
+
+#alert-status[alertstate="on"] {
+    list-style-image: url("chrome://chatzilla/skin/images/spbubble-on.png");
+}
+
 #logging-status[loggingstate="off"] {
     list-style-image: url("chrome://chatzilla/skin/images/logging-off.png");
 }

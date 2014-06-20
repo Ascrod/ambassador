@@ -77,6 +77,8 @@ function initHandlers()
     node.addEventListener("dblclick", onSecurityIconDblClick, false);
     node = document.getElementById("logging-status");
     node.addEventListener("click", onLoggingIconClick, false);
+    node = document.getElementById("alert-status");
+    node.addEventListener("click", onAlertIconClick, false);
 
     window.onkeypress = onWindowKeyPress;
 
@@ -290,6 +292,15 @@ function onLoggingIconClick(e)
 {
     if (e.button == 0)
         client.currentObject.dispatch("log", { state: "toggle" });
+}
+
+function onAlertIconClick(e)
+{
+    if (e.button == 0)
+    {
+        client.prefs["alert.globalEnabled"] = !client.prefs["alert.globalEnabled"];
+        updateAlertIcon();
+    }
 }
 
 function onMultilineInputKeyPress (e)

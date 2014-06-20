@@ -97,6 +97,17 @@ function initPrefs()
     var prefs =
         [
          ["activityFlashDelay", 200,      "hidden"],
+         ["alert.overlapDelay", 50,       "hidden"],
+         ["alert.floodDensity", 290,      "hidden"],
+         ["alert.floodDispersion", 200,   "hidden"],
+         ["alert.enabled",      true,     ".palert"],
+         ["alert.globalEnabled", true,    "global.palertconfig"],
+         ["alert.clickable",    true,     "hidden"],
+         ["alert.nonFocusedOnly", true,   "global.palertconfig"],
+         ["alert.channel.event", false,   ".palert"],
+         ["alert.channel.chat", false,    ".palert"],
+         ["alert.channel.stalk", true,    ".palert"],
+         ["alert.user.chat",    true,     ".palert"],
          ["aliases",            [],       "lists.aliases"],
          ["autoAwayCap",        300,      "global"],
          ["autoAwayPeriod",     2,        "appearance.misc"],
@@ -401,6 +412,11 @@ function getNetworkPrefManager(network)
 
     var prefs =
         [
+         ["alert.enabled",      defer,     ".palert"],
+         ["alert.channel.event",defer,     ".palert"],
+         ["alert.channel.chat", defer,     ".palert"],
+         ["alert.channel.stalk",defer,     ".palert"],
+         ["alert.user.chat",    defer,     ".palert"],
          ["autoAwayPeriod",   defer, "appearance.misc"],
          ["autoperform",      [],    "lists.autoperform"],
          ["autoRejoin",       defer, ".connect"],
@@ -509,6 +525,10 @@ function getChannelPrefManager(channel)
 
     var prefs =
         [
+         ["alert.enabled",      defer,     ".palert"],
+         ["alert.channel.event",defer,     ".palert"],
+         ["alert.channel.chat", defer,     ".palert"],
+         ["alert.channel.stalk",defer,     ".palert"],
          ["autoperform",      [],    "lists.autoperform"],
          ["autoRejoin",       defer, ".connect"],
          ["bugURL",           defer, "appearance.misc"],
@@ -574,6 +594,8 @@ function getUserPrefManager(user)
 
     var prefs =
         [
+         ["alert.enabled",      defer,     ".palert"],
+         ["alert.user.chat",    defer,     ".palert"],
          ["autoperform",      [],    "lists.autoperform"],
          ["charset",          defer, ".connect"],
          ["collapseActions",  defer, "appearance.misc"],
@@ -625,6 +647,8 @@ function getDCCUserPrefManager(user)
 
     var prefs =
         [
+         ["alert.enabled",      defer,     ".palert"],
+         ["alert.user.chat",    defer,     ".palert"],
          ["charset",          defer, ".connect"],
          ["collapseMsgs",     defer, "appearance.misc"],
          ["displayHeader",    client.prefs["dccUserHeader"], "appearance.misc"],
@@ -807,6 +831,20 @@ function onPrefChanged(prefName, newValue, oldValue)
 
         case "log":
             client.dispatch("sync-log");
+            break;
+
+        case "alert.globalEnabled":
+            updateAlertIcon();
+            break;
+
+        case "alert.floodDensity":
+            if (client.alert && client.alert.floodProtector)
+                client.alert.floodProtector.floodDensity = newValue;
+            break;
+
+        case "alert.floodDispersion":
+            if (client.alert && client.alert.floodProtector)
+                client.alert.floodProtector.floodDispersion = newValue;
             break;
 
         case "aliases":
