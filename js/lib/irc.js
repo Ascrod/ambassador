@@ -495,7 +495,7 @@ function CIRCServer (parent, hostname, port, isSecure, password)
     s.channelCount = -1;
     s.userModes = null;
     s.maxLineLength = 400;
-    s.capab = new Object();
+    s.caps = new Object();
 
     parent.servers[s.canonicalName] = s;
     if ("onInit" in s)
@@ -1626,28 +1626,6 @@ function serv_254(e)
     e.set = "network";
 }
 
-/* CAPAB response */
-CIRCServer.prototype.on290 =
-function my_290 (e)
-{
-    // we expect some sort of identifier
-    if (e.params.length < 2)
-        return;
-
-    switch (e.params[2])
-    {
-        case "IDENTIFY-MSG":
-            /* Every message comes prefixed with either + or -
-               + indicates the user is registered
-               - indicates the user is not registered */
-            this.capab.identifyMsg = true;
-            break;
-
-    }
-    e.destObject = this.parent;
-    e.set = "network";
-}
-
 /* user away message */
 CIRCServer.prototype.on301 =
 function serv_301(e)
@@ -1835,6 +1813,9 @@ function serv_353 (e)
             break;
 
         var modes = new Array();
+        var multiPrefix = (("namesx" in this.supports) && this.supports.namesx)
+                          || (("multi-prefix" in this.caps)
+                              && this.caps["multi-prefix"]);
         do
         {
             var found = false;
@@ -1848,7 +1829,7 @@ function serv_353 (e)
                     break;
                 }
             }
-        } while (found && ("namesx" in this.supports) && this.supports.namesx);
+        } while (found && multiPrefix);
 
         new CIRCChanUser(e.channel, null, nick, modes, true);
     }
@@ -2004,6 +1985,51 @@ function serv_302(e)
     e.set = "network";
 
     return true;
+}
+
+/* CAP response */
+CIRCServer.prototype.onCap =
+function my_cap (e)
+{
+    // We expect some sort of identifier.
+    if (e.params.length < 2)
+        return;
+
+    if (e.params[2] == "LS")
+    {
+        /* We're getting a list of all server capabilities. Set them all to
+         * null (if they don't exist) to indicate we don't know if they're
+         * enabled or not (but this will evaluate to false which matches that
+         * capabilities are only enabled on request).
+         */
+        for (var i = 3; i < e.params.length; i++)
+        {
+            var cap = e.params[i].replace(/^-/, "").trim();
+            if (!(cap in this.caps))
+                this.caps[cap] = null;
+        }
+    }
+    else if (e.params[2] == "ACK")
+    {
+        /* A capability change has been successfully applied. An enabled
+         * capability is just "cap" whilst a disabled capability is "-cap".
+         */
+        e.cap = e.params[3].replace(/^-/, "").trim();
+        e.capEnabled = e.params[3][0] != "-";
+        this.caps[e.cap] = e.capEnabled;
+    }
+    else if (e.params[2] == "NAK")
+    {
+        // A capability change has failed.
+        e.cap = e.params[3].replace(/^-/, "").trim();
+    }
+    else
+    {
+        dd("Unknown CAP reply " + e.params[2]);
+    }
+
+    e.destObject = this.parent;
+    e.set = "network";
 }
 
 /* user changed the mode */
@@ -2429,8 +2455,10 @@ function serv_notice_privmsg (e)
         e.replyTo = e.user; /* send replies to the user who sent the message */
     }
 
-    // The CAPAB IDENTIFY-MSG stuff for freenode
-    if (this.capab.identifyMsg)
+    /* The capability identify-msg adds a + or - in front the message to
+     * indicate their network registration status.
+     */
+    if (this.caps["identify-msg"])
     {
         e.identifyMsg = false;
         var flag = e.params[2].substring(0,1);

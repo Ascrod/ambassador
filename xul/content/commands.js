@@ -3780,6 +3780,22 @@ function cmdSupports(e)
     display(getMsg(MSG_SUPPORTS_FLAGSON, listB1.join(MSG_COMMASP)));
     display(getMsg(MSG_SUPPORTS_FLAGSOFF, listB2.join(MSG_COMMASP)));
     display(getMsg(MSG_SUPPORTS_MISCOPTIONS, listN.join(MSG_COMMASP)));
+
+    var listCaps = new Array();
+    var listCapsEnabled = new Array();
+    for (var cap in server.caps)
+    {
+        listCaps.push(cap);
+        if (server.caps[cap])
+            listCapsEnabled.push(cap);
+    }
+    if (listCaps.length > 0)
+    {
+        listCaps.sort();
+        listCapsEnabled.sort();
+        display(getMsg(MSG_SUPPORTS_CAPS, listCaps.join(MSG_COMMASP)));
+        display(getMsg(MSG_SUPPORTS_CAPSON, listCapsEnabled.join(MSG_COMMASP)));
+    }
 }
 
 function cmdDoCommand(e)
