@@ -72,6 +72,7 @@
     <em:homepageURL>http://chatzilla.hacksrus.com/</em:homepageURL>
     <em:aboutURL>chrome://chatzilla/content/about/about.xul</em:aboutURL>
     <em:optionsURL>chrome://chatzilla/content/config.xul</em:optionsURL>
+    <em:multiprocessCompatible>true</em:multiprocessCompatible>
 
     <!-- package files -->
     <em:file>

@@ -58,7 +58,8 @@ function onLoad()
     catch (ex)
     {
         dd("caught exception while initializing:\n" + dumpObjectTree(ex));
-        showErrorDlg(formatException(ex) + "\n" + dumpObjectTree(ex));
+        var exception = formatException(ex) + (ex.stack && "\n" + ex.stack);
+        showErrorDlg(exception + "\n" + dumpObjectTree(ex));
     }
 
     dd("}");
