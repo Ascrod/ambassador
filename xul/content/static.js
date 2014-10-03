@@ -1405,7 +1405,7 @@ function cycleView(amount)
 }
 
 // Plays the sound for a particular event on a type of object.
-function playEventSounds(type, event)
+function playEventSounds(type, event, source)
 {
     if (!client.sound || !client.prefs["sound.enabled"])
         return;
@@ -1424,10 +1424,12 @@ function playEventSounds(type, event)
     if (ev in client.soundList)
         return;
 
-    if (!(("sound." + ev) in client.prefs))
+    var src = source ? source : client;
+
+    if (!(("sound." + ev) in src.prefs))
         return;
 
-    var s = client.prefs["sound." + ev];
+    var s = src.prefs["sound." + ev];
 
     if (!s)
         return;
@@ -2896,11 +2898,11 @@ function setTabState(source, what, callback)
     if (!callback && (!window.isFocused || !current || (what == "attention")))
     {
         if (what == "attention")
-            playEventSounds(source.TYPE, "stalk");
+            playEventSounds(source.TYPE, "stalk", source);
         else if (what == "activity")
-            playEventSounds(source.TYPE, "chat");
+            playEventSounds(source.TYPE, "chat", source);
         else if (what == "superfluous")
-            playEventSounds(source.TYPE, "event");
+            playEventSounds(source.TYPE, "event", source);
     }
 
     // Only change the tab's colour if it's not the active view.
@@ -3552,7 +3554,7 @@ function syncOutputFrame(obj, nesting)
 
 function createMessages(source)
 {
-    playEventSounds(source.TYPE, "start");
+    playEventSounds(source.TYPE, "start", source);
 
     source.messages = document.createElementNS(XHTML_NS, "html:table");
     source.messages.setAttribute("class", "msg-table");
