@@ -351,7 +351,9 @@ function initStatic()
                 invalidFile.createUnique(FTYPE_FILE, 0600);
                 var msg = getMsg(MSG_ERR_INVALID_FILE,
                                  [awayFile.leafName, invalidFile.leafName]);
-                setTimeout("client.display(" + msg.quote() + ", MT_WARN)", 0);
+                setTimeout(function() {
+                    client.display(msg, MT_WARN);
+                }, 0);
                 awayFile.moveTo(null, invalidFile.leafName);
             }
         }
@@ -368,7 +370,9 @@ function initStatic()
     catch (ex)
     {
         msg = getMsg(MSG_ERR_INPUTHISTORY_NOT_WRITABLE, inputHistoryFile.path);
-        setTimeout("client.display(" + msg.quote() + ", MT_ERROR)", 0);
+        setTimeout(function() {
+            client.display(msg, MT_ERROR);
+        }, 0);
         dd(formatException(ex));
         client.inputHistoryLogger = null;
     }
@@ -386,7 +390,9 @@ function initStatic()
     catch (ex)
     {
         msg = getMsg(MSG_ERR_URLS_NOT_WRITABLE, urlsFile.path);
-        setTimeout("client.display(" + msg.quote() + ", MT_ERROR)", 0);
+        setTimeout(function() {
+            client.display(msg, MT_ERROR);
+        }, 0);
         dd(formatException(ex));
         client.urlLogger = null;
     }
@@ -3668,7 +3674,7 @@ function getTabForObject(source, create)
                         "nsDragAndDrop.startDrag(event, tabDNDObserver);");
         tb.setAttribute("href", source.getURL());
         tb.setAttribute("name", source.unicodeName);
-        tb.setAttribute("onclick", "onTabClick(event, " + id.quote() + ");");
+        tb.setAttribute("onclick", "onTabClick(event, this.id);");
         // This wouldn't be here if there was a supported CSS property for it.
         tb.setAttribute("crop", "center");
         tb.setAttribute("context", "context:tab");
