@@ -2231,7 +2231,7 @@ function cmdGotoURL(e)
     else
         browserWin = getWindowByType("navigator:browser");
 
-    var location = browserWin ? browserWin.content.document.location : null;
+    var location = browserWin ? browserWin.gBrowser.currentURI.spec : null;
     var action = e.command.name;
 
     // We don't want to replace ChatZilla running in a tab.
