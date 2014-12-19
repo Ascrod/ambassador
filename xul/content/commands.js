@@ -2224,13 +2224,7 @@ function cmdGotoURL(e)
         return;
     }
 
-    var browserWin;
-
-    if (client.host == "Songbird")
-        browserWin = getWindowByType("Songbird:Main");
-    else
-        browserWin = getWindowByType("navigator:browser");
-
+    var browserWin = getWindowByType("navigator:browser");
     var location = browserWin ? browserWin.gBrowser.currentURI.spec : null;
     var action = e.command.name;
 

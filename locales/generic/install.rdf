@@ -63,17 +63,6 @@
         <em:maxVersion>2.20a1</em:maxVersion>
       </Description>
     </em:targetApplication>
-
-    <!-- Songbird
-         1.9 is Gecko 1.9.2
-         1.10 is Gecko 1.9.2 -->
-    <em:targetApplication>
-      <Description>
-        <em:id>songbird@songbirdnest.com</em:id>
-        <em:minVersion>1.9</em:minVersion>
-        <em:maxVersion>1.10.*</em:maxVersion>
-      </Description>
-    </em:targetApplication>
     <!-- END COPY BETWEEN /xpi/resources/install.rdf AND /locales/generic/install.rdf -->
 
     <!-- package files -->
