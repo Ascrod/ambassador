@@ -2233,7 +2233,7 @@ function cmdGotoURL(e)
         ((action == "goto-url-newtab") && !browserWin) ||
         ((action == "goto-url") && !browserWin) ||
         ((action == "goto-url") && browserWin &&
-         (location.href.indexOf("chrome://chatzilla/content/") == 0)))
+         (location.indexOf("chrome://chatzilla/content/") == 0)))
     {
         try
         {
