@@ -3089,7 +3089,7 @@ function replaceColorCodes(msg)
     // to prevent munging the URLs resulting in broken links. Leave codes at
     // the start of the URL alone.
     msg = msg.replace(new RegExp(client.linkRE.source, "g"), function(url, _foo, scheme) {
-        if (!client.checkURLScheme(scheme))
+        if (scheme && !client.checkURLScheme(scheme))
             return url;
         return url.replace(/%[BC][0-9A-Fa-f]/g, function(hex, index) {
             // as JS does not support lookbehind and we don't want to consume the
