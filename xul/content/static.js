@@ -4326,6 +4326,12 @@ function cli_load(url, scope)
             client._loader = cls.getService(mozIJSSubScriptLoader);
     }
 
+    if (client._loader.loadSubScriptWithOptions)
+    {
+        var opts = {target: scope, ignoreCache: true};
+        return client._loader.loadSubScriptWithOptions(url, opts);
+    }
+
     return client._loader.loadSubScript(url, scope);
 }
 
