@@ -575,6 +575,8 @@ function pdata_loadXUL()
             
             this.edit = document.createElement("textbox");
             this.edit.setAttribute("size", "5");
+            this.edit.setAttribute("type", "number");
+            this.edit.setAttribute("min", "-1");
             
             editCont = document.createElement("hbox");
             editCont.flex = 1000;
