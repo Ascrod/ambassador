@@ -110,7 +110,6 @@ BadCertHandler.prototype.QueryInterface =
 function badcert_queryinterface(aIID)
 {
     if (aIID.equals(Components.interfaces.nsIBadCertListener2) ||
-        aIID.equals(Components.interfaces.nsISSLErrorListener) ||
         aIID.equals(Components.interfaces.nsIInterfaceRequestor) ||
         aIID.equals(Components.interfaces.nsISupports))
     {
@@ -125,12 +124,6 @@ function badcert_queryinterface(aIID)
  */
 BadCertHandler.prototype.notifyCertProblem =
 function badcert_notifyCertProblem(socketInfo, sslStatus, targetHost)
-{
-    return true;
-}
-
-BadCertHandler.prototype.notifySSLError =
-function badcert_notifySSLError(socketInfo, error, targetSite)
 {
     return true;
 }
