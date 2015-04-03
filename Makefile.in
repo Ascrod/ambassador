@@ -13,7 +13,6 @@ include $(DEPTH)/config/autoconf.mk
 PACKAGE_FILE = chatzilla.pkg
 
 NO_JS_MANIFEST = 1
-EXTRA_COMPONENTS = js/lib/chatzilla-service.js
 DIST_FILES = xpi/resources/install.rdf
 
 CHATZILLA_VERSION=$(shell grep "const __cz_version" "$(srcdir)/xul/content/static.js" | sed "s|.*\"\([^\"]\{1,\}\)\".*|\1|")

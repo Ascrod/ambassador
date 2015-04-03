@@ -14,3 +14,7 @@ XPI_NAME = 'chatzilla'
 export('XPI_NAME')
 
 JAR_MANIFESTS += ['jar.mn']
+
+EXTRA_COMPONENTS += [
+    'js/lib/chatzilla-service.js',
+]
