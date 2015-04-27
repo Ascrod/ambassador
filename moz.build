@@ -9,6 +9,7 @@ DIRS += [
 ]
 
 CONFIGURE_SUBST_FILES += ['locales/Makefile']
+NO_JS_MANIFEST = True
 
 XPI_NAME = 'chatzilla'
 export('XPI_NAME')
