@@ -36,9 +36,7 @@ XPI_NAME               = chatzilla-$(AB_CD)
 INSTALL_EXTENSION_ID   = langpack-$(AB_CD)@chatzilla.mozilla.org
 XPI_PKGNAME            = chatzilla-$(CHATZILLA_VERSION).$(AB_CD)
 DIST_FILES             = generic/install.rdf generic/install.js
-XULAPP_DEFINES = \
-    $(DEFINES) \
-    $(ACDEFINES) \
+XULPPFLAGS += \
     -I$(call EXPAND_LOCALE_SRCDIR,toolkit/locales)/defines.inc \
     -I$(LOCALE_SRCDIR)/defines.inc \
     $(NULL)
