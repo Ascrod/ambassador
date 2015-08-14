@@ -2120,6 +2120,11 @@ function my_netdisconnect (e)
                 msg = MSG_PROXY_CONNECTION_REFUSED;
                 break;
 
+            case NS_ERROR_OFFLINE:
+                msg = MSG_ERR_OFFLINE;
+                retrying = false;
+                break;
+
             case NS_ERROR_ABORT:
                 if (client.iosvc.offline)
                 {
