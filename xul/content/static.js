@@ -161,8 +161,6 @@ function init()
     client.commandManager.installKeys(document);
     createMenus();
 
-    initIcons();
-
     client.busy = false;
     updateProgress();
     initOfflineIcon();
@@ -495,9 +493,6 @@ function initApplicationCompatibility()
 
     // Set up simple host and platform information.
     client.host = "Unknown";
-    // Do we need to copy the icons? (not necessary on Gecko 1.8 and onwards,
-    // and install.js does it for us on SeaMonkey)
-    client.hostCompat.needToCopyIcons = false;
 
     var app = getService("@mozilla.org/xre/app-info;1", "nsIXULAppInfo");
     // nsIXULAppInfo wasn't implemented before 1.8...
@@ -527,23 +522,9 @@ function initApplicationCompatibility()
                 client.host = ""; // Unknown host, show an error later.
         }
     }
-    else if ("getBrowserURL" in window)
+    else
     {
-        var url = getBrowserURL();
-        if (url == "chrome://navigator/content/navigator.xul")
-        {
-            client.host = "Mozilla";
-        }
-        else if (url == "chrome://browser/content/browser.xul")
-        {
-            client.hostCompat.needToCopyIcons = true;
-            client.host = "Firefox";
-        }
-        else
-        {
-            client.host = ""; // We don't know this host. Show an error later.
-            client.unknownUID = url;
-        }
+        client.host = ""; // We don't know this host. Show an error later.
     }
 
     client.platform = "Unknown";
@@ -567,58 +548,6 @@ function initApplicationCompatibility()
         client.lineEnd = "\r\n";
     else
         client.lineEnd = "\n";
-}
-
-function initIcons()
-{
-    // Make sure we got the ChatZilla icon(s) in place first.
-    const iconName = "chatzilla-window";
-    const suffixes = [".ico", ".xpm", "16.xpm"];
-
-    /* when installing on Mozilla, the XPI has the power to put the icons where
-     * they are needed - in older versions of Firefox, it doesn't.
-     */
-    if (!client.hostCompat.needToCopyIcons)
-        return;
-
-    var sourceDir = getSpecialDirectory("ProfD");
-    sourceDir.append("extensions");
-    sourceDir.append("{" + __cz_guid + "}");
-    sourceDir.append("chrome");
-    sourceDir.append("icons");
-    sourceDir.append("default");
-
-    var destDir = getSpecialDirectory("AChrom");
-    destDir.append("icons");
-    destDir.append("default");
-    if (!destDir.exists())
-    {
-        try
-        {
-            mkdir(destDir);
-        }
-        catch(ex)
-        {
-            return;
-        }
-    }
-
-    for (var i = 0; i < suffixes.length; i++)
-    {
-        var iconDest = destDir.clone();
-        iconDest.append(iconName + suffixes[i]);
-        var iconSrc = sourceDir.clone();
-        iconSrc.append(iconName + suffixes[i]);
-
-        if (iconSrc.exists() && !iconDest.exists())
-        {
-            try
-            {
-                iconSrc.copyTo(iconDest.parent, iconDest.leafName);
-            }
-            catch(ex){}
-        }
-    }
 }
 
 function initInstrumentation()

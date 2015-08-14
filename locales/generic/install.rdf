@@ -20,15 +20,6 @@
 
     <em:iconURL>chrome://chatzilla/skin/images/logo.png</em:iconURL>
 
-    <!-- Require ChatZilla. -->
-    <em:requires>
-      <Description>
-        <em:id>{59c81df5-4b7a-477b-912d-4e0fdf64e5f2}</em:id>
-        <em:minVersion>@CHATZILLA_BASE_VERSION@</em:minVersion>
-        <em:maxVersion>@CHATZILLA_BASE_VERSION@.*</em:maxVersion>
-      </Description>
-    </em:requires>
-
     <!-- BEGIN COPY BETWEEN /xpi/resources/install.rdf AND /locales/generic/install.rdf -->
     <!-- ChatZilla supports Gecko 1.9.1 and higher.
          All applications listed below are the subset of supported versions
@@ -64,12 +55,6 @@
       </Description>
     </em:targetApplication>
     <!-- END COPY BETWEEN /xpi/resources/install.rdf AND /locales/generic/install.rdf -->
-
-    <!-- package files -->
-    <em:file>
-      <Description about="urn:mozilla:extension:file:chatzilla.jar">
-        <em:locale>locale/@AB_CD@/chatzilla/</em:locale>
-      </Description>
-    </em:file>
+    <em:unpack>true</em:unpack>
   </Description>
 </RDF>
