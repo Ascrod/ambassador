@@ -3255,7 +3255,7 @@ function cli_installPlugin(name, source)
     }
     catch (ex)
     {
-        display(getMSg(MSG_INSTALL_PLUGIN_ERR_CHECK_SD, ex), MT_ERROR);
+        display(getMsg(MSG_INSTALL_PLUGIN_ERR_CHECK_SD, ex), MT_ERROR);
         return;
     }
 
@@ -3444,7 +3444,7 @@ function cli_installPlugin(name, source)
         {
             if (ex != CZ_PI_ABORT)
             {
-                display(getMSg(MSG_INSTALL_PLUGIN_ERR_INSTALLING, ex),
+                display(getMsg(MSG_INSTALL_PLUGIN_ERR_INSTALLING, ex),
                         MT_ERROR);
             }
         }
