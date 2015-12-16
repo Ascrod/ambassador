@@ -53,7 +53,6 @@ const NS_ERROR_NO_CONTENT = NS_ERROR_MODULE_NETWORK_BASE + 17;
 
 /* interfaces used in this file */
 const nsIWindowMediator  = Components.interfaces.nsIWindowMediator;
-const nsICmdLineHandler  = Components.interfaces.nsICmdLineHandler;
 const nsICategoryManager = Components.interfaces.nsICategoryManager;
 const nsIURIContentListener = Components.interfaces.nsIURIContentListener;
 const nsIURILoader       = Components.interfaces.nsIURILoader;
@@ -156,23 +155,11 @@ function handler_QI(iid)
     if (iid.equals(nsISupports))
         return this;
 
-    if (nsICmdLineHandler && iid.equals(nsICmdLineHandler))
-        return this;
-
     if (nsICommandLineHandler && iid.equals(nsICommandLineHandler))
         return this;
 
     throw Components.results.NS_ERROR_NO_INTERFACE;
 }
-
-/* nsICmdLineHandler */
-CLineService.prototype.commandLineArgument = "-chat";
-CLineService.prototype.prefNameForStartup = "general.startup.chat";
-CLineService.prototype.chromeUrlForTask = "chrome://chatzilla/content";
-CLineService.prototype.helpText = "Start with an IRC chat client";
-CLineService.prototype.handlesArgs = true;
-CLineService.prototype.defaultArgs = "";
-CLineService.prototype.openWindowWithArgs = true;
 
 /* nsICommandLineHandler */
 CLineService.prototype.handle =
