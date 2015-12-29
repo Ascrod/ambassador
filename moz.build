@@ -20,3 +20,7 @@ JAR_MANIFESTS += ['jar.mn']
 EXTRA_COMPONENTS += [
     'js/lib/chatzilla-service.js',
 ]
+
+FINAL_TARGET_PP_FILES += [
+    'xpi/resources/install.rdf',
+]
