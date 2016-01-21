@@ -3805,8 +3805,16 @@ function cmdDoCommand(e)
     }
     else if (e.cmdName == "cmd_chatzillaPrefs")
     {
-        window.openDialog('chrome://chatzilla/content/config.xul', '',
-                          'chrome,resizable,dialog=no', window);
+        var prefWin = getWindowByType("irc:chatzilla:config");
+        if (!prefWin)
+        {
+            window.openDialog('chrome://chatzilla/content/config.xul', '',
+                              'chrome,resizable,dialog=no', window);
+        }
+        else
+        {
+            prefWin.focus();
+        }
     }
     else if (e.cmdName == "cmd_selectAll")
     {
