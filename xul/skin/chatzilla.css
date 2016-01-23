@@ -13,10 +13,6 @@ window {
     display: none;
 }
 
-#tabpanels-contents-box {
-    margin: 3px 0;
-}
-
 #header-url:hover {
     text-decoration: underline;
 }
@@ -51,6 +47,10 @@ window {
     background: darkslategrey !important;
 }
 
+#user-list {
+    margin: 0;
+}
+
 #view-tabs {
     overflow: hidden;
 }
@@ -76,32 +76,66 @@ window {
 }
 
 .view-button {
-    /* do NOT set colour, at least not without background. :) */
+    /* Box model is 5px 5px 5px 6px in aggregate. Extra pixel on the left is for the separator. */
+    -moz-appearance: none;
+    margin: 5px 0;
+    border: none;
+    border-left: 1px solid ButtonShadow;
+    padding: 0 5px;
+    background: Button;
+    color: ButtonText;
+    font: message-box;
+    text-shadow: none;
     text-align: center;
     max-width: 30ex;
     -moz-box-flex: 1;
+    -moz-box-orient: vertical;
+    -moz-box-align: stretch;
+}
+
+.view-button:first-child {
+    border-left-color: transparent;
+}
+
+.view-button::before {
+    content: " ";
+    display: -moz-box;
+    margin: -5px -5px 0 -5px;
+    height: 4px;
+}
+
+.view-button[state="superfluous"]::before {
+    background-color: darkblue;
+}
+
+.view-button[state="activity"]::before {
+    background-color: darkgreen;
+}
+
+.view-button[state="attention"]::before {
+    background-color: red;
+}
+
+.view-button:hover,
+.view-button[state="current"] {
+    margin: 0 0 0 1px;
+    border-left: none;
+    border-radius: 0 0 6px 6px;
+    padding: 5px;
+    background: Window;
+    color: WindowText;
+}
+
+.view-button[state="current"] + .view-button,
+.view-button:hover + .view-button:not([state="current"]) {
+    border-left-color: transparent;
 }
 
 .view-button[state="current"] {
-    font-weight: bold;
-}
-
-.view-button[state="superfluous"] {
-    color: darkblue;
-}
-
-.view-button[state="activity"] {
-    color: darkgreen;
-}
-
-.view-button[state="attention"] {
-    color: red;
-}
-
-.output-container {
-    border: thin silver inset;
-    border-left: none;
-    border-right: none;
+    position: relative; /* So it visually appears above the tabs either side. */
+    border: 2px solid ButtonShadow;
+    border-top: none;
+    padding: 5px 3px 3px 3px;
 }
 
 treecol { 
@@ -268,6 +302,22 @@ progressmeter[mode="undetermined"] {
     direction: rtl;
 }
 
+#input-splitter {
+    margin: 4px 0 0 0;
+}
+
+#input-widgets {
+    margin: 4px 0;
+}
+
+#server-nick, #button-multiline-expand, #button-input, #button-multiline-contract {
+    margin: 0;
+}
+
+#input, #multiline-input {
+    margin: 0 4px;
+}
+
 /* Hack; Stop the status-bar from distorting without a security icon */
 #status-text {
     min-height: 17px;
@@ -329,24 +379,5 @@ progressmeter[mode="undetermined"] {
 /* Focus styling for a11y reasons */
 #user-list-box[focusobvious="true"], #browser-box[focusobvious="true"],
 #multiline-hug-box[focusobvious="true"], #singleline-hug-box[focusobvious="true"] {
-    border-color: highlight !important;
-}
-
-/* Not setting a right border so the scrollbar remains on the window edge. */
-#browser-box:last-child, #user-list-box:last-child {
-    border-left: 2px solid transparent;
-    border-top: 2px solid transparent;
-    border-bottom: 2px solid transparent;
-}
-
-#user-list-box:first-child, #browser-box:first-child {
-    border-right: 2px solid transparent;
-    border-top: 2px solid transparent;
-    border-bottom: 2px solid transparent;
-}
-
-#singleline-hug-box, #multiline-hug-box {
-    border-right: 2px solid transparent;
-    border-left: 2px solid transparent;
-    border-top: 2px solid transparent;
+    outline: 2px solid highlight;
 }

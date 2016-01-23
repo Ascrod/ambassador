@@ -64,7 +64,7 @@
             ondragover="nsDragAndDrop.dragOver(event, tabsDropObserver)"
             ondragexit="nsDragAndDrop.dragExit(event, tabsDropObserver)"
             ondragdrop="nsDragAndDrop.drop(event, tabsDropObserver)">
-          <tabs class="tabs-bottom" id="views-tbar-inner" flex="1"
+          <tabs id="views-tbar-inner" flex="1"
               onselect="onTabSelect(event)" setfocus="false">
             <tab hidden="true"/> <!-- dummy tab to keep the freaking xbl from
                                       causing an exception -->
