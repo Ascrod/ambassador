@@ -4578,7 +4578,7 @@ function this_getFontCSS(format)
     else
         fs = "font-size: medium;";
 
-    css = "body.chatzilla-body { " + fs + fn + " }";
+    css = ".chatzilla-body { " + fs + fn + " }";
 
     if (format == "data")
         return "data:text/css," + encodeURIComponent(css);

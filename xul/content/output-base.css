@@ -22,7 +22,7 @@
  *
  *     @import url(chatzilla.css);
  *
- * to the to your userContent.css (also in your <profile>/chrome directory, and
+ * to your userContent.css (also in your <profile>/chrome directory, and
  * also not there unless you created it already.)  End all CSS rules in your
  * new chatzilla.css with !important to override any styles declared here.
  * For example, on a Linux system, you would create a file called
@@ -35,7 +35,7 @@
  *     font-size: 14pt !important;
  *   }
  *
- *   body.chatzilla-body {
+ *   .chatzilla-body {
  *     background: green !important;
  *   }
  *
@@ -123,15 +123,21 @@
  *     This occurs when someone with a nickname matching a pattern in your
  *     /stalk list speaks, when someone says a word that matches a pattern in
  *     your /stalk list, or when someone says your nickname.
- *
- * 
  */
+
+#splash-wrapper {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
 
 /******************************************************************************
  * basic classes                                                              *
  ******************************************************************************/
 
-body.chatzilla-body {               /* The topmost container in the ChatZilla */
+.chatzilla-body {                   /* The topmost container in the ChatZilla */
     margin: 0px 0px 0px 0px;        /* output window. */
     background: #FFFFFF;
     color: #000000;

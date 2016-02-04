@@ -10,7 +10,7 @@
 
 @import url(chrome://chatzilla/content/output-base.css);
 
-body.chatzilla-body {               /* The topmost container in the ChatZilla */
+.chatzilla-body {                   /* The topmost container in the ChatZilla */
     background: white;              /* output window.                         */
     color: #222222;    
 }
@@ -27,9 +27,7 @@ a.chatzilla-link {
 .header {
     color: darkslategrey;
     background-color: #EEEEEE;
-/*    opacity: 0.9;*/
     border: 1px #777499 solid;
-    -moz-border-radius: 7px;
     border-radius: 7px;
 }
 
@@ -134,30 +132,25 @@ a.chatzilla-link {
     color: #0e9e0e;
     background-color: #c3f7c3; 
     font-weight: bold;
-    -moz-border-radius: 5px 5px 5px 5px;
     border-radius: 5px 5px 5px 5px;
-    /*border: thin darkblue solid;*/
 }
 
 .msg[msg-type="QUIT"] .msg-data {
     background: #fff196;
     color: #ff8d02;
     font-weight: bold;
-    -moz-border-radius: 5px 5px 5px 5px;
     border-radius: 5px 5px 5px 5px;
 }
 
 .msg[msg-type="HELLO"] .msg-data {
     background: #1342a5;
     color: white;
-    -moz-border-radius: 5px 5px 5px 5px;
     border-radius: 5px 5px 5px 5px;
     font-weight: bold;
 }
 
 .msg[msg-type="ERROR"] .msg-data,
 .msg[msg-type="DISCONNECT"] .msg-data {
-    -moz-border-radius: 5px 5px 5px 5px;
     border-radius: 5px 5px 5px 5px;
     background: #a8221e;
     color: white;
@@ -192,7 +185,6 @@ a.chatzilla-link {
     color: #ff1a0a;
     background: #ffdbcc;
     font-weight: bold;
-    -moz-border-radius: 5px 5px 5px 5px;
     border-radius: 5px 5px 5px 5px;
 }
 
@@ -201,7 +193,6 @@ a.chatzilla-link {
  */
 .msg[important="true"] .msg-user {
     background: #d4d8d4;
-    -moz-border-radius: 5px 0px 0px 5px;
     border-radius: 5px 0px 0px 5px;
 }
 

@@ -2,12 +2,10 @@
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
+<!DOCTYPE html>
 <html>
   <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8">
     <style type="text/css">
       [hidden="true"] {
         display: none;
@@ -81,7 +79,7 @@
     <script type="application/x-javascript" src="chrome://chatzilla/content/output-window.js"></script>
   </head>
 
-  <body class="chatzilla-body" onresize="onResize();">
+  <body class="chatzilla-body">
 
     <div class="header-outer">
 
@@ -204,7 +202,7 @@
     </div>
 
     <div id="messages-outer" hidden="true">
-      <div id="splash"></div>
+      <div id="splash-wrapper"><div id="splash"></div></div>
       <div id="output"></div>
     </div>
   </body>

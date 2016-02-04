@@ -10,7 +10,7 @@
 
 @import url(chrome://chatzilla/content/output-base.css);
 
-body.chatzilla-body {               /* The topmost container in the ChatZilla */
+.chatzilla-body {                   /* The topmost container in the ChatZilla */
     background: black;              /* output window. */
     color: lightgrey;    
 }
@@ -30,8 +30,6 @@ a.chatzilla-link:visited {
 .header {
     color: lightslategrey;
     background-color: #333333;
-/*    opacity: 0.9;  causes memory leak? */
-    -moz-border-radius: 7px;
     border-radius: 7px;
 }
 
@@ -127,7 +125,7 @@ treechildren::-moz-tree-cell-text(unselected) {
     color: white !important;                /* a message (channel and query   */
 }                                           /* views)                         */
 
-.msg[mark="even"] .msg-data {                    /* use even/odd marks to create a */
+.msg[mark="even"] .msg-data {               /* use even/odd marks to create a */
     color: white;                           /* subtle brightness change when  */
 }                                           /* the speaker changes.           */
 

@@ -119,14 +119,12 @@ function stock_initOutputWindow(newClient, newView, newClickHandler)
         header.update = headers[view.TYPE].update;
     }
 
-    var splash = document.getElementById("splash");
     var name;
     if ("unicodeName" in view)
         name = view.unicodeName;
     else
         name = view.name;
-    splash.appendChild(document.createTextNode(name));
-    onResize();
+    updateSplash(name);
 
     setTimeout(initHeader, 500);
 
@@ -166,14 +164,6 @@ function onTopicKeypress(e)
         default:
             client.mainWindow.onInputKeyPress(e);
     }
-}
-
-function onResize()
-{
-    var halfHeight = Math.floor(window.innerHeight / 2);
-    var splash = document.getElementById("splash");
-    splash.style.paddingTop = halfHeight + "px";
-    splash.style.paddingBottom = halfHeight + "px";
 }
 
 function startTopicEdit()
@@ -589,4 +579,10 @@ function updateDCCFile()
                                 mainWindow.getSISpeed(view.speed)]));
 
     setAttribute("progressbar", "width", pcent + "%");
+}
+
+function updateSplash(content)
+{
+    var splash = document.getElementById("splash");
+    splash.appendChild(document.createTextNode(content));
 }
