@@ -195,7 +195,7 @@ function initStatic()
     {
         dd("IO service failed to initialize: " + ex);
     }
-    
+
     try
     {
         const nsISound = Components.interfaces.nsISound;
@@ -276,7 +276,7 @@ function initStatic()
                  "unselected"];
     for (var i = 0; i < atoms.length; i++)
         client.atomCache[atoms[i]] = atomSvc.getAtom(atoms[i]);
-    
+
     if (client.prefs["showModeSymbols"])
         setListMode("symbol");
     else
@@ -689,7 +689,7 @@ function processStartupScripts()
 {
     client.plugins = new Object();
     var scripts = client.prefs["initialScripts"];
-    var basePath = getURLSpecFromFile(client.prefs["profilePath"]); 
+    var basePath = getURLSpecFromFile(client.prefs["profilePath"]);
     var baseURL = client.iosvc.newURI(basePath, null, null);
     for (var i = 0; i < scripts.length; ++i)
     {
@@ -2367,7 +2367,7 @@ function updateAppMotif(motifURL)
 
     motifURL = motifURL.replace(/"/g, "%22");
     var dataStr = "href=\"" + motifURL + "\" name=\"dyn-motif\"";
-    try 
+    try
     {
         // No dynamic style node yet.
         if (!node)
@@ -3027,7 +3027,7 @@ function replaceColorCodes(msg)
             return (needPercent ? "" : "%") + hex;
         });
     });
-    
+
     // mIRC codes: underline, bold, Original (reset), colors, reverse colors.
     msg = msg.replace(/(^|[^%])%U/g, "$1\x1f");
     msg = msg.replace(/(^|[^%])%B/g, "$1\x02");
@@ -3140,7 +3140,7 @@ function client_statechange (webProgress, request, stateFlags, status)
             {
                 // This should totally never ever happen. It will if we get in a
                 // fight with xpcnativewrappers, though. Oops:
-                dd("Couldn't find a content window or its initOutputWindow " + 
+                dd("Couldn't find a content window or its initOutputWindow " +
                    "function. This is BAD!");
             }
         }
@@ -3159,7 +3159,7 @@ function client_statechange (webProgress, request, stateFlags, status)
                 //dd("scrollDown(" + frame.source.getURL() + ")");
             }
         }
-    
+
     }
 }
 
@@ -3270,7 +3270,7 @@ function cli_installPlugin(name, source)
                                       "nsIZipReader");
             // Gah at changing APIs:
             if ("init" in zipReader)
-            {   
+            {
                 zipReader.init(source);
                 zipReader.open();
             }
@@ -3832,11 +3832,11 @@ function cdnd_gsf()
  * XXX: Some of the code below has to work around specific limitations in how
  * the nsDragAndDrop.js wrapper works. The wrapper greatly simplifies the DnD
  * code, though, so it's still worth using.
- * 
+ *
  * XXX: canDrop checks if there is a supported flavour of data because
  * nsDragAndDrop does not. This will prevent the drag service from thinking
  * we accept any old data when we don't.
- * 
+ *
  * XXX: nsDragAndDrop.checkCanDrop does this:
  *     mDragSession.canDrop = mDragSession.sourceNode != aEvent.target;
  *     mDragSession.canDrop &= aDragDropObserver.canDrop(...);
@@ -3846,7 +3846,7 @@ function cdnd_gsf()
  * it can't be dropped, luckily). As a result, after nsDragAndDrop has called
  * canDrop and onDragOver, the drag service's canDrop value is true iff there
  * is a supported flavour.
- * 
+ *
  * XXX: onDrop is the only place which checks we're getting an IRC URL, as
  * accessing the drag data at any other time is both tedious and could
  * significantly impact the performance of the drag (getting the data can be
@@ -4668,7 +4668,7 @@ function __display(message, msgtype, sourceObj, destObj)
         else
             toAttr = destObj.viewName;
     }
-        
+
     // Is the message 'to' or 'from' somewhere other than this view
     var toOther = ((sourceObj == me) && destObj && (destObj != this));
     var fromOther = (toUser && (destObj == me) && (sourceObj != this) &&
@@ -5042,7 +5042,7 @@ function __display(message, msgtype, sourceObj, destObj)
                              "ERROR");
         }
     }
-    
+
     /* We want to show alerts if they're from a non-current view (optional),
     * or we don't have focus at all.
     */
@@ -5717,21 +5717,21 @@ function showEventAlerts (type, event, message, nick, o, thisp, msgtype)
     // Converts .TYPE values into the event object names.
     // IRCChannel => channel, IRCUser => user, etc.
     type = type.replace(/^IRC/i,'').toLowerCase();
-  
+
     var source = type;
     // DCC Chat sessions should act just like user views.
     if (type == "dccchat") type = "user";
-  
+
     var ev = type + "." + event;
     if (!(("alert."+ev) in thisp.prefs))
         return;
     if (!thisp.prefs["alert."+ev])
         return;
-  
+
     client.alert.floodProtector.request();
     if (ev in client.alert.alertList)
         return;
-  
+
     client.alert.floodProtector.accept();
     if(client.prefs['alert.overlapDelay'] > 0)
     {
@@ -5739,11 +5739,11 @@ function showEventAlerts (type, event, message, nick, o, thisp, msgtype)
         setTimeout(toasterPopupOverlapDelayReset,
             client.prefs['alert.overlapDelay'], ev);
     }
-  
+
     var clickable = client.prefs['alert.clickable'];
     var tabId = clickable ? getTabForObject(thisp,false).id : "";
     var listener = clickable ? alertClickerObserver : null;
-  
+
     message = removeColorCodes(message);
     if (nick)
     {
@@ -5765,7 +5765,7 @@ function showEventAlerts (type, event, message, nick, o, thisp, msgtype)
     {
         source = o.network.viewName;
     }
-  
+
     // We can't be sure if it is a MAC OS X and Growl is now turned off or not
     try
     {
