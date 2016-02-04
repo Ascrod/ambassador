@@ -4538,7 +4538,7 @@ function cmdInstallPlugin(e)
 
             ctx.outFile = getTempFile(client.prefs["profilePath"], tempName);
             ctx.outFileH = fopen(ctx.outFile, ">");
-        }, 
+        },
         onDataAvailable: function _onDataAvailable(request, context, stream,
                                                    offset, count)
         {
@@ -4550,7 +4550,7 @@ function cmdInstallPlugin(e)
         onStopRequest: function _onStopRequest(request, context, statusCode)
         {
             ctx.outFileH.close();
- 
+
             if (statusCode == 0)
             {
                 client.installPlugin(e.name, ctx.outFile);
@@ -4686,12 +4686,12 @@ function cmdWebSearch(e)
     const SEARCH_SVC = "@mozilla.org/browser/search-service;1";
     var nibss = getService(SEARCH_SVC, "nsIBrowserSearchService");
     var engine = nibss.currentEngine;
-    
+
     if (client.prefs["websearch.url"])
     {
         searchText = encodeURIComponent(searchText).replace(/%20/g, "+");
         var baseURL = client.prefs["websearch.url"];
-        
+
         if (baseURL.indexOf("%s") != -1)
             searchURL = baseURL.replace(/%s/g, searchText);
         else
