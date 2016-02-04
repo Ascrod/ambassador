@@ -43,13 +43,13 @@ var headers = {
                  "descnodes"],
         update: updateUser
     },
-    
+
     IRCDCCChat: {
         prefix: "dcc-chat-",
         fields: ["container", "remotestr", "title"],
         update: updateDCCChat
     },
-    
+
     IRCDCCFileTransfer: {
         prefix: "dcc-file-",
         fields: ["container", "file", "progress", "progressbar"],
@@ -76,7 +76,7 @@ function stock_initOutputWindow(newClient, newView, newClickHandler)
     view = newView;
     clickHandler = newClickHandler;
     mainWindow = client.mainWindow;
-    
+
     client.messageManager.importBundle(client.defaultBundle, window);
 
     getMsg = mainWindow.getMsg;
@@ -157,12 +157,12 @@ function onTopicKeypress(e)
             cancelTopicEdit(true);
             view.dispatch("focus-input");
             break;
-            
+
         case 27: /* esc */
             cancelTopicEdit(true);
             view.dispatch("focus-input");
             break;
-            
+
         default:
             client.mainWindow.onInputKeyPress(e);
     }
@@ -223,7 +223,7 @@ function changeCSS(url, id)
 {
     if (!id)
         id = "main-css";
-    
+
     var node = document.getElementById(id);
 
     if (!node)
@@ -332,7 +332,7 @@ function updateMotifSettings(existingTimeout)
         existingTimeout += TIMEOUT;
         view.motifSettings = getMotifSettings();
     }
-    catch(ex) 
+    catch(ex)
     {
         if (existingTimeout >= 30000) // Stop after trying for 30 seconds
             return;
@@ -383,7 +383,7 @@ function setText(field, text, checkCondition)
     {
         setAttribute(field, "condition", "green");
     }
-                
+
     header[field].firstChild.data = text;
 }
 
@@ -424,7 +424,7 @@ function setHeaderState(state)
 function updateHeader()
 {
     document.title = view.getURL();
-    
+
     if (!header || hasAttribute("container", "hidden"))
         return;
 
@@ -485,7 +485,7 @@ function updateNetwork()
             setText("lag", getMsg(MSG_FMT_SECONDS, lag.toFixed(2)));
         else
             setText("lag", MSG_UNKNOWN);
-        
+
     }
     else
     {
@@ -581,7 +581,7 @@ function updateDCCChat()
 function updateDCCFile()
 {
     var pcent = view.progress;
-    
+
     setText("file", view.filename);
     setText("progress", getMsg(MSG_DCCFILE_PROGRESS,
                                [pcent, mainWindow.getSISize(view.position),
