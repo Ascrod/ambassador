@@ -38,7 +38,7 @@
       <Description>
         <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
         <em:minVersion>3.5</em:minVersion>
-        <em:maxVersion>19.0a1</em:maxVersion>
+        <em:maxVersion>@FIREFOX_MAXVERSION@</em:maxVersion>
       </Description>
     </em:targetApplication>
 
@@ -51,7 +51,7 @@
       <Description>
         <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id>
         <em:minVersion>2.0</em:minVersion>
-        <em:maxVersion>2.20a1</em:maxVersion>
+        <em:maxVersion>@SEAMONKEY_MAXVERSION@</em:maxVersion>
       </Description>
     </em:targetApplication>
     <!-- END COPY BETWEEN /xpi/resources/install.rdf AND /locales/generic/install.rdf -->

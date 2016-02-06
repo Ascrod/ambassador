@@ -9,6 +9,7 @@ srcdir		= @srcdir@
 VPATH		= @srcdir@
 
 include $(DEPTH)/config/autoconf.mk
+include $(srcdir)/maxversions.mk
 
 PACKAGE_FILE = chatzilla.pkg
 
@@ -29,7 +30,10 @@ ifneq (,$(filter $(AB_CD),$(shell cat $(srcdir)/locales/all-locales)))
 BUILD_LOCALES += $(AB_CD)
 endif
 
-DEFINES += -DCHATZILLA_VERSION=$(CHATZILLA_VERSION)
+DEFINES += -DCHATZILLA_VERSION=$(CHATZILLA_VERSION) \
+           -DSEAMONKEY_MAXVERSION=$(SEAMONKEY_MAXVERSION) \
+           -DFIREFOX_MAXVERSION=$(FIREFOX_MAXVERSION) \
+           $(NULL)
 
 include $(topsrcdir)/config/rules.mk
 

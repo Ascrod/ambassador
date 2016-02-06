@@ -10,6 +10,8 @@ srcdir=@srcdir@
 VPATH=@srcdir@
 relativesrcdir = extensions/irc/locales
 
+include $(srcdir)/../maxversions.mk
+
 EXTERNALLY_MANAGED_MAKE_FILE := 1
 STANDALONE_MAKEFILE := 1
 JAR_MANIFEST := $(srcdir)/jar.mn
@@ -29,7 +31,10 @@ ifeq (,$(filter $(AB_CD),$(shell cat $(srcdir)/all-locales)))
 override AB_CD = en-US
 endif
 
-DEFINES += -DAB_CD=$(AB_CD)
+DEFINES += -DAB_CD=$(AB_CD) \
+           -DSEAMONKEY_MAXVERSION=$(SEAMONKEY_MAXVERSION) \
+           -DFIREFOX_MAXVERSION=$(FIREFOX_MAXVERSION) \
+           $(NULL)
 
 ifneq (en-US,$(AB_CD))
 XPI_NAME               = chatzilla-$(AB_CD)
