@@ -3323,6 +3323,7 @@ function cli_installPlugin(name, source)
             var initJSFile = getTempFile(client.prefs["profilePath"],
                                          "install-plugin.temp");
             zipReader.extract(initPath, initJSFile);
+            initJSFile.permissions = 438; // 0666
             var initJSFileH = fopen(initJSFile, "<");
             var initJSData = initJSFileH.read();
             initJSFileH.close();
@@ -3370,6 +3371,7 @@ function cli_installPlugin(name, source)
                         destInit = zipFile;
 
                     zipReader.extract(itemName, zipFile);
+                    zipFile.permissions = 438; // 0666
                 }
             }
 
