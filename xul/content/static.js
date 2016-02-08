@@ -147,6 +147,16 @@ function init()
     client.display(MSG_WELCOME, "HELLO");
     client.dispatch("set-current-view", { view: client });
 
+    /*
+     * Due to Firefox 44 changes regarding ES6 lexical scope, these 'const'
+     * items are no longer accessible from the global object ('window') but
+     * are required by the output window. The compromise is to copy them on
+     * to the global object so they can be used.
+     */
+    window.__cz_version = __cz_version;
+    window.__cz_condition = __cz_condition;
+    window.NET_CONNECTING = NET_CONNECTING;
+
     importFromFrame("updateHeader");
     importFromFrame("setHeaderState");
     importFromFrame("changeCSS");
@@ -3127,7 +3137,6 @@ function client_statechange (webProgress, request, stateFlags, status)
                 if (!("_called_initOutputWindow" in cwin))
                 {
                     cwin._called_initOutputWindow = true;
-                    cwin.getMsg = getMsg;
                     cwin.initOutputWindow(client, frame.source, onMessageViewClick);
                     cwin.changeCSS(frame.source.getFontCSS("data"), "cz-fonts");
                     scrollDown(frame, true);
