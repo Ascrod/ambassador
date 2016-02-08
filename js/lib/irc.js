@@ -2002,9 +2002,10 @@ function my_cap (e)
          * enabled or not (but this will evaluate to false which matches that
          * capabilities are only enabled on request).
          */
-        for (var i = 3; i < e.params.length; i++)
+        var caps = e.params[3].split(/\s+/);
+        for (var i = 0; i < caps.length; i++)
         {
-            var cap = e.params[i].replace(/^-/, "").trim();
+            var cap = caps[i].replace(/^-/, "").trim();
             if (!(cap in this.caps))
                 this.caps[cap] = null;
         }
