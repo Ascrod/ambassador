@@ -1605,7 +1605,11 @@ function serv_251(e)
     // things that might depend upon server features.
 
     if (("namesx" in this.supports) && this.supports.namesx)
+    {
+        // "multi-prefix" is the same as "namesx" but PROTOCTL doesn't reply.
+        this.caps["multi-prefix"] = true;
         this.sendData("PROTOCTL NAMESX\n");
+    }
 
     if (this.parent.INITIAL_CHANNEL)
     {
