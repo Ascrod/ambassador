@@ -457,7 +457,7 @@ function updateClient()
 
 function updateNetwork()
 {
-    if (view.state == mainWindow.NET_CONNECTING)
+    if (view.state == client.mainWindow.NET_CONNECTING)
     {
         setText("status", MSG_CONNECTING);
         setAttribute("status","condition", "yellow");
