@@ -155,7 +155,7 @@ def locale():
     """
     check arguments for locale or return None
     """
-    locale_pattern = re.compile(r'\w{1,3}-\w{1,3}')
+    locale_pattern = re.compile(r'^[a-z]{1,3}(?:-[A-Z]{1,3}(?:-[a-z]{1,3})?)?$')
     for arg in sys.argv:
         locale_match = locale_pattern.match(arg)
         if locale_match is not None:
