@@ -5,6 +5,11 @@
 
 #filter substitution
 
+#ifndef IRC_STANDALONE_BUILD
+#include @TK_DEFINES@
+#include @APP_DEFINES@
+#endif
+
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
   <Description about="urn:mozilla:install-manifest"

@@ -31,25 +31,26 @@ ifeq (,$(filter $(AB_CD),$(shell cat $(srcdir)/all-locales)))
 override AB_CD = en-US
 endif
 
-DEFINES += -DAB_CD=$(AB_CD) \
-           -DSEAMONKEY_MAXVERSION=$(SEAMONKEY_MAXVERSION) \
-           -DFIREFOX_MAXVERSION=$(FIREFOX_MAXVERSION) \
-           $(NULL)
-
 ifneq (en-US,$(AB_CD))
 XPI_NAME               = chatzilla-$(AB_CD)
 INSTALL_EXTENSION_ID   = langpack-$(AB_CD)@chatzilla.mozilla.org
 XPI_PKGNAME            = chatzilla-$(CHATZILLA_VERSION).$(AB_CD)
-DIST_FILES             = generic/install.rdf
-XULPPFLAGS += \
-    -I$(call EXPAND_LOCALE_SRCDIR,toolkit/locales)/defines.inc \
-    -I$(LOCALE_SRCDIR)/defines.inc \
-    $(NULL)
 endif
 
-DEFINES += -DINSTALL_EXTENSION_ID="$(INSTALL_EXTENSION_ID)"
-DEFINES += -DCHATZILLA_VERSION=$(CHATZILLA_VERSION)
-DEFINES += -DCHATZILLA_BASE_VERSION=$(CHATZILLA_BASE_VERSION)
+DEFINES += -DAB_CD=$(AB_CD) \
+           -DSEAMONKEY_MAXVERSION=$(SEAMONKEY_MAXVERSION) \
+           -DFIREFOX_MAXVERSION=$(FIREFOX_MAXVERSION) \
+           -DINSTALL_EXTENSION_ID="$(INSTALL_EXTENSION_ID)" \
+           -DCHATZILLA_VERSION=$(CHATZILLA_VERSION) \
+           -DCHATZILLA_BASE_VERSION=$(CHATZILLA_BASE_VERSION) \
+           $(NULL)
+
+APP_DEFINES = $(firstword $(wildcard $(LOCALE_SRCDIR)/defines.inc) \
+                          $(srcdir)/en-US/defines.inc)
+
+TK_DEFINES = $(firstword \
+             $(wildcard $(call EXPAND_LOCALE_SRCDIR,toolkit/locales)/defines.inc) \
+             $(MOZILLA_DIR)/toolkit/locales/en-US/defines.inc)
 
 include $(topsrcdir)/config/rules.mk
 
@@ -57,6 +58,9 @@ ifneq (en-US,$(AB_CD))
 libs realchrome::
 	@echo "Comparing $(AB_CD) to en-US"
 	@$(PERL) $(topsrcdir)/toolkit/locales/compare-locales.pl $(srcdir)/en-US $(LOCALE_SRCDIR)
+	$(call py_action,preprocessor,$(DEFINES) $(ACDEFINES) \
+	  -DTK_DEFINES=$(TK_DEFINES) -DAPP_DEFINES=$(APP_DEFINES) \
+	  $(srcdir)/generic/install.rdf -o $(DIST)/xpi-stage/$(XPI_NAME)/install.rdf)
 endif
 
 libs-%: AB_CD=$*
