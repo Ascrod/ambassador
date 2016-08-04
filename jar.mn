@@ -35,6 +35,7 @@ chatzilla.jar:
 	content/chatzilla/lib/js/text-logger.js      (js/lib/text-logger.js)
 	content/chatzilla/lib/xul/munger.js          (xul/lib/munger.js) 
 	content/chatzilla/lib/xul/tree-utils.js      (xul/lib/tree-utils.js) 
+	content/chatzilla/nsDragAndDrop.js           (xul/content/nsDragAndDrop.js) 
 	content/chatzilla/chatzilla.xul              (xul/content/chatzilla.xul) 
 	content/chatzilla/scripts.xul                (xul/content/scripts.xul) 
 	content/chatzilla/menus.xul                  (xul/content/menus.xul) 

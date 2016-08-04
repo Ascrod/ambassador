@@ -63,7 +63,7 @@
         <hbox id="view-tabs" persist="collapsed" flex="1"
             ondragover="nsDragAndDrop.dragOver(event, tabsDropObserver)"
             ondragexit="nsDragAndDrop.dragExit(event, tabsDropObserver)"
-            ondragdrop="nsDragAndDrop.drop(event, tabsDropObserver)">
+            ondrop="nsDragAndDrop.drop(event, tabsDropObserver)">
           <tabs id="views-tbar-inner" flex="1"
               onselect="onTabSelect(event)" setfocus="false">
             <tab hidden="true"/> <!-- dummy tab to keep the freaking xbl from

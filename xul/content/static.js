@@ -293,7 +293,7 @@ function initStatic()
         setListMode("graphic");
 
     var tree = document.getElementById('user-list');
-    tree.setAttribute("ondraggesture",
+    tree.setAttribute("ondragstart",
                       "nsDragAndDrop.startDrag(event, userlistDNDObserver);");
 
     setDebugMode(client.prefs["debugMode"]);
@@ -3607,7 +3607,7 @@ function getTabForObject(source, create)
             createMessages(source);
 
         tb = document.createElement("tab");
-        tb.setAttribute("ondraggesture",
+        tb.setAttribute("ondragstart",
                         "nsDragAndDrop.startDrag(event, tabDNDObserver);");
         tb.setAttribute("href", source.getURL());
         tb.setAttribute("name", source.unicodeName);
@@ -3637,9 +3637,9 @@ function getTabForObject(source, create)
         browser.setAttribute("ondragover",
                              "nsDragAndDrop.dragOver(event, " +
                              "contentDropObserver);");
-        browser.setAttribute("ondragdrop",
+        browser.setAttribute("ondrop",
                              "nsDragAndDrop.drop(event, contentDropObserver);");
-        browser.setAttribute("ondraggesture",
+        browser.setAttribute("ondragstart",
                              "nsDragAndDrop.startDrag(event, " +
                              "contentAreaDNDObserver);");
         browser.source = source;
