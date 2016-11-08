@@ -67,7 +67,8 @@ IRCProtocolHandler.prototype =
 
     allowPort(port, scheme)
     {
-        return false;
+        // Allow all ports to connect, so long as they are irc: or ircs:
+        return (scheme === 'irc' || scheme === 'ircs');
     },
 
     newURI(spec, charset, baseURI)
