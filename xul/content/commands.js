@@ -223,6 +223,10 @@ function initCommands()
          ["statusbar",        "toggle-ui status",                  CMD_CONSOLE],
          ["header",           "toggle-ui header",                  CMD_CONSOLE],
 
+         ["add-ons",           cmdAddons,                                    0],
+         ["jsconsole",         cmdJSConsole,                                 0],
+         ["about-config",      cmdAboutConfig,                               0],
+
          // text-direction aliases
          ["rtl",              "text-direction rtl",                CMD_CONSOLE],
          ["ltr",              "text-direction ltr",                CMD_CONSOLE],
@@ -4706,4 +4710,37 @@ function cmdWebSearch(e)
         searchURL = "https://www.google.com/search?q=" + searchText;
     }
     dispatch(client.prefs["messages.click"], {url: searchURL});
+}
+
+function cmdAddons(e)
+{
+    var winType = "Extension:Manager";
+    var url = "chrome://mozapps/content/extensions/extensions.xul"
+    toOpenWindowByType(winType, url);
+}
+
+function toOpenWindowByType(inType, url, features)
+{
+    var wm = getService("@mozilla.org/appshell/window-mediator;1",
+                        "nsIWindowMediator");
+    var topWindow = wm.getMostRecentWindow(inType);
+
+    if (typeof features == "undefined")
+        features = "chrome,extrachrome,menubar,resizable," +
+                   "scrollbars,status,toolbar";
+
+    if (topWindow)
+        topWindow.focus();
+    else
+        window.open(url, "_blank", features);
+}
+
+function cmdJSConsole(e)
+{
+    toOpenWindowByType("global:console", "chrome://global/content/console.xul");
+}
+
+function cmdAboutConfig(e)
+{
+    openDialog("chrome://global/content/config.xul");
 }

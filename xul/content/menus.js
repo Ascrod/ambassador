@@ -114,6 +114,10 @@ function initMenus()
          ["-"],
          ["print"],
          ["save"],
+         ["-",                 {visibleif: XULRunner}],
+         ["add-ons",           {visibleif: XULRunner}],
+         ["jsconsole",         {visibleif: XULRunner}],
+         ["about-config",      {visibleif: XULRunner}],
          ["-",           {visibleif: NotMac}],
          ["exit",        {visibleif: Win}],
          ["quit",        {visibleif: NotMac + " and " + NotWin}]
