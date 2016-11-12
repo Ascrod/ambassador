@@ -4714,25 +4714,8 @@ function cmdWebSearch(e)
 
 function cmdAddons(e)
 {
-    var winType = "Addons:Manager";
-    var url = "chrome://mozapps/content/extensions/extensions.xul"
-    toOpenWindowByType(winType, url);
-}
-
-function toOpenWindowByType(inType, url, features)
-{
-    var wm = getService("@mozilla.org/appshell/window-mediator;1",
-                        "nsIWindowMediator");
-    var topWindow = wm.getMostRecentWindow(inType);
-
-    if (typeof features == "undefined")
-        features = "chrome,extrachrome,menubar,resizable," +
-                   "scrollbars,status,toolbar";
-
-    if (topWindow)
-        topWindow.focus();
-    else
-        window.open(url, "_blank", features);
+    toOpenWindowByType("Addons:Manager",
+                       "chrome://mozapps/content/extensions/extensions.xul");
 }
 
 function cmdJSConsole(e)

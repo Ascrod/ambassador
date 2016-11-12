@@ -524,6 +524,20 @@ function getWindowByType (windowType)
     return windowManager.getMostRecentWindow(windowType);
 }
 
+function toOpenWindowByType(inType, url, features)
+{
+    var topWindow = getWindowByType(inType);
+
+    if (typeof features == "undefined")
+        features = "chrome,extrachrome,menubar,resizable," +
+                   "scrollbars,status,toolbar";
+
+    if (topWindow)
+        topWindow.focus();
+    else
+        window.open(url, "_blank", features);
+}
+
 function renameProperty (obj, oldname, newname)
 {
 
@@ -1489,7 +1503,7 @@ function srGetStrBundle(path)
         }
     }
 
-    strBundle = strBundleService.createBundle(path); 
+    strBundle = strBundleService.createBundle(path);
     if (!strBundle)
         dump("\n--** strBundle createInstance failed **--\n");
 
