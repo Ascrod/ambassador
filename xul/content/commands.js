@@ -4714,7 +4714,7 @@ function cmdWebSearch(e)
 
 function cmdAddons(e)
 {
-    var winType = "Extension:Manager";
+    var winType = "Addons:Manager";
     var url = "chrome://mozapps/content/extensions/extensions.xul"
     toOpenWindowByType(winType, url);
 }
@@ -4742,5 +4742,6 @@ function cmdJSConsole(e)
 
 function cmdAboutConfig(e)
 {
-    openDialog("chrome://global/content/config.xul");
+    toOpenWindowByType("Preferences:ConfigManager",
+                       "chrome://global/content/config.xul");
 }
