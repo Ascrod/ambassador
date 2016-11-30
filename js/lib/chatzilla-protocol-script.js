@@ -5,7 +5,6 @@
 
 const { utils: Cu } = Components;
 
-Cu.import("chrome://chatzilla/content/lib/js/protocol-handlers.jsm");
-/* global ChatZillaProtocols */
+let { ChatZillaProtocols } = Cu.import("chrome://chatzilla/content/lib/js/protocol-handlers.jsm", {});
 
 ChatZillaProtocols.init();
