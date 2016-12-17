@@ -22,9 +22,9 @@ const IRCPROT_HANDLER_CONTRACTID =
     "@mozilla.org/network/protocol;1?name=irc";
 const IRCSPROT_HANDLER_CONTRACTID =
     "@mozilla.org/network/protocol;1?name=ircs";
-const IRCPROT_HANDLER_CID =
+this.IRCPROT_HANDLER_CID =
     Components.ID("{f21c35f4-1dd1-11b2-a503-9bf8a539ea39}");
-const IRCSPROT_HANDLER_CID =
+this.IRCSPROT_HANDLER_CID =
     Components.ID("{f21c35f4-1dd1-11b2-a503-9bf8a539ea3a}");
 
 const IRC_MIMETYPE = "application/x-irc";
@@ -93,7 +93,7 @@ IRCProtocolHandler.prototype =
 };
 
 
-const IRCProtocolHandlerFactory =
+this.IRCProtocolHandlerFactory =
 {
     createInstance(outer, iid)
     {
@@ -111,7 +111,7 @@ const IRCProtocolHandlerFactory =
 };
 
 
-const IRCSProtocolHandlerFactory =
+this.IRCSProtocolHandlerFactory =
 {
     createInstance(outer, iid)
     {
@@ -207,7 +207,7 @@ BogusChannel.prototype =
 };
 
 
-const ChatZillaProtocols =
+this.ChatZillaProtocols =
 {
     init()
     {
