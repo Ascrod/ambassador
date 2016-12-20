@@ -41,24 +41,24 @@ var nsClipboard = {
     },
 
   /**
-   * nsISupportsArray getClipboardTransferable (Object aFlavourList) ;
+   * nsIArray getClipboardTransferable (Object aFlavourList) ;
    *
-   * returns a nsISupportsArray of the item on the clipboard
+   * returns a nsIArray of the item on the clipboard
    *
    * @param Object aFlavourList
    *        formatted list of desired flavours.
    **/
   getClipboardTransferable: function (aFlavourList)
     {
-      const supportsContractID = "@mozilla.org/supports-array;1";
-      const supportsIID = Components.interfaces.nsISupportsArray;
-      var supportsArray = Components.classes[supportsContractID].createInstance(supportsIID);
+      const arrayContractID = "@mozilla.org/array;1";
+      const mutableIID = Components.interfaces.nsIMutableArray;
+      let mutableArray = Components.classes[arrayContractID].createInstance(mutableIID);
       var trans = nsTransferable.createTransferable();
       for (var flavour in aFlavourList)
         trans.addDataFlavor(flavour);
       nsClipboard.mClipboard.getData(trans, nsClipboard.currentClipboard)
-      supportsArray.AppendElement(trans);
-      return supportsArray;
+      mutableArray.appendElement(trans, /* weak */ false);
+      return mutableArray;
     }
 };
 
