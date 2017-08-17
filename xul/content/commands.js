@@ -4126,7 +4126,7 @@ function cmdDCCSend(e)
     }
     else
     {
-        // Wrap in try/catch because nsILocalFile creation throws a freaking
+        // Wrap in try/catch because nsIFile creation throws a freaking
         // error if it doesn't get a FULL path.
         try
         {
@@ -4136,7 +4136,7 @@ function cmdDCCSend(e)
         {
             // Ok, try user's home directory.
             var fl = Components.classes[DIRSVC_CID].getService(nsIProperties);
-            file = fl.get("Home", Components.interfaces.nsILocalFile);
+            file = fl.get("Home", Components.interfaces.nsIFile);
 
             // Another freaking try/catch wrapper.
             try

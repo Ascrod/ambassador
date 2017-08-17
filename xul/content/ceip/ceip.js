@@ -252,7 +252,7 @@ function ceip_writelogline(line)
 CEIP.prototype.uploadLogs =
 function ceip_uploadlogs()
 {
-    const nsILocalFile = Components.interfaces.nsILocalFile;
+    const nsIFile = Components.interfaces.nsIFile;
 
     try
     {
@@ -264,7 +264,7 @@ function ceip_uploadlogs()
 
         while (enumerator.hasMoreElements())
         {
-            var file = enumerator.getNext().QueryInterface(nsILocalFile);
+            var file = enumerator.getNext().QueryInterface(nsIFile);
             if (re.test(file.leafName))
                 this.uploadLog(file);
         }
