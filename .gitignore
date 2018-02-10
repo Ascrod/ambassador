@@ -1,0 +1,9 @@
+*Makefile*
+
+xpi/chatzilla-*
+xpi/runtimes
+xpi/jar-tree
+xpi/xpi-tree-*
+xpi/-xr-tree-*
+
+*.pyc

@@ -1,8 +1,0 @@
-(^|/)Makefile$
-
-^xpi/chatzilla-.*(\.xpi|\.mar|\.zip|\.xulapp|\.tar\.bz2|\.dmg|\.txt|\.msi)$
-^xpi/runtimes$
-^xpi/jar-tree$
-^xpi/(xpi|xr)-tree(-.*)?$
-
-.*\.pyc
