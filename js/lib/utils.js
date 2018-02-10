@@ -1005,7 +1005,7 @@ function getFileFromURLSpec(url)
      */
     if ("initFileFromURLSpec" in service)
     {
-        var file = newObject("@mozilla.org/file/local;1", "nsIFile");
+        var file = newObject("@mozilla.org/file/local;1", "nsILocalFile");
         service.initFileFromURLSpec(file, url);
         return file;
     }
@@ -1024,12 +1024,12 @@ function getURLSpecFromFile (file)
     const LOCALFILE_CTRID = "@mozilla.org/file/local;1";
 
     const nsIIOService = Components.interfaces.nsIIOService;
-    const nsIFile = Components.interfaces.nsIFile;
+    const nsILocalFile = Components.interfaces.nsILocalFile;
 
     if (typeof file == "string")
     {
         var fileObj =
-            Components.classes[LOCALFILE_CTRID].createInstance(nsIFile);
+            Components.classes[LOCALFILE_CTRID].createInstance(nsILocalFile);
         fileObj.initWithPath(file);
         file = fileObj;
     }

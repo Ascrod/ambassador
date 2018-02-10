@@ -67,7 +67,7 @@ futils.MSG_OPEN = "Open";
  *                properties: |defaultString| (*defaultFile* in |pick|
  *                functions) sets the initial/default filename, and
  *                |defaultExtension| XXX FIXME (this seems wrong?) XXX.
- * @returns An |Object| with |ok| (Boolean), |file| (|nsIFile|) and
+ * @returns An |Object| with |ok| (Boolean), |file| (|nsILocalFile|) and
  *          |picker| (|nsIFilePicker|) properties.
  */
 futils.getPicker =
@@ -80,7 +80,7 @@ function futils_nosepicker(initialPath, typeList, attribs)
     const LOCALFILE_CTRID = "@mozilla.org/file/local;1";
 
     const nsIFilePicker = interfaces.nsIFilePicker;
-    const nsIFile = interfaces.nsIFile;
+    const nsILocalFile = interfaces.nsILocalFile;
 
     var picker = classes[PICKER_CTRID].createInstance(nsIFilePicker);
     if (attribs)
@@ -103,12 +103,12 @@ function futils_nosepicker(initialPath, typeList, attribs)
         if (typeof initialPath == "string")
         {
             localFile =
-                classes[LOCALFILE_CTRID].createInstance(nsIFile);
+                classes[LOCALFILE_CTRID].createInstance(nsILocalFile);
             localFile.initWithPath(initialPath);
         }
         else
         {
-            if (!isinstance(initialPath, nsIFile))
+            if (!isinstance(initialPath, nsILocalFile))
                 throw "bad type for argument |initialPath|";
 
             localFile = initialPath;
@@ -209,7 +209,7 @@ function getPickerChoice(picker)
  * @param defaultFile Optional. See |futils.getPicker| for details.
  * @param defaultDir Optional. See |futils.getPicker| for details.
  * @param defaultExt Optional. See |futils.getPicker| for details.
- * @returns An |Object| with "ok" (Boolean), "file" (|nsIFile|) and
+ * @returns An |Object| with "ok" (Boolean), "file" (|nsILocalFile|) and
  *          "picker" (|nsIFilePicker|) properties.
  */
 function pickSaveAs (title, typeList, defaultFile, defaultDir, defaultExt)
@@ -237,7 +237,7 @@ function pickSaveAs (title, typeList, defaultFile, defaultDir, defaultExt)
  * @param typeList Optional. See |futils.getPicker| for details.
  * @param defaultFile Optional. See |futils.getPicker| for details.
  * @param defaultDir Optional. See |futils.getPicker| for details.
- * @returns An |Object| with "ok" (Boolean), "file" (|nsIFile|) and
+ * @returns An |Object| with "ok" (Boolean), "file" (|nsILocalFile|) and
  *          "picker" (|nsIFilePicker|) properties.
  */
 function pickOpen (title, typeList, defaultFile, defaultDir)
@@ -262,7 +262,7 @@ function pickOpen (title, typeList, defaultFile, defaultDir)
  *
  * @param title Optional. The title for the dialog.
  * @param defaultDir Optional. See |futils.getPicker| for details.
- * @returns An |Object| with "ok" (Boolean), "file" (|nsIFile|) and
+ * @returns An |Object| with "ok" (Boolean), "file" (|nsILocalFile|) and
  *          "picker" (|nsIFilePicker|) properties.
  */
 function pickGetFolder(title, defaultDir)
@@ -300,10 +300,10 @@ function getTempFile(path, name)
 function nsLocalFile(path)
 {
     const LOCALFILE_CTRID = "@mozilla.org/file/local;1";
-    const nsIFile = Components.interfaces.nsIFile;
+    const nsILocalFile = Components.interfaces.nsILocalFile;
 
     var localFile =
-        Components.classes[LOCALFILE_CTRID].createInstance(nsIFile);
+        Components.classes[LOCALFILE_CTRID].createInstance(nsILocalFile);
     localFile.initWithPath(path);
     return localFile;
 }
@@ -324,6 +324,7 @@ function LocalFile(file, mode, perms, tmp)
     const SCRIPTSTREAM_CTRID = "@mozilla.org/scriptableinputstream;1";
 
     const nsIFile = interfaces.nsIFile;
+    const nsILocalFile = interfaces.nsILocalFile;
     const nsIFileOutputStream = interfaces.nsIFileOutputStream;
     const nsIFileInputStream = interfaces.nsIFileInputStream;
     const nsIScriptableInputStream = interfaces.nsIScriptableInputStream;
@@ -353,7 +354,7 @@ function LocalFile(file, mode, perms, tmp)
     {
         this.localFile = new nsLocalFile(file);
     }
-    else if (isinstance(file, nsIFile))
+    else if (isinstance(file, nsILocalFile))
     {
         this.localFile = file;
     }

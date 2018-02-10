@@ -4,8 +4,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-Components.utils.import("resource://gre/modules/Services.jsm");
-
 const __cz_version   = "0.9.93";
 const __cz_condition = "green";
 const __cz_suffix    = "";
@@ -250,38 +248,21 @@ function initStatic()
 
     try
     {
-        // nsIScriptableDateFormat was removed from Gecko 57
-        // The replacement function was not available in a stable version
-        // prior to Gecko 56.
-        if (Services.vc.compare(Services.appinfo.platformVersion, "56.0") < 0)
-        {
-            const nsISDateFormat = Components.interfaces.nsIScriptableDateFormat;
-            const DTFMT_CID = "@mozilla.org/intl/scriptabledateformat;1";
-            client.dtFormatter =
-                Components.classes[DTFMT_CID].createInstance(nsISDateFormat);
+        const nsISDateFormat = Components.interfaces.nsIScriptableDateFormat;
+        const DTFMT_CID = "@mozilla.org/intl/scriptabledateformat;1";
+        client.dtFormatter =
+            Components.classes[DTFMT_CID].createInstance(nsISDateFormat);
 
-            // Mmmm, fun. This ONLY affects the ChatZilla window, don't worry!
-            Date.prototype.toStringInt = Date.prototype.toString;
-            Date.prototype.toString = function() {
-                var dtf = client.dtFormatter;
-                return dtf.FormatDateTime("", dtf.dateFormatLong,
-                                          dtf.timeFormatSeconds,
-                                          this.getFullYear(), this.getMonth() + 1,
-                                          this.getDate(), this.getHours(),
-                                          this.getMinutes(), this.getSeconds()
-                                         );
-            }
-        }
-        else
-        {
-            client.dtFormatter = Services.intl.createDateTimeFormat(
-                undefined, { dateStyle: "full", timeStyle: "long" });
-
-            // Mmmm, fun. This ONLY affects the ChatZilla window, don't worry!
-            Date.prototype.toStringInt = Date.prototype.toString;
-            Date.prototype.toString = function() {
-                return client.dtFormatter.format(this);
-            }
+        // Mmmm, fun. This ONLY affects the ChatZilla window, don't worry!
+        Date.prototype.toStringInt = Date.prototype.toString;
+        Date.prototype.toString = function() {
+            var dtf = client.dtFormatter;
+            return dtf.FormatDateTime("", dtf.dateFormatLong,
+                                      dtf.timeFormatSeconds,
+                                      this.getFullYear(), this.getMonth() + 1,
+                                      this.getDate(), this.getHours(),
+                                      this.getMinutes(), this.getSeconds()
+                                     );
         }
     }
     catch (ex)
@@ -771,7 +752,7 @@ function loadPluginDirectory(localPath, recurse)
     while (enumer.hasMoreElements())
     {
         var entry = enumer.getNext();
-        entry = entry.QueryInterface(Components.interfaces.nsIFile);
+        entry = entry.QueryInterface(Components.interfaces.nsILocalFile);
         if (entry.isDirectory())
             loadPluginDirectory(entry, recurse - 1);
     }

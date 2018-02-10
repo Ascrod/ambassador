@@ -33,6 +33,7 @@ function PrefManager (branchName, defaultBundle)
     const PREF_CTRID = "@mozilla.org/preferences-service;1";
     const nsIPrefService = Components.interfaces.nsIPrefService;
     const nsIPrefBranch = Components.interfaces.nsIPrefBranch;
+    const nsIPrefBranchInternal = Components.interfaces.nsIPrefBranchInternal;
 
     this.prefService =
         Components.classes[PREF_CTRID].getService(nsIPrefService);
@@ -47,9 +48,9 @@ function PrefManager (branchName, defaultBundle)
     this.observer = { observe: pm_observe, branch: branchName };
     this.observers = new Array();
 
-    this.nsIPrefBranch =
-        this.prefBranch.QueryInterface(nsIPrefBranch);
-    this.nsIPrefBranch.addObserver("", this.observer, false);
+    this.prefBranchInternal =
+        this.prefBranch.QueryInterface(nsIPrefBranchInternal);
+    this.prefBranchInternal.addObserver("", this.observer, false);
 
     this.defaultBundle = defaultBundle;
 
@@ -69,7 +70,7 @@ function pm_destroy()
 {
     if (this.valid)
     {
-        this.nsIPrefBranch.removeObserver("", this.observer);
+        this.prefBranchInternal.removeObserver("", this.observer);
         this.valid = false;
     }
 }
