@@ -1,0 +1,5 @@
+<!ENTITY  brandShortName        "ChatZilla">
+<!ENTITY  brandFullName         "ChatZilla @REVISION@">
+<!ENTITY  vendorShortName       "">
+<!ENTITY  logoTrademark         "">
+<!ENTITY  releaseURL            "http://chatzilla.rdmsoft.com/">

@@ -1,0 +1,22 @@
+<r:RDF xmlns="http://www.mozilla.org/2004/em-rdf#" xmlns:r="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+<r:Description r:about="urn:mozilla:install-manifest">
+
+ <id>{972ce4c6-7e08-4474-a285-3208198ce6fd}</id>
+ <version>1</version>
+ <name>ChatZilla</name>
+
+ <targetApplication><r:Description>
+  <id>{59c81df5-4b7a-477b-912d-4e0fdf64e5f2}</id>
+  <minVersion>0</minVersion>
+  <maxVersion>*</maxVersion>
+ </r:Description></targetApplication>
+
+ <description>The Default Theme</description>
+ <creator>ChatZilla Contributors</creator>
+ <internalName>modern/1.0</internalName>
+ <appManaged>true</appManaged>
+ <locked>true</locked>
+
+</r:Description>
+</r:RDF>
+

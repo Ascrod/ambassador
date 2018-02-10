@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+<key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
+           <key>CFBundleIdentifier</key><string>com.rdmsoft.chatzilla</string>
+          <key>CFBundlePackageType</key><string>APPL</string>
+           <key>CFBundleExecutable</key><string>xulrunner</string>
+         <key>NSAppleScriptEnabled</key><true/>
+                 <key>CFBundleName</key><string>ChatZilla</string>
+          <key>CFBundleDisplayName</key><string>ChatZilla</string>
+        <key>CFBundleGetInfoString</key><string>ChatZilla @REVISION@</string>
+   <key>CFBundleShortVersionString</key><string>@REVISION@</string>
+              <key>CFBundleVersion</key><string>@REVISION@.@BUILDID@</string>
+         <!--<key>CFBundleIconFile</key><string>TODO</string>-->
+         <!--<key>CFBundleURLTypes</key>
+      <array><dict>
+             <key>CFBundleTypeRole</key><string>Shell</string>
+          <key>CFBundleURLIconFile</key><string>TODO</string>
+              <key>CFBundleURLName</key><string>Internet Relay Chat</string>
+           <key>CFBundleURLSchemes</key><array><string>irc</string><string>ircs</string></array>
+      </dict></array>-->
+</dict>
+</plist>

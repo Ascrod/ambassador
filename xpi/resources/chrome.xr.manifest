@@ -1,0 +1,5 @@
+content chatzilla       jar:chatzilla.jar!/content/chatzilla/ xpcnativewrappers=yes
+overlay	chrome://chatzilla/content/chatzilla.xul chrome://chatzilla/content/xr/overlay.xul
+skin 	chatzilla classic/1.0 jar:chatzilla.jar!/skin/modern/chatzilla/
+locale  chatzilla       en-US   jar:chatzilla.jar!/locale/en-US/chatzilla/
+locale branding en-US branding/

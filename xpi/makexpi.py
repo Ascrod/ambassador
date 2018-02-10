@@ -14,10 +14,12 @@ the original shell script
 import os
 import os.path
 import sys
+import time
 import shutil
 import re
 import zipfile
 from os.path import join as joinpath
+from subprocess import call, PIPE
 
 # Set up settings and paths for finding files.
 pwd = os.path.dirname(__file__)
@@ -89,6 +91,7 @@ def rm(path):
     except WindowsError, ex:
         if ex.errno != 2:
             raise
+
 def mkdir(dir):
     """
     acts like mkdir -p
@@ -103,6 +106,13 @@ def copy(src, dst):
     copy file
     """
     shutil.copy(src, dst)
+
+def copytree(src, dst):
+    """
+    copy directory
+    """
+    shutil.rmtree(dst)
+    shutil.copytree(src, dst)
 
 def move(src, dst):
     """
@@ -178,6 +188,7 @@ def version(fedir):
 fedir     = getenv('FEDIR',     joinpath(pwd, '..'), dir=True, check=True)
 xpifiles  = getenv('XPIFILES',  joinpath(pwd, 'resources'), dir=True, check=True)
 xpiroot   = getenv('XPIROOT',   joinpath(pwd, 'xpi-tree'), dir=True)
+xrroot    = getenv('XRROOT',    joinpath(pwd, 'xr-tree'), dir=True)
 jarroot   = getenv('JARROOT',   joinpath(pwd, 'jar-tree'), dir=True)
 localedir = getenv('LOCALEDIR', joinpath(fedir, 'locales'), dir=True, check=True)
 locale    = locale()
@@ -189,11 +200,14 @@ else:
 
 version = version(fedir)
 xpiname = None
+buildid = time.strftime("%Y%m%d%H%M%S")
+theme_guid = '{972ce4c6-7e08-4474-a285-3208198ce6fd}'
 
 if debug > 0:
     print 'FEDIR     = %s' % fedir
     print 'XPIFILES  = %s' % xpifiles
     print 'XPIROOT   = %s' % xpiroot
+    print 'XRROOT    = %s' % xrroot
     print 'JARROOT   = %s' % jarroot
     print 'LOCALEDIR = %s' % localedir
     print 'LOCALE    = %s' % locale
@@ -302,6 +316,15 @@ def progress_sed(infile, outfile, patterns):
     sed_infile.close()
     sed_outfile.close()
 
+def sed_version_buildid(inpath, outpath):
+    echo('.')
+    infile = joinpath(*inpath)
+    tempfile = joinpath(*outpath) + ".tmp"
+    outfile = joinpath(*outpath)
+    sed(("@REVISION@", version), open(infile), open(tempfile, "w"))
+    sed(("@BUILDID@", buildid), open(tempfile), open(outfile, "w"))
+    rm(tempfile)
+
 def progress_zip(indir, outfile):
     if debug > 1:
         print '    zip %s %s' % (indir, outfile)
@@ -321,11 +344,16 @@ def do_clean():
     rm(xpiroot)
     echo('.')
     rm(jarroot)
+    echo('.')
+    rm(xrroot)
     print('. done.')
 
 def do_build_base():
     print 'Beginning build of ChatZilla %s...' % version
-    xpiname = check_xpiname('chatzilla-%s.xpi' % version)
+    basename = 'chatzilla-%s' % version
+    if "dev" in sys.argv:
+        basename += "-%s" % buildid
+    xpiname = check_xpiname('%s.xpi' % basename)
 
     progress_echo('  Checking XPI structure')
     progress_mkdir(xpiroot)
@@ -334,6 +362,16 @@ def do_build_base():
     progress_mkdir(joinpath(xpiroot, 'chrome', 'icons', 'default'))
     progress_mkdir(joinpath(xpiroot, 'components'))
     print '            done'
+
+    progress_echo('  Checking XULRunner structure')
+    progress_mkdir(xrroot)
+    progress_mkdir(joinpath(xrroot, 'chrome', 'branding'))
+    progress_mkdir(joinpath(xrroot, 'chrome', 'icons', 'default'))
+    progress_mkdir(joinpath(xrroot, 'components'))
+    progress_mkdir(joinpath(xrroot, 'defaults', 'preferences'))
+    progress_mkdir(joinpath(xrroot, 'extensions', theme_guid))
+    progress_mkdir(joinpath(xrroot, 'icons'))
+    print '    done'
 
     progress_echo('  Checking JAR structure')
     progress_mkdir(jarroot)
@@ -351,6 +389,7 @@ def do_build_base():
     progress_jarmaker_make(jm, joinpath(fedir, 'jar.mn'), fedir)
     progress_jarmaker_make(jm, joinpath(fedir, 'sm', 'jar.mn'), joinpath(fedir, 'sm'))
     progress_jarmaker_make(jm, joinpath(fedir, 'ff', 'jar.mn'), joinpath(fedir, 'ff'))
+    progress_jarmaker_make(jm, joinpath(fedir, 'xr', 'jar.mn'), joinpath(fedir, 'xr'))
     progress_preprocess(joinpath(localedir, 'jar.mn'), joinpath(localedir, 'jar.mn.pp'), {'AB_CD': 'en-US'})
     # Define a preprocessor var for the next call to makeJar
     jm.pp.context['AB_CD'] = 'en-US'
@@ -366,6 +405,35 @@ def do_build_base():
     progress_chmod(joinpath(xpiroot, 'components', 'chatzilla-service.js'), 0664)
     progress_zip(xpiroot, joinpath(pwd, xpiname))
     print '         done'
+
+    progress_echo('  Packaging XULRunner app')
+    progress_copy(joinpath(jarroot, 'chatzilla.jar'), joinpath(xrroot, 'chrome'))
+    progress_copy(joinpath(fedir, 'js', 'lib', 'chatzilla-service.js'), joinpath(xrroot, 'components'))
+    progress_copy(joinpath(xpiroot, 'chrome.manifest'), joinpath(xrroot, 'chrome.manifest'))
+    progress_chmod(joinpath(xrroot, 'chrome', 'chatzilla.jar'), 0664)
+    progress_chmod(joinpath(xrroot, 'components', 'chatzilla-service.js'), 0664)
+
+    if "updates" in sys.argv:
+        sed_version_buildid((xpifiles, "update-prefs.xr.js"), (xrroot, "defaults", "preferences", "update-prefs.xr.js"))
+        channel = "dev" if "dev" in sys.argv else "release"
+        open(joinpath(xrroot, "defaults", "preferences", "channel-prefs.js"), "w").write("pref(\"app.update.channel\", \"%s\");" % channel)
+    else:
+        echo('.')
+
+    sed_version_buildid((xpifiles, "chatzilla-prefs.xr.js"), (xrroot, "defaults", "preferences", "chatzilla-prefs.xr.js"))
+    sed_version_buildid((xpifiles, "themeinstall.rdf"), (xrroot, "extensions", theme_guid, "install.rdf"))
+    sed_version_buildid((xpifiles, "brand.dtd"), (xrroot, "chrome", "branding", "brand.dtd"))
+    sed_version_buildid((xpifiles, "brand.properties"), (xrroot, "chrome", "branding", "brand.properties"))
+    sed_version_buildid((xpifiles, "application.ini"), (xrroot, "application.ini"))
+
+    progress_copy(joinpath(xpifiles, "chatzilla-window.ico"), joinpath(xrroot, "chrome", "icons", "default", "chatzilla-window.ico"))
+    progress_copy(joinpath(xpifiles, "chatzilla-window.xpm"), joinpath(xrroot, "chrome", "icons", "default", "chatzilla-window.xpm"))
+    progress_copy(joinpath(xpifiles, "chatzilla-window16.xpm"), joinpath(xrroot, "chrome", "icons", "default", "chatzilla-window16.xpm"))
+    open(joinpath(xrroot, "icons", "updater.png"), "w").close()
+
+    xrname = '%s.en-US.xulapp' % basename
+    progress_zip(xrroot, joinpath(pwd, xrname))
+    print ' done'
 
     print 'Build of ChatZilla %s... ALL DONE' % version
 

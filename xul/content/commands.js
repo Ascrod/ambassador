@@ -226,6 +226,7 @@ function initCommands()
          ["add-ons",           cmdAddons,                                    0],
          ["jsconsole",         cmdJSConsole,                                 0],
          ["about-config",      cmdAboutConfig,                               0],
+         ["update",            cmdUpdate,                                    0],
 
          // text-direction aliases
          ["rtl",              "text-direction rtl",                CMD_CONSOLE],
@@ -4712,6 +4713,22 @@ function cmdWebSearch(e)
     dispatch(client.prefs["messages.click"], {url: searchURL});
 }
 
+function toOpenWindowByType(inType, url, features)
+{
+    var wm = getService("@mozilla.org/appshell/window-mediator;1",
+                        "nsIWindowMediator");
+    var topWindow = wm.getMostRecentWindow(inType);
+
+    if(typeof features == "undefined")
+        features = "chrome,extrachrome,menubar,resizable," +
+                   "scrollbars,status,toolbar";
+
+    if (topWindow)
+        topWindow.focus();
+    else
+        window.open(url, "_blank", features);
+}
+
 function cmdAddons(e)
 {
     toOpenWindowByType("Addons:Manager",
@@ -4727,4 +4744,18 @@ function cmdAboutConfig(e)
 {
     toOpenWindowByType("Preferences:ConfigManager",
                        "chrome://global/content/config.xul");
+}
+
+
+function cmdUpdate(e)
+{
+    var um = getService("@mozilla.org/updates/update-manager;1",
+                        "nsIUpdateManager");
+    var prompter = newObject("@mozilla.org/updates/update-prompt;1",
+                             "nsIUpdatePrompt");
+
+    if (um.activeUpdate && um.activeUpdate.state == "pending")
+        prompter.showUpdateDownloaded(um.activeUpdate);
+    else
+        prompter.checkForUpdates();
 }
