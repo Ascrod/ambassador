@@ -118,6 +118,7 @@ function initMenus()
          ["add-ons",           {visibleif: XULRunner}],
          ["jsconsole",         {visibleif: XULRunner}],
          ["about-config",      {visibleif: XULRunner}],
+         ["update",            {visibleif: XULRunner}],
          ["-",           {visibleif: NotMac}],
          ["exit",        {visibleif: Win}],
          ["quit",        {visibleif: NotMac + " and " + NotWin}]

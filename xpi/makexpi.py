@@ -19,7 +19,6 @@ import shutil
 import re
 import zipfile
 from os.path import join as joinpath
-from subprocess import call, PIPE
 
 # Set up settings and paths for finding files.
 pwd = os.path.dirname(__file__)
