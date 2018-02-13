@@ -226,6 +226,7 @@ function initCommands()
          ["add-ons",           cmdAddons,                                    0],
          ["jsconsole",         cmdJSConsole,                                 0],
          ["about-config",      cmdAboutConfig,                               0],
+         ["certmgr",           cmdCertificateManager,                        0],
          ["update",            cmdUpdate,                                    0],
 
          // text-direction aliases
@@ -4758,4 +4759,10 @@ function cmdUpdate(e)
         prompter.showUpdateDownloaded(um.activeUpdate);
     else
         prompter.checkForUpdates();
+}
+
+function cmdCertificateManager(e)
+{
+    toOpenWindowByType("mozilla:certmanager",
+                       "chrome://pippki/content/certManager.xul");
 }
