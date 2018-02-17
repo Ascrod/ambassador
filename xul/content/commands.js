@@ -4714,36 +4714,20 @@ function cmdWebSearch(e)
     dispatch(client.prefs["messages.click"], {url: searchURL});
 }
 
-function toOpenWindowByType(inType, url, features)
-{
-    var wm = getService("@mozilla.org/appshell/window-mediator;1",
-                        "nsIWindowMediator");
-    var topWindow = wm.getMostRecentWindow(inType);
-
-    if(typeof features == "undefined")
-        features = "chrome,extrachrome,menubar,resizable," +
-                   "scrollbars,status,toolbar";
-
-    if (topWindow)
-        topWindow.focus();
-    else
-        window.open(url, "_blank", features);
-}
-
 function cmdAddons(e)
 {
-    toOpenWindowByType("Addons:Manager",
+    client.toOpenWindowByType("Addons:Manager",
                        "chrome://mozapps/content/extensions/extensions.xul");
 }
 
 function cmdJSConsole(e)
 {
-    toOpenWindowByType("global:console", "chrome://global/content/console.xul");
+    client.toOpenWindowByType("global:console", "chrome://global/content/console.xul");
 }
 
 function cmdAboutConfig(e)
 {
-    toOpenWindowByType("Preferences:ConfigManager",
+    client.toOpenWindowByType("Preferences:ConfigManager",
                        "chrome://global/content/config.xul");
 }
 
@@ -4763,6 +4747,6 @@ function cmdUpdate(e)
 
 function cmdCertificateManager(e)
 {
-    toOpenWindowByType("mozilla:certmanager",
+    client.toOpenWindowByType("mozilla:certmanager",
                        "chrome://pippki/content/certManager.xul");
 }

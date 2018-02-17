@@ -5355,6 +5355,23 @@ function cli_wantToQuit(reason, deliberate)
     }
 }
 
+client.toOpenWindowByType = 
+function toOpenWindowByType(inType, url, features)
+{
+    var wm = getService("@mozilla.org/appshell/window-mediator;1",
+                        "nsIWindowMediator");
+    var topWindow = wm.getMostRecentWindow(inType);
+
+    if(typeof features == "undefined")
+        features = "chrome,extrachrome,menubar,resizable," +
+                   "scrollbars,status,toolbar";
+
+    if (topWindow)
+        topWindow.focus();
+    else
+        window.open(url, "_blank", features);
+}
+
 /* gets a tab-complete match for the line of text specified by |line|.
  * wordStart is the position within |line| that starts the word being matched,
  * wordEnd marks the end position.  |cursorPos| marks the position of the caret
