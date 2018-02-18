@@ -16,12 +16,15 @@ function initCommands()
     var cmdary =
         [/* "real" commands */
          ["about",             cmdAbout,                           CMD_CONSOLE],
+         ["about-config",      cmdAboutConfig,                               0],
+         ["add-ons",           cmdAddons,                                    0],
          ["alias",             cmdAlias,                           CMD_CONSOLE],
          ["attach",            cmdAttach,                          CMD_CONSOLE],
          ["away",              cmdAway,                            CMD_CONSOLE],
          ["back",              cmdAway,                            CMD_CONSOLE],
          ["ban",               cmdBanOrExcept,     CMD_NEED_CHAN | CMD_CONSOLE],
          ["cancel",            cmdCancel,                          CMD_CONSOLE],
+         ["certmgr",           cmdCertificateManager,                        0],
          ["charset",           cmdCharset,                         CMD_CONSOLE],
          ["channel-motif",     cmdMotif,           CMD_NEED_CHAN | CMD_CONSOLE],
          ["channel-pref",      cmdPref,            CMD_NEED_CHAN | CMD_CONSOLE],
@@ -90,6 +93,7 @@ function initCommands()
          ["goto-url-external", cmdGotoURL,                                   0],
          ["help",              cmdHelp,                            CMD_CONSOLE],
          ["hide-view",         cmdHideView,                        CMD_CONSOLE],
+         ["identify",          cmdIdentify,         CMD_NEED_SRV | CMD_CONSOLE],
          ["idle-away",         cmdAway,                                      0],
          ["idle-back",         cmdAway,                                      0],
          ["ignore",            cmdIgnore,           CMD_NEED_NET | CMD_CONSOLE],
@@ -98,6 +102,7 @@ function initCommands()
          ["invite",            cmdInvite,           CMD_NEED_SRV | CMD_CONSOLE],
          ["join",              cmdJoin,                            CMD_CONSOLE],
          ["join-charset",      cmdJoin,             CMD_NEED_SRV | CMD_CONSOLE],
+         ["jsconsole",         cmdJSConsole,                                 0],
          ["jump-to-anchor",    cmdJumpToAnchor,                   CMD_NEED_NET],
          ["kick",              cmdKick,            CMD_NEED_CHAN | CMD_CONSOLE],
          ["kick-ban",          cmdKick,            CMD_NEED_CHAN | CMD_CONSOLE],
@@ -169,6 +174,7 @@ function initCommands()
          ["unban",             cmdBanOrExcept,     CMD_NEED_CHAN | CMD_CONSOLE],
          ["unexcept",          cmdBanOrExcept,     CMD_NEED_CHAN | CMD_CONSOLE],
          ["unstalk",           cmdUnstalk,                         CMD_CONSOLE],
+         ["update",            cmdUpdate,                                    0],
          ["urls",              cmdURLs,                            CMD_CONSOLE],
          ["user",              cmdUser,                            CMD_CONSOLE],
          ["userhost",          cmdUserhost,         CMD_NEED_SRV | CMD_CONSOLE],
@@ -222,12 +228,6 @@ function initCommands()
          ["tabstrip",         "toggle-ui tabstrip",                CMD_CONSOLE],
          ["statusbar",        "toggle-ui status",                  CMD_CONSOLE],
          ["header",           "toggle-ui header",                  CMD_CONSOLE],
-
-         ["add-ons",           cmdAddons,                                    0],
-         ["jsconsole",         cmdJSConsole,                                 0],
-         ["about-config",      cmdAboutConfig,                               0],
-         ["certmgr",           cmdCertificateManager,                        0],
-         ["update",            cmdUpdate,                                    0],
 
          // text-direction aliases
          ["rtl",              "text-direction rtl",                CMD_CONSOLE],
@@ -3897,6 +3897,18 @@ function cmdJumpToAnchor(e)
 
     dispatch("set-current-view", {view: e.channel});
     e.channel.scrollToElement(row, "center");
+}
+
+function cmdIdentify(e)
+{
+    // Password is optional, if it is not given, we use a safe prompt.
+    if (!e.password)
+        e.password = promptPassword(MSG_NEED_IDENTIFY_PASSWORD, "");
+
+    if (!e.password)
+        return;
+
+    e.server.sendData("NS IDENTIFY " + fromUnicode(e.password, e.server) + "\n");
 }
 
 function cmdIgnore(e)
