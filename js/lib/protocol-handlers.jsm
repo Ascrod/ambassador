@@ -75,7 +75,7 @@ IRCProtocolHandler.prototype =
     {
         const cls = Cc[STANDARDURL_CONTRACTID];
         const url = cls.createInstance(Ci.nsIStandardURL);
-        const port = this.isSecure ? 9999 : 6667;
+        const port = this.isSecure ? 6697 : 6667;
 
         url.init(Ci.nsIStandardURL.URLTYPE_STANDARD, port, spec, charset, baseURI);
 
@@ -123,7 +123,7 @@ this.IRCSProtocolHandlerFactory =
 
         const protHandler = new IRCProtocolHandler(true);
         protHandler.scheme = "ircs";
-        protHandler.defaultPort = 9999;
+        protHandler.defaultPort = 6697;
         return protHandler;
     },
 };
