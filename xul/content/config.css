@@ -18,9 +18,9 @@
 
 /* Set min-width and min-height on tabs container. */
 #pref-object-deck {
-	min-width: 65ex;
+	min-width: 80ex;
 	min-height: 32em;
-	width: 65ex;
+	width: 80ex;
 	height: 32em;
 }
 
