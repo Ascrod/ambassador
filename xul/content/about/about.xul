@@ -51,6 +51,7 @@
     <label class="contributors-label header" value="&section.contrib.label;"/>
     <vbox class="contributors">
       <label>Lim Chee Aun (graphics)</label>
+      <label>Rob Marshall (XULRunner patches)</label>
     </vbox>
   </vbox>
   <separator id="groove" class="groove"/>
