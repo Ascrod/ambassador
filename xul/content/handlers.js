@@ -579,8 +579,7 @@ function onWindowKeyPress(e)
     const isMac     = client.platform == "Mac";
     const isLinux   = client.platform == "Linux";
     const isWindows = client.platform == "Windows";
-    const isOS2     = client.platform == "OS/2";
-    const isUnknown = !(isMac || isLinux || isWindows || isOS2);
+    const isUnknown = !(isMac || isLinux || isWindows);
     const isSuite   = client.host == "Mozilla";
 
     switch (code)
@@ -704,7 +703,7 @@ function onWindowKeyPress(e)
             modifierMask = client.prefs["tabGotoKeyModifiers"];
         else if (!isSuite && isMac)
             modifierMask = 0x8; // meta
-        else if (!isSuite && (isLinux || isOS2))
+        else if (!isSuite && isLinux)
             modifierMask = 0x1; // alt
         else if (!isSuite && (isWindows || isUnknown))
             modifierMask = 0x2; // control

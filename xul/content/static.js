@@ -521,11 +521,8 @@ function initApplicationCompatibility()
             case "{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}": // SeaMonkey
                 client.host = "Mozilla";
                 break;
-            case "{a463f10c-3994-11da-9945-000d60ca027b}": // Flock
-                client.host = "Flock";
-                break;
-            case "{3db10fab-e461-4c80-8b97-957ad5f8ea47}": // Netscape
-                client.host = "Netscape";
+            case "{8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}": //Pale Moon
+                client.host = "PaleMoon";
                 break;
             default:
                 client.unknownUID = app.ID;
@@ -544,8 +541,6 @@ function initApplicationCompatibility()
         client.platform = "Windows";
     if (navigator.platform.search(/linux/i) > -1)
         client.platform = "Linux";
-    if (navigator.platform.search(/os\/2/i) > -1)
-        client.platform = "OS/2";
 
     client.hostPlatform = client.host + client.platform;
 
