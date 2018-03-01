@@ -176,6 +176,7 @@ function initPrefs()
          ["logFileName",        makeLogNameClient,
                                           "hidden"],
          ["logFolder",          getURLSpecFromFile(logPath.path), ".log"],
+         ["login.promptToSave", true,       "global.security"],
          ["messages.click",     gotos[0],   "global.links"],
          ["messages.ctrlClick", gotos[1],   "global.links"],
          ["messages.metaClick", gotos[2],   "global.links"],

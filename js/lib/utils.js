@@ -1173,6 +1173,39 @@ function viewCert(cert, parent)
     cd.viewCert(parent, cert);
 }
 
+function addOrUpdateLogin(url, type, username, password)
+{
+    var mgr = getService("@mozilla.org/login-manager;1", "nsILoginManager");
+    var newinfo = newObject("@mozilla.org/login-manager/loginInfo;1", "nsILoginInfo");
+    username = username.toLowerCase();
+    var oldinfo = getLogin(url, type, username);
+    newinfo.init(url, null, type, username, password, "", "");
+
+    if (oldinfo) {
+        mgr.modifyLogin(oldinfo, newinfo);
+        return true; //updated
+    } else {
+        mgr.addLogin(newinfo);
+        return false; //added
+    }
+}
+
+function getLogin(url, realm, username)
+{
+    var mgr = getService("@mozilla.org/login-manager;1", "nsILoginManager");
+    var info = newObject("@mozilla.org/login-manager/loginInfo;1", "nsILoginInfo");
+    username = username.toLowerCase();
+
+    var rv = null;
+    mgr.findLogins({}, url, null, realm).forEach(function(login) {
+        if (login.username == username) {
+            rv = login;
+        }
+    });
+
+    return rv;
+}
+
 function getHostmaskParts(hostmask)
 {
     var rv;

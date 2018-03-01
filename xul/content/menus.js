@@ -118,6 +118,7 @@ function initMenus()
          ["add-ons",     {visibleif: XULRunner}],
          ["jsconsole",   {visibleif: XULRunner}],
          ["about-config",{visibleif: XULRunner}],
+         ["passmgr"],
          ["certmgr"],
          ["update",      {visibleif: XULRunner}],
          ["-",           {visibleif: NotMac}],

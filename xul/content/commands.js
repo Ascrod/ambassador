@@ -131,6 +131,7 @@ function initCommands()
          ["notify",            cmdNotify,           CMD_NEED_SRV | CMD_CONSOLE],
          ["open-at-startup",   cmdOpenAtStartup,                   CMD_CONSOLE],
          ["oper",              cmdOper,             CMD_NEED_SRV | CMD_CONSOLE],
+         ["passmgr",           cmdPasswordManager,                           0],
          ["ping",              cmdPing,             CMD_NEED_SRV | CMD_CONSOLE],
          ["plugin-pref",       cmdPref,                            CMD_CONSOLE],
          ["pref",              cmdPref,                            CMD_CONSOLE],
@@ -2373,6 +2374,16 @@ function cmdJoin(e)
         chan = e.channelToJoin;
     }
 
+    var stored_key = client.tryToGetLogin(chan.getURL(), "chan", "*");
+    var promptToSave = false;
+    if (!e.key && stored_key)
+        e.key = stored_key;
+    else if (e.key && stored_key != e.key)
+        promptToSave = true;
+
+    if (promptToSave && client.prefs["login.promptToSave"])
+        client.promptToSaveLogin(chan.getURL(), "chan", "*", e.key);
+
     chan.join(e.key);
 
     /* !-channels are "safe" channels, and get a server-generated prefix. For
@@ -3019,12 +3030,25 @@ function cmdOpenAtStartup(e)
 
 function cmdOper(e)
 {
-    // Password is optional, if it is not given, we use a safe prompt.
-    if (!e.password)
+    // Password is optional. If it is not given, we look for a saved password first.
+    // If there isn't one, we use a safe prompt.
+    var stored_password = client.tryToGetLogin(e.server.getURL(), "oper", e.opername);
+    var promptToSave = false;
+    if (!e.password && stored_password)
+        e.password = stored_password;
+    else if (!e.password)
+    {
         e.password = promptPassword(MSG_NEED_OPER_PASSWORD, "");
+        if (!e.password)
+            return;
+        promptToSave = true;
 
-    if (!e.password)
-        return;
+    }
+    else if (stored_password != e.password)
+        promptToSave = true;
+
+    if (promptToSave && client.prefs["login.promptToSave"])
+        client.promptToSaveLogin(e.server.getURL(), "oper", e.opername, e.password);
 
     e.server.sendData("OPER " + fromUnicode(e.opername, e.server) + " " +
                       fromUnicode(e.password, e.server) + "\n");
@@ -3901,12 +3925,25 @@ function cmdJumpToAnchor(e)
 
 function cmdIdentify(e)
 {
-    // Password is optional, if it is not given, we use a safe prompt.
-    if (!e.password)
+    // Password is optional. If it is not given, we look for a saved password first.
+    // If there isn't one, we use a safe prompt.
+    var stored_password = client.tryToGetLogin(e.server.getURL(), "nick", e.server.me.unicodeName);
+    var promptToSave = false;
+    if (!e.password && stored_password)
+        e.password = stored_password;
+    else if (!e.password)
+    {
         e.password = promptPassword(MSG_NEED_IDENTIFY_PASSWORD, "");
+        if (!e.password)
+            return;
+        promptToSave = true;
 
-    if (!e.password)
-        return;
+    }
+    else if (stored_password != e.password)
+        promptToSave = true;
+
+    if (promptToSave && client.prefs["login.promptToSave"])
+        client.promptToSaveLogin(e.server.getURL(), "nick", e.server.me.unicodeName, e.password);
 
     e.server.sendData("NS IDENTIFY " + fromUnicode(e.password, e.server) + "\n");
 }
@@ -4743,6 +4780,11 @@ function cmdAboutConfig(e)
                        "chrome://global/content/config.xul");
 }
 
+function cmdPasswordManager(e)
+{
+    client.toOpenWindowByType("Toolkit:PasswordManager",
+                       "chrome://passwordmgr/content/passwordManager.xul");
+}
 
 function cmdUpdate(e)
 {
