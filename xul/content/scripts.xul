@@ -42,7 +42,6 @@
 
     <script src="chrome://chatzilla/content/nsUserSettings.js"/>
     <script src="chrome://chatzilla/content/nsClipboard.js"/>
-    <script src="chrome://chatzilla/content/nsDragAndDrop.js"/>
     <script src="chrome://chatzilla/content/static.js"/>
     <script src="chrome://chatzilla/content/commands.js"/>
     <script src="chrome://chatzilla/content/menus.js"/>

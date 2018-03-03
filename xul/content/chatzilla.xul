@@ -60,9 +60,9 @@
     
       <vbox id="tabstrip-box" flex="0" crop="right">
         <hbox id="view-tabs" persist="collapsed" flex="1"
-            ondragover="nsDragAndDrop.dragOver(event, tabsDropObserver)"
-            ondragexit="nsDragAndDrop.dragExit(event, tabsDropObserver)"
-            ondrop="nsDragAndDrop.drop(event, tabsDropObserver)">
+            ondragover="tabDNDObserver.onDragOver(event);"
+            ondragexit="tabDNDObserver.onDragExit(event);"
+            ondrop="tabDNDObserver.onDrop(event);">
           <tabs id="views-tbar-inner" flex="1"
               onselect="onTabSelect(event)" setfocus="false">
             <tab hidden="true"/> <!-- dummy tab to keep the freaking xbl from
