@@ -746,7 +746,7 @@ function loadPluginDirectory(localPath, recurse)
     while (enumer.hasMoreElements())
     {
         var entry = enumer.getNext();
-        entry = entry.QueryInterface(Components.interfaces.nsILocalFile);
+        entry = entry.QueryInterface(Components.interfaces.nsIFile);
         if (entry.isDirectory())
             loadPluginDirectory(entry, recurse - 1);
     }
