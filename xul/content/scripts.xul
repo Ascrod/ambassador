@@ -40,8 +40,6 @@
     <script src="chrome://chatzilla/content/lib/xul/munger.js"/>
     <script src="chrome://chatzilla/content/lib/xul/tree-utils.js"/>
 
-    <script src="chrome://chatzilla/content/nsUserSettings.js"/>
-    <script src="chrome://chatzilla/content/nsClipboard.js"/>
     <script src="chrome://chatzilla/content/static.js"/>
     <script src="chrome://chatzilla/content/commands.js"/>
     <script src="chrome://chatzilla/content/menus.js"/>
