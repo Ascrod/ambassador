@@ -50,6 +50,8 @@ const STATE_IS_INSECURE = 3;
 const STATE_SECURE_LOW = 1;
 const STATE_SECURE_HIGH = 2;
 
+const STATE_SECURE_KEYSIZE = 128;
+
 const nsIScriptableInputStream = Components.interfaces.nsIScriptableInputStream;
 
 const nsIBinaryInputStream = Components.interfaces.nsIBinaryInputStream;
@@ -656,7 +658,7 @@ function bc_getsecuritystate()
         // Store appropriate status
         if (!("keyLength" in sslStatus) || !sslStatus.keyLength)
             return [STATE_IS_BROKEN];
-        else if (sslStatus.keyLength >= 90)
+        else if (sslStatus.keyLength >= STATE_SECURE_KEYSIZE)
             return [STATE_IS_SECURE, STATE_SECURE_HIGH];
         else
             return [STATE_IS_SECURE, STATE_SECURE_LOW];
