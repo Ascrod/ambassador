@@ -669,6 +669,70 @@ function bc_getsecuritystate()
     }
 }
 
+CBSConnection.prototype.getSecurityInfo =
+function bc_getsecurityinfo()
+{
+    if (!this.isConnected || !this._transport.securityInfo)
+        return null;
+
+    const nsISSLStatusProvider = Components.interfaces.nsISSLStatusProvider;
+    const nsISSLStatus = Components.interfaces.nsISSLStatus;
+
+    // Get the actual SSL Status
+    var sslSp = this._transport.securityInfo.QueryInterface(nsISSLStatusProvider);
+    var sslStatus = sslSp.SSLStatus.QueryInterface(nsISSLStatus);
+
+    var rv = {
+        hostName: this.host,
+        cipherName: sslStatus.cipherName,
+        keyLength: sslStatus.keyLength,
+        protocolVersion: null,
+        certTransparency: null
+    }
+
+    switch (sslStatus.protocolVersion)
+    {
+        case nsISSLStatus.SSL_VERSION_3:
+            rv.protocolVersion = "SSL 3.0"
+            break;
+        case nsISSLStatus.TLS_VERSION_1:
+            rv.protocolVersion = "TLS 1.0"
+            break;
+        case nsISSLStatus.TLS_VERSION_1_1:
+            rv.protocolVersion = "TLS 1.1"
+            break;
+        case nsISSLStatus.TLS_VERSION_1_2:
+            rv.protocolVersion = "TLS 1.2"
+            break;
+        case nsISSLStatus.TLS_VERSION_1_3:
+            rv.protocolVersion = "TLS 1.3"
+            break;
+    }
+
+    switch (sslStatus.certificateTransparencyStatus)
+    {
+        case nsISSLStatus.CERTIFICATE_TRANSPARENCY_NOT_APPLICABLE:
+            // CT compliance checks were not performed,
+            // do not display any status text.
+            rv.certTransparency = null;
+            break;
+        case nsISSLStatus.CERTIFICATE_TRANSPARENCY_NONE:
+            rv.certTransparency = "None";
+            break;
+        case nsISSLStatus.CERTIFICATE_TRANSPARENCY_OK:
+            rv.certTransparency = "OK";
+            break;
+        case nsISSLStatus.CERTIFICATE_TRANSPARENCY_UNKNOWN_LOG:
+            rv.certTransparency = "UnknownLog";
+            break;
+        case nsISSLStatus.CERTIFICATE_TRANSPARENCY_INVALID:
+            rv.certTransparency = "Invalid";
+            break;
+    }
+
+    return rv;
+}
+
 CBSConnection.prototype.getCertificate =
 function bc_getcertificate()
 {

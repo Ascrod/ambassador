@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<!DOCTYPE dialog SYSTEM "chrome://chatzilla/locale/security-info.dtd">
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://chatzilla/skin/security-info.css" type="text/css"?>
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        xmlns:html="http://www.w3.org/1999/xhtml"
+        windowtype="irc:chatzilla:security-info"
+        onload="onLoad()"
+        id="chatzilla-window"
+        buttons="accept"
+        title="&window.title;">
+
+    <script src="chrome://chatzilla/lib/js/utils.js"/>
+    <script src="security-info.js"/>
+
+    <vbox id="securityPanel">
+        <!-- Security details -->
+        <caption id="security-details" label="&security.details;" />
+        <grid id="security-details-grid" flex="1">
+            <columns>
+                <column/>
+                <column flex="1"/>
+            </columns>
+            <rows id="security-rows">
+                <row id="security-hostname-row">
+                    <label id="security-hostname-label"
+                        class="fieldLabel"
+                        value="&security.hostname.label;"
+                        control="security-hostname-value" />
+                    <textbox id="security-hostname-value"
+                        class="fieldValue"
+                        readonly="true" />
+                </row>
+                <row id="security-status-row">
+                    <label id="security-status-label"
+                        class="fieldLabel"
+                        value="&security.status.label;"
+                        control="security-status-value" />
+                    <textbox id="security-status-value"
+                        class="fieldValue"
+                        readonly="true" />
+                </row>
+                <row id="security-cipher-row">
+                    <label id="security-cipher-label"
+                        class="fieldLabel"
+                        value="&security.cipher.label;"
+                        control="security-cipher-value" />
+                    <textbox id="security-cipher-value"
+                        class="fieldValue"
+                        readonly="true" />
+                </row>
+                <row id="security-keysize-row">
+                    <label id="security-keysize-label"
+                        class="fieldLabel"
+                        value="&security.keysize.label;"
+                        control="security-keysize-value" />
+                    <textbox id="security-keysize-value"
+                        class="fieldValue"
+                        readonly="true" />
+                </row>
+                <row id="security-protocol-row">
+                    <label id="security-protocol-label"
+                        class="fieldLabel"
+                        value="&security.protocol.label;"
+                        control="security-protocol-value" />
+                    <textbox id="security-protocol-value"
+                        class="fieldValue"
+                        readonly="true" />
+                </row>
+            </rows>
+        </grid>
+
+        <!-- Cert button -->
+        <hbox id="security-view-cert-box" pack="end">
+            <button id="security-view-cert" label="&security.certView.label;"
+                accesskey="&security.certView.accesskey;"
+                oncommand="client.mainWindow.viewCert(server.connection.getCertificate());"/>
+        </hbox>
+
+        <!-- Cert Transparency -->
+        <vbox id="security-certificate-transparency-box">
+            <textbox id="security-certificate-transparency"
+                readonly="true" />
+        </vbox>
+    </vbox>
+</dialog>

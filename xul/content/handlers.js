@@ -286,7 +286,7 @@ function onMouseOver (e)
 function onSecurityIconDblClick(e)
 {
     if (e.button == 0)
-        displayCertificateInfo();
+        displaySecurityInfo();
 }
 
 function onLoggingIconClick(e)

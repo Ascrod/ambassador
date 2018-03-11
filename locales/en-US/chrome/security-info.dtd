@@ -1,0 +1,15 @@
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<!ENTITY window.title                   "Security Info">
+
+<!ENTITY security.details               "SSL Connection Details">
+<!ENTITY security.hostname.label        "Host:">
+<!ENTITY security.status.label          "Status:">
+<!ENTITY security.cipher.label          "Cipher:">
+<!ENTITY security.keysize.label         "Key Size:">
+<!ENTITY security.protocol.label        "Protocol:">
+
+<!ENTITY security.certView.label        "View Certificate">
+<!ENTITY security.certView.accesskey    "V">

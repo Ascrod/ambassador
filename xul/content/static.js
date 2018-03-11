@@ -2626,7 +2626,7 @@ function multilineInputMode (state)
     client.input.focus();
 }
 
-function displayCertificateInfo()
+function displaySecurityInfo()
 {
     var o = getObjectDetails(client.currentObject);
     if (!o.server)
@@ -2638,7 +2638,9 @@ function displayCertificateInfo()
         return;
     }
 
-    viewCert(o.server.connection.getCertificate());
+    window.openDialog("chrome://chatzilla/content/security-info.xul", "",
+                      "resizable=yes",
+                      { client: client, server: o.server, opener: window });
 }
 
 function newInlineText (data, className, tagName)
