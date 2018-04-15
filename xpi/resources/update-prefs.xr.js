@@ -6,8 +6,8 @@ pref("app.update.mode", 0);
 pref("app.update.incompatible.mode", 0);
 
 pref("app.update.url", "http://chatzilla.rdmsoft.com/xulrunner/update/2/%CHANNEL%?v=%VERSION%&b=%BUILD_ID%&o=%BUILD_TARGET%&ov=%OS_VERSION%&pv=%PLATFORM_VERSION%&");
-pref("app.update.url.manual", "http://chatzilla.rdmsoft.com/xulrunner/");
-pref("app.update.url.details", "http://chatzilla.rdmsoft.com/xulrunner/");
+pref("app.update.url.manual", "https://github.com/ascrod/chatzilla-uxp/");
+pref("app.update.url.details", "https://github.com/ascrod/chatzilla-uxp/");
 
 // Check every day, if download or install is deferred ask again each day.
 pref("app.update.interval", 86400);

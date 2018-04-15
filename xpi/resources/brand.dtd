@@ -2,4 +2,4 @@
 <!ENTITY  brandFullName         "ChatZilla @REVISION@">
 <!ENTITY  vendorShortName       "">
 <!ENTITY  logoTrademark         "">
-<!ENTITY  releaseURL            "http://chatzilla.rdmsoft.com/">
+<!ENTITY  releaseURL            "https://github.com/ascrod/chatzilla-uxp/">

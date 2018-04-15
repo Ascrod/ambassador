@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 <key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
-           <key>CFBundleIdentifier</key><string>com.rdmsoft.chatzilla</string>
+           <key>CFBundleIdentifier</key><string>com.ascrod.chatzilla</string>
           <key>CFBundlePackageType</key><string>APPL</string>
            <key>CFBundleExecutable</key><string>xulrunner</string>
          <key>NSAppleScriptEnabled</key><true/>
