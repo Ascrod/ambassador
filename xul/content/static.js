@@ -436,36 +436,31 @@ function getVersionInfo()
     var app = getService("@mozilla.org/xre/app-info;1", "nsIXULAppInfo");
     if (app)
     {
-        // Use the XUL host app info, and Gecko build ID.
+        // Use the XUL host app info, and platform build ID.
         if (app.ID == "{" + __cz_guid + "}")
         {
             /* We ARE the app, in other words, we're running in XULrunner.
              * Because of this, we must disregard app.(name|vendor|version).
              */
 
-            // "XULRunner 1.7+"
-            version.hostName = "XULRunner";
+            // "App 1.0"
+            version.hostName = "UXP";
             version.hostVersion = app.platformVersion;
             version.host = version.hostName + " " + version.hostVersion;
 
-            // "XULRunner 1.7+/2005071506"
+            // "App 1.0/YYYYMMDDHHMMSS"
             version.ua = version.host + "/" + app.platformBuildID;
             version.hostBuildID = app.platformBuildID;
         }
         else
         {
-            // "Mozilla Firefox 1.0+"
+            // "App 1.0"
             version.hostName = app.vendor + " " + app.name;
             version.hostVersion = app.version;
             version.host = version.hostName + " " + version.hostVersion;
 
-            // "Firefox 1.0+/2005071506"
-            if ("platformBuildID" in app) // 1.1 and up
-                version.hostBuildID = app.platformBuildID;
-            else if ("geckoBuildID" in app) // 1.0 - 1.1 trunk only
-                version.hostBuildID = app.geckoBuildID;
-            else // Uh oh!
-                version.hostBuildID = "??????????";
+            // "App 1.0/YYYYMMDDHHMMSS"
+            version.hostBuildID = app.platformBuildID;
             version.ua = app.name + " " + app.version + "/" +
                          version.hostBuildID;
         }
