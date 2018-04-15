@@ -37,7 +37,11 @@
       </vbox>
     </hbox>
     <description id="description">&description.label;</description>
-    <label class="contributors-label header" value="&section.core.label;"/>
+    <label class="contributors-label header" value="&section.uxp.label;"/>
+    <vbox class="contributors">
+      <label>Ascrod</label>
+    </vbox>
+    <label class="contributors-label header" value="&section.orig.label;"/>
     <vbox class="contributors">
       <label>Robert Ginda</label>
       <label>Gijs Kruitbosch</label>

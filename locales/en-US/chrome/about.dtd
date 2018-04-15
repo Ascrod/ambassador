@@ -12,6 +12,7 @@
 <!ENTITY homepage.label    "Visit Home Page">
 <!ENTITY copyversion.label "Copy Version Details">
 
-<!ENTITY section.core.label    "Core Development Team:">
+<!ENTITY section.uxp.label     "UXP Port:">
+<!ENTITY section.orig.label    "Original Development Team:">
 <!ENTITY section.locale.label  "Localization:">
 <!ENTITY section.contrib.label "Contributors:">
