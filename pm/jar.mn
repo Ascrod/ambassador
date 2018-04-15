@@ -1,0 +1,8 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+chatzilla.jar:
+% content chatzilla-pm %content/chatzilla/pm/
+% overlay chrome://chatzilla/content/chatzilla.xul chrome://chatzilla/content/pm/overlay.xul application={8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}
+	content/chatzilla/pm/overlay.xul             (../xul/content/pm/overlay.xul)
