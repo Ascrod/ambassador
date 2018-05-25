@@ -149,9 +149,6 @@ function onUnload()
 
     // We don't trust anybody.
     client.hiddenDocument = null;
-    // Log client stop and shut down CEIP.
-    client.ceip.logEvent({type: "client", event: "stop"});
-    client.ceip.destroy();
     uninitOfflineIcon();
     uninitIdleAutoAway(client.prefs["awayIdleTime"]);
     destroy();
