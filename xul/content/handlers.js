@@ -2362,7 +2362,13 @@ function my_cap(e)
 {
     if (e.params[2] == "LS")
     {
-        display(getMsg(MSG_CAPS_LIST, keys(e.server.caps).join(MSG_COMMASP)));
+        display(getMsg(MSG_CAPS_LS, keys(e.server.caps).join(MSG_COMMASP)));
+    }
+    else if (e.params[2] == "LIST")
+    {
+        var caps = e.server.caps;
+        var list = keys(caps).filter(k => caps[k] == true).join(MSG_COMMASP);
+        display(getMsg(MSG_CAPS_LIST, list));
     }
     else if (e.params[2] == "ACK")
     {
