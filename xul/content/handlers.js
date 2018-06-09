@@ -842,7 +842,8 @@ function onWhoTimeout()
         // The time since the last check, with a 5s error margin to
         // stop us from not checking because the timer fired a tad early:
         var waited = Number(new Date()) - net.lastWhoCheckTime + 5000;
-        if (net.isConnected() && (period != 0) && (period * 60000 < waited))
+        if (net.isConnected() && (period != 0) && (period * 60000 < waited) &&
+            !net.primServ.caps["away-notify"])
             checkWho();
     }
 }

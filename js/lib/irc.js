@@ -2432,6 +2432,12 @@ function serv_join(e)
                 e.server.sendData("MODE " + e.channel.encodedName + " +e\n");
                 e.channel.pendingExceptList = true;
             }
+
+            //If away-notify is active, query the list of users for away status.
+            if (e.server.caps["away-notify"])
+            {
+                e.server.sendData("WHO " + e.channel.encodedName + "\n");
+            }
         };
         // Between 10s - 20s.
         setTimeout(delayFn2, 10000 + 10000 * Math.random(), this);
