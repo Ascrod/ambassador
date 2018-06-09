@@ -495,7 +495,7 @@ function mircChangeColor (colorInfo, containerTag, data)
 
     var ary = colorInfo.match (/.(\d{1,2}|)(,(\d{1,2})|)/);
 
-    // Do we have a BG color specified...?
+    // Do we have a FG color specified...?
     if (!arrayHasElementAt(ary, 1) || !ary[1])
     {
         // Oops, no colors.
@@ -504,7 +504,17 @@ function mircChangeColor (colorInfo, containerTag, data)
         return;
     }
 
-    var fgColor = String(Number(ary[1]) % 16);
+    var fgNum = Number(ary[1]);
+    if (fgNum == 99)
+    {
+        /* Show the default FG color.
+         * We ignore any background color sent with this.
+         */
+        delete data.currFgColor;
+        delete data.currBgColor;
+        return;
+    }
+    var fgColor = String(fgNum % 16);
 
     if (fgColor.length == 1)
         data.currFgColor = "0" + fgColor;
@@ -514,12 +524,20 @@ function mircChangeColor (colorInfo, containerTag, data)
     // Do we have a BG color specified...?
     if (arrayHasElementAt(ary, 3) && ary[3])
     {
-        var bgColor = String(Number(ary[3]) % 16);
-
-        if (bgColor.length == 1)
-            data.currBgColor = "0" + bgColor;
+        var bgNum = Number(ary[3]);
+        if (bgNum == 99) {
+            //Show the default BG color.
+            delete data.currBgColor;
+        }
         else
-            data.currBgColor = bgColor;
+        {
+            var bgColor = String(bgNum % 16);
+
+            if (bgColor.length == 1)
+                data.currBgColor = "0" + bgColor;
+            else
+                data.currBgColor = bgColor;
+        }
     }
 
     data.hasColorInfo = true;
