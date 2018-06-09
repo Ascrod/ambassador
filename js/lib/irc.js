@@ -12,7 +12,7 @@ const JSIRC_ERR_PAC_LOADING = "JSIRCE:PAC_LOADING";
 const JSIRCV3_SUPPORTED_CAPS = [
     //"account-tag",
     //"account-notify",
-    //"away-notify",
+    "away-notify",
     //"batch",
     //"cap-notify",
     //"chghost",
@@ -2099,6 +2099,15 @@ function my_cap (e)
         dd("Unknown CAP reply " + e.params[2]);
     }
 
+    e.destObject = this.parent;
+    e.set = "network";
+}
+
+/* User away status changed */
+CIRCServer.prototype.onAway =
+function serv_away (e)
+{
+    e.user.isAway = (e.params[1] ? true : false);
     e.destObject = this.parent;
     e.set = "network";
 }

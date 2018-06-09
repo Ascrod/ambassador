@@ -2384,6 +2384,23 @@ function my_cap(e)
     return true;
 }
 
+/* user away status */
+CIRCNetwork.prototype.onAway =
+function my_away(e)
+{
+    var userlist = document.getElementById("user-list");
+    for (var c in e.server.channels)
+    {
+        var chan = e.server.channels[c];
+        if (chan.active && (e.user.canonicalName in chan.users))
+        {
+            var index = chan.users[e.user.canonicalName].chanListEntry.childIndex;
+            userlist.treeBoxObject.invalidateRow(index);
+            e.server.channels[c].updateUsers([e.user.canonicalName]);
+        }
+    }
+}
+
 CIRCNetwork.prototype.reclaimName =
 function my_reclaimname()
 {
