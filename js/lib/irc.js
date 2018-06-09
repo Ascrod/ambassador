@@ -9,6 +9,27 @@ const JSIRC_ERR_NO_SECURE = "JSIRCE:NO_SECURE";
 const JSIRC_ERR_OFFLINE   = "JSIRCE:OFFLINE";
 const JSIRC_ERR_PAC_LOADING = "JSIRCE:PAC_LOADING";
 
+const JSIRCV3_SUPPORTED_CAPS = [
+    //"account-tag",
+    //"account-notify",
+    //"away-notify",
+    //"batch",
+    //"cap-notify",
+    //"chghost",
+    //"echo-message",
+    //"extended-join",
+    //"invite-notify",
+    //"labeled-response",
+    //"message-tags",
+    //"metadata",
+    //"monitor",
+    //"multi-prefix",
+    //"sasl",
+    //"server-time",
+    //"tls",
+    //"userhost-in-name",
+];
+
 function userIsMe (user)
 {
 
@@ -725,6 +746,8 @@ CIRCServer.prototype.onConnect =
 function serv_onconnect (e)
 {
     this.parent.primServ = e.server;
+    this.sendData("CAP LS\n");
+    this.pendingCapNegotiation = true;
     this.login(this.parent.INITIAL_NICK, this.parent.INITIAL_NAME,
                this.parent.INITIAL_DESC);
     return true;
@@ -1408,6 +1431,8 @@ function serv_001 (e)
 {
     this.parent.connectAttempt = 0;
     this.parent.connectCandidate = 0;
+    //Mark capability negotiation as finished, if we haven't already.
+    delete this.parent.pendingCapNegotiation;
     this.parent.state = NET_ONLINE;
     // nextHost is incremented after picking a server. Push it back here.
     this.parent.nextHost--;
@@ -2011,6 +2036,25 @@ function my_cap (e)
             if (!(cap in this.caps))
                 this.caps[cap] = null;
         }
+
+        //Only request capabilities we support if we are connecting.
+        if (this.pendingCapNegotiation)
+        {
+            var caps_req  = JSIRCV3_SUPPORTED_CAPS.filter(i => caps.indexOf(i) != -1);
+            if (caps_req.length > 0)
+            {
+                caps_req = caps_req.join(" ");
+                e.server.sendData("CAP REQ :" + caps_req + "\n");
+            }
+            else
+            {
+                e.server.sendData("CAP END\n");
+                delete this.pendingCapNegotiation;
+            }
+
+            //Don't show the raw message while connecting.
+            return true;
+        }
     }
     else if (e.params[2] == "LIST")
     {
@@ -2034,6 +2078,15 @@ function my_cap (e)
             e.cap = cap.replace(/^-/, "").trim();
             e.capEnabled = cap[0] != "-";
             this.caps[e.cap] = e.capEnabled;
+        }
+
+        if (this.pendingCapNegotiation)
+        {
+            e.server.sendData("CAP END\n");
+            delete this.pendingCapNegotiation;
+
+            //Don't show the raw message while connecting.
+            return true;
         }
     }
     else if (e.params[2] == "NAK")
