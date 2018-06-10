@@ -23,7 +23,7 @@ const JSIRCV3_SUPPORTED_CAPS = [
     //"message-tags",
     //"metadata",
     //"monitor",
-    //"multi-prefix",
+    "multi-prefix",
     //"sasl",
     //"server-time",
     //"tls",
