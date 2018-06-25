@@ -124,6 +124,7 @@ chatzilla.jar:
 	skin/modern/chatzilla/images/multiline-contract.png (xul/skin/images/multiline-contract.png)
 	skin/modern/chatzilla/images/input-send.png         (xul/skin/images/input-send.png)
 	skin/modern/chatzilla/images/secure.png             (xul/skin/images/secure.png)
+	skin/modern/chatzilla/images/secure-low.png         (xul/skin/images/secure-low.png)
 	skin/modern/chatzilla/images/secure-broken.png      (xul/skin/images/secure-broken.png)
 	skin/modern/chatzilla/images/online.png             (xul/skin/images/online.png)
 	skin/modern/chatzilla/images/offline.png            (xul/skin/images/offline.png)

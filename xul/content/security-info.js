@@ -38,9 +38,8 @@ function onLoad()
     setText("security-keysize-value",   info.keyLength);
     setText("security-protocol-value",  info.protocolVersion);
 
-    var secState = server.connection.getSecurityState();
     var stateText = null;
-    switch (secState[0])
+    switch (info.state[0])
     {
         case STATE_IS_BROKEN:
             stateText = client.mainWindow.MSG_SECURITY_BROKEN;
@@ -49,7 +48,7 @@ function onLoad()
             stateText = client.mainWindow.MSG_SECURITY_INSECURE;
             break;
         case STATE_IS_SECURE:
-            if (secState[1] == STATE_SECURE_HIGH)
+            if (info.state[1] == STATE_SECURE_HIGH)
                 stateText = client.mainWindow.MSG_SECURITY_STRONG;
             else
                 stateText = client.mainWindow.MSG_SECURITY_WEAK;

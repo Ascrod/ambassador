@@ -629,51 +629,22 @@ function bc_senddatanow(str)
 }
 
 /**
- * Gets an array containing information about the security of the connection.
- *
- * |STATE_IS_BROKEN| is returned if any errors occur and |STATE_IS_INSECURE| is
- * returned for disconnected sockets.
- *
- * @returns An array with at least one item, containing a value from the
- *          |STATE_IS_*| enumeration at the top of this file. Iff this is
- *          |STATE_IS_SECURE|, the array has a second item indicating the level
- *          of security - a value from the |STATE_SECURE_*| enumeration.
+ * @returns A structure containing information about the security of the connection.
  */
-CBSConnection.prototype.getSecurityState =
-function bc_getsecuritystate()
-{
-    if (!this.isConnected || !this._transport.securityInfo)
-        return [STATE_IS_INSECURE];
-
-    try
-    {
-        var sslSp = Components.interfaces.nsISSLStatusProvider;
-        var sslStatus = Components.interfaces.nsISSLStatus;
-
-        // Get the actual SSL Status
-        sslSp = this._transport.securityInfo.QueryInterface(sslSp);
-        sslStatus = sslSp.SSLStatus.QueryInterface(sslStatus);
-        // Store appropriate status
-        if (!("keyLength" in sslStatus) || !sslStatus.keyLength)
-            return [STATE_IS_BROKEN];
-        else if (sslStatus.keyLength >= STATE_SECURE_KEYSIZE)
-            return [STATE_IS_SECURE, STATE_SECURE_HIGH];
-        else
-            return [STATE_IS_SECURE, STATE_SECURE_LOW];
-    }
-    catch (ex)
-    {
-        // Something goes wrong -> broken security icon
-        dd("Exception getting certificate for connection: " + ex.message);
-        return [STATE_IS_BROKEN];
-    }
-}
-
 CBSConnection.prototype.getSecurityInfo =
 function bc_getsecurityinfo()
 {
+    var rv = {
+        hostName: this.host,
+        cipherName: null,
+        keyLength: null,
+        protocolVersion: null,
+        certTransparency: null,
+        state: [STATE_IS_INSECURE]
+    }
+
     if (!this.isConnected || !this._transport.securityInfo)
-        return null;
+        return rv;
 
     const nsISSLStatusProvider = Components.interfaces.nsISSLStatusProvider;
     const nsISSLStatus = Components.interfaces.nsISSLStatus;
@@ -682,13 +653,8 @@ function bc_getsecurityinfo()
     var sslSp = this._transport.securityInfo.QueryInterface(nsISSLStatusProvider);
     var sslStatus = sslSp.SSLStatus.QueryInterface(nsISSLStatus);
 
-    var rv = {
-        hostName: this.host,
-        cipherName: sslStatus.cipherName,
-        keyLength: sslStatus.keyLength,
-        protocolVersion: null,
-        certTransparency: null
-    }
+    rv.cipherName = sslStatus.cipherName;
+    rv.keyLength = sslStatus.keyLength;
 
     switch (sslStatus.protocolVersion)
     {
@@ -729,6 +695,18 @@ function bc_getsecurityinfo()
             rv.certTransparency = "Invalid";
             break;
     }
+
+/*  State is an array with at least one item, containing a value from the
+ *  |STATE_IS_*| enumeration at the top of this file. Iff this is
+ *  |STATE_IS_SECURE|, the array has a second item indicating the level
+ *  of security - a value from the |STATE_SECURE_*| enumeration.
+ */
+    if (sslStatus.protocolVersion <= nsISSLStatus.SSL_VERSION_3 || !rv.keyLength)
+        rv.state = [STATE_IS_BROKEN];
+    else if (sslStatus.protocolVersion <= nsISSLStatus.TLS_VERSION_1 || rv.keyLength < STATE_SECURE_KEYSIZE)
+        rv.state = [STATE_IS_SECURE, STATE_SECURE_LOW];
+    else
+        rv.state = [STATE_IS_SECURE, STATE_SECURE_HIGH];
 
     return rv;
 }

@@ -2037,7 +2037,7 @@ function updateSecurityIcon()
         return;
     }
 
-    var securityState = o.server.connection.getSecurityState()
+    var securityState = o.server.connection.getSecurityInfo().state;
     switch (securityState[0])
     {
         case STATE_IS_SECURE:
