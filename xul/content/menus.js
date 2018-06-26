@@ -118,7 +118,7 @@ function initMenus()
          ["about-config",{visibleif: XULRunner}],
          ["passmgr"],
          ["certmgr"],
-         ["flush-tls]",  {visibleif: XULRunner}],
+         ["flush-ssl",   {visibleif: XULRunner}],
          ["update",      {visibleif: XULRunner}],
          ["-",           {visibleif: NotMac}],
          ["exit",        {visibleif: Win}],

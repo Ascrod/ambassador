@@ -78,7 +78,7 @@ function initCommands()
          ["except",            cmdBanOrExcept,     CMD_NEED_CHAN | CMD_CONSOLE],
          ["find",              cmdFind,                                      0],
          ["find-again",        cmdFindAgain,                                 0],
-         ["flush-tls",         cmdFlushTLS,                                  0],
+         ["flush-ssl",         cmdFlushSSL,                        CMD_CONSOLE],
          ["focus-input",       cmdFocusInput,                                0],
          ["font-family",       cmdFont,                            CMD_CONSOLE],
          ["font-family-other", cmdFont,                                      0],
@@ -4767,9 +4767,9 @@ function cmdCertificateManager(e)
                        "chrome://pippki/content/certManager.xul");
 }
 
-function cmdFlushTLS(e)
+function cmdFlushSSL(e)
 {
         var sdr = getService("@mozilla.org/security/sdr;1", "nsISecretDecoderRing");
         sdr.logout();
-        display("Flushed TLS session cache.");
+        display("Flushed SSL session cache.");
 }
