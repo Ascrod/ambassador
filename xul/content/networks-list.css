@@ -1,0 +1,31 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+/* Set min-width on the left-side tree. */
+#network-objects {
+	min-width: 30ex;
+}
+
+/* Set min-width and min-height on main container. */
+#network-editor-box {
+        min-width: 65ex;
+        min-height: 32em;
+        width: 65ex;
+        height: 32em;
+}
+
+scroller {
+	overflow: auto;
+}
+
+listbox {
+	min-height: 7em;
+}
+
+#label {
+        width: 100;
+}
+

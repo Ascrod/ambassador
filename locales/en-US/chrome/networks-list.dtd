@@ -1,0 +1,28 @@
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<!ENTITY window.title   "Networks">
+<!ENTITY dialog.restore "Restore Defaults">
+
+<!ENTITY loading.label  "Please wait, loading…">
+
+<!ENTITY object.network "Network">
+<!ENTITY object.server  "Server">
+
+<!ENTITY object.name.label      "Name">
+<!ENTITY object.name.help       "The name of the network.">
+<!ENTITY object.hostname.label  "Hostname">
+<!ENTITY object.hostname.help   "The address of the server.">
+<!ENTITY object.port.label      "Port">
+<!ENTITY object.port.help       "The port to connect to.">
+<!ENTITY object.usessl.label    "Use SSL">
+<!ENTITY object.usessl.help     "Whether to use SSL/TLS when connecting.">
+
+<!ENTITY object.add.label       "Add">
+<!ENTITY object.add.hint        "Add a new network or server">
+<!ENTITY object.add.accesskey   "A">
+
+<!ENTITY object.del.label       "Remove">
+<!ENTITY object.del.hint        "Remove the current network or server">
+<!ENTITY object.del.accesskey   "R">

@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<!DOCTYPE dialog SYSTEM "chrome://chatzilla/locale/networks-list.dtd">
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="networks-list.css" type="text/css"?>
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    windowtype="irc:chatzilla:networks"
+    id="chatzilla-window"
+    buttons="accept,cancel,extra1"
+    buttonlabelextra1="&dialog.restore;"
+    ondialogaccept="gNetworkWindow.onOK();"
+    ondialogcancel="gNetworkWindow.onCancel();"
+    ondialogextra1="gNetworkWindow.onRestore();"
+    onload="gNetworkWindow.onLoad();"
+    onunload="gNetworkWindow.onClose();"
+    title="&window.title;">
+
+  <script src="chrome://chatzilla/content/lib/js/utils.js"/>
+  <script src="chrome://chatzilla/content/lib/js/file-utils.js"/>
+  <script src="chrome://chatzilla/content/lib/js/message-manager.js"/>
+  <script src="chrome://chatzilla/content/lib/js/text-serializer.js"/>
+  <script src="chrome://chatzilla/content/messages.js"/>
+  <script src="chrome://chatzilla/content/networks.js"/>
+  <script src="chrome://chatzilla/content/networks-list.js"/>
+  <script src="chrome://chatzilla/content/static.js"/>
+
+  <tooltip id="czNetworkTip" orient="vertical" 
+      onpopupshowing="return gNetworkWindow.onTooltipPopupShowing(this);">
+    <vbox>
+      <label id="czNetworkTipTitle" class="header">.</label>
+      <label id="czNetworkTipLabel">.</label>
+    </vbox>
+    <spacer flex="1"/>
+  </tooltip>
+
+  <deck id="loadDeck" flex="1">
+    <vbox flex="1" align="center" pack="center">
+      <label class="loading" value="&loading.label;"/>
+    </vbox>
+    <hbox flex="1">
+      <vbox id="network-objects">
+        <tree id="network-tree-object" flex="1" seltype="single" 
+            hidecolumnpicker="true" onselect="gNetworkWindow.onSelectObject();">
+          <treecols>
+            <treecol id="network-col-name" primary="true" flex="1" 
+                hideheader="true"/>
+          </treecols>
+          <treechildren id="network-tree"/>
+        </tree>
+        <hbox>
+          <button id="button-add" type="menu" label="&object.add.label;"
+              tooltiptext="&object.add.hint;" accesskey="&object.add.accesskey;" flex="1"> 
+            <menupopup>
+              <menuitem id="button-add-network" label="&object.network;"
+                  oncommand="gNetworkWindow.onAddNetworkObject();"/>
+              <menuitem id="button-add-server" label="&object.server;"
+                  oncommand="gNetworkWindow.onAddServerObject();"/>
+            </menupopup>
+          </button>
+          <button id="network-del-button" label="&object.del.label;"
+              tooltiptext="&object.del.hint;" accesskey="&object.del.accesskey;" flex="1" 
+              oncommand="gNetworkWindow.onDeleteObject();"/>
+        </hbox>
+      </vbox>
+      <vbox flex="1">
+        <dialogheader id="network-header" title=""/>
+        <vbox id="network-editor-box" flex="1">
+            <hbox align="center"
+                tooltiptitle="&object.name.label;"
+                tooltipcontent="&object.name.help;"
+                onmouseover="gNetworkWindow.onMouseOver(this);"
+                onmousemove="gNetworkWindow.onMouseMove(this);"
+                onmouseout="gNetworkWindow.onMouseOut(this);">
+                <label value="&object.name.label;" width="100" flex="1"/>
+                <hbox flex="1000">
+                    <textbox id="editor-network-name"/>
+                </hbox>
+            </hbox>
+        </vbox>
+        <vbox id="server-editor-box" flex="1">
+            <hbox align="center"
+                tooltiptitle="&object.hostname.label;"
+                tooltipcontent="&object.hostname.help;"
+                onmouseover="gNetworkWindow.onMouseOver(this);"
+                onmousemove="gNetworkWindow.onMouseMove(this);"
+                onmouseout="gNetworkWindow.onMouseOut(this);">
+                <label value="&object.hostname.label;" width="100" flex="1"/>
+                <hbox flex="1000">
+                    <textbox id="editor-server-hostname"/>
+                </hbox>
+            </hbox>
+            <hbox align="center"
+                tooltiptitle="&object.port.label;"
+                tooltipcontent="&object.port.help;"
+                onmouseover="gNetworkWindow.onMouseOver(this);"
+                onmousemove="gNetworkWindow.onMouseMove(this);"
+                onmouseout="gNetworkWindow.onMouseOut(this);">
+                <label value="&object.port.label;" width="100" flex="1"/>
+                <hbox flex="1000">
+                    <textbox id="editor-server-port" type="number"
+                        size="5" min="0" max="65535"/>
+                </hbox>
+            </hbox>
+            <hbox align="center"
+                tooltiptitle="&object.usessl.label;"
+                tooltipcontent="&object.usessl.help;"
+                onmouseover="gNetworkWindow.onMouseOver(this);"
+                onmousemove="gNetworkWindow.onMouseMove(this);"
+                onmouseout="gNetworkWindow.onMouseOut(this);">
+                <checkbox id="editor-server-isSecure" label="&object.usessl.label;"/>
+            </hbox>
+        </vbox>
+        <hbox align="center">
+          <spacer flex="1"/>
+        </hbox>
+      </vbox>
+    </hbox>
+  </deck>
+</dialog>

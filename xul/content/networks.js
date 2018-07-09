@@ -5,102 +5,27 @@
 function initNetworks()
 {
     var networks = new Object();
-
-    // Set up default network list.
-    networks["moznet"] = {
-        displayName:  "moznet",
-        isupportsKey: "Mozilla",
-        servers: [{hostname: "irc.mozilla.org", port:6667},
-                  {hostname: "irc.mozilla.org", port:6697, isSecure: true}]};
-   networks["slashnet"] = {
-        displayName:  "slashnet",
-        isupportsKey: "",
-        servers: [{hostname: "irc.slashnet.org", port:6667}]};
-    networks["dalnet"] = {
-        displayName:  "dalnet",
-        isupportsKey: "",
-        servers: [{hostname: "irc.dal.net", port:6667}]};
-    networks["undernet"] = {
-        displayName:  "undernet",
-        isupportsKey: "",
-        servers: [{hostname: "irc.undernet.org", port:6667}]};
-    networks["webbnet"] = {
-        displayName:  "webbnet",
-        isupportsKey: "",
-        servers: [{hostname: "irc.webbnet.info", port:6667}]};
-    networks["quakenet"] = {
-        displayName:  "quakenet",
-        isupportsKey: "",
-        servers: [{hostname: "irc.quakenet.org", port:6667}]};
-    networks["ircnet"] = {
-        displayName:  "ircnet",
-        isupportsKey: "",
-        servers: [{hostname: "ircnet.eversible.com", port:6667}]};
-    networks["freenode"] = {
-        displayName:  "freenode",
-        isupportsKey: "",
-        servers: [{hostname: "chat.freenode.net", port:6667},
-                  {hostname: "chat.freenode.net", port:7000, isSecure: true},
-                  // XXX irc.freenode.net is only here until we can link servers
-                  // to networks without them being in the network's server list
-                  {hostname: "irc.freenode.net", port:6667},
-                  {hostname: "irc.freenode.net", port:7000, isSecure: true}]};
-    networks["serenia"] = {
-        displayName:  "serenia",
-        isupportsKey: "",
-        servers: [{hostname: "chat.serenia.net", port:9999, isSecure: true}]};
-    networks["efnet"] = {
-        displayName:  "efnet",
-        isupportsKey: "",
-        servers: [{hostname: "irc.prison.net", port: 6667},
-                  {hostname: "irc.magic.ca", port: 6667}]};
-    networks["hispano"] = {
-        displayName:  "hispano",
-        isupportsKey: "",
-        servers: [{hostname: "irc.irc-hispano.org", port: 6667}]};
-    networks["solidirc"] = {
-        displayName:  "solidirc",
-        isupportsKey: "",
-        servers: [{hostname: "irc.solidirc.com", port: 6667}]};
-
-    for (var name in networks)
-        networks[name].name = name;
-
-    var builtInNames = keys(networks);
-
-    var userNetworkList = new Array();
-
-    // Load the user's network list.
     var networksFile = new nsLocalFile(client.prefs["profilePath"]);
     networksFile.append("networks.txt");
-    if (networksFile.exists())
+    var createDefault = !networksFile.exists();
+
+    if (createDefault)
     {
-        var networksLoader = new TextSerializer(networksFile);
-        if (networksLoader.open("<"))
+        // Use the default network list.
+        networks = networksGetDefaults();
+    }
+    else
+    {
+        // Load the user's network list.
+        var userNetworkList = networksLoadList();
+
+        for (var i = 0; i < userNetworkList.length; i++)
         {
-            var item = networksLoader.deserialize();
-            if (isinstance(item, Array))
-                userNetworkList = item;
-            else
-                dd("Malformed networks file!");
-            networksLoader.close();
+            var lowerNetName = userNetworkList[i].name.toLowerCase();
+            networks[lowerNetName] = userNetworkList[i];
+            networks[lowerNetName].name = lowerNetName;
         }
     }
-
-    // Merge the user's network list with the default ones.
-    for (var i = 0; i < userNetworkList.length; i++)
-    {
-        var lowerNetName = userNetworkList[i].name.toLowerCase();
-        networks[lowerNetName] = userNetworkList[i];
-        networks[lowerNetName].name = lowerNetName;
-    }
-
-    /* Flag up all networks that are built-in, so they can be handled properly.
-     * We need to do this last so that it ensures networks overridden by the
-     * user's networks.txt are still flagged properly.
-     */
-    for (var i = 0; i < builtInNames.length; i++)
-        networks[builtInNames[i]].isBuiltIn = true;
 
     // Push network list over to client.networkList.
     client.networkList = new Array();
@@ -109,6 +34,65 @@ function initNetworks()
 
     // Sync to client.networks.
     networksSyncFromList();
+
+    // If we created a new file with the defaults, save it.
+    if (createDefault)
+        networksSaveList();
+}
+
+function networksGetDefaults()
+{
+    var networks = new Object();
+
+    // Set up default network list.
+    networks["moznet"] = {
+        displayName:  "moznet",
+        servers: [{hostname: "irc.mozilla.org", port:6667},
+                  {hostname: "irc.mozilla.org", port:6697, isSecure: true}]};
+   networks["slashnet"] = {
+        displayName:  "slashnet",
+        servers: [{hostname: "irc.slashnet.org", port:6667}]};
+    networks["dalnet"] = {
+        displayName:  "dalnet",
+        servers: [{hostname: "irc.dal.net", port:6667}]};
+    networks["undernet"] = {
+        displayName:  "undernet",
+        servers: [{hostname: "irc.undernet.org", port:6667}]};
+    networks["webbnet"] = {
+        displayName:  "webbnet",
+        servers: [{hostname: "irc.webbnet.info", port:6667}]};
+    networks["quakenet"] = {
+        displayName:  "quakenet",
+        servers: [{hostname: "irc.quakenet.org", port:6667}]};
+    networks["ircnet"] = {
+        displayName:  "ircnet",
+        servers: [{hostname: "ircnet.eversible.com", port:6667}]};
+    networks["freenode"] = {
+        displayName:  "freenode",
+        servers: [{hostname: "chat.freenode.net", port:6667},
+                  {hostname: "chat.freenode.net", port:7000, isSecure: true},
+                  // XXX irc.freenode.net is only here until we can link servers
+                  // to networks without them being in the network's server list
+                  {hostname: "irc.freenode.net", port:6667},
+                  {hostname: "irc.freenode.net", port:7000, isSecure: true}]};
+    networks["serenia"] = {
+        displayName:  "serenia",
+        servers: [{hostname: "chat.serenia.net", port:9999, isSecure: true}]};
+    networks["efnet"] = {
+        displayName:  "efnet",
+        servers: [{hostname: "irc.prison.net", port: 6667},
+                  {hostname: "irc.magic.ca", port: 6667}]};
+    networks["hispano"] = {
+        displayName:  "hispano",
+        servers: [{hostname: "irc.irc-hispano.org", port: 6667}]};
+    networks["solidirc"] = {
+        displayName:  "solidirc",
+        servers: [{hostname: "irc.solidirc.com", port: 6667}]};
+
+    for (var name in networks)
+        networks[name].name = name;
+
+    return networks;
 }
 
 function networksSyncToList()
@@ -141,15 +125,7 @@ function networksSyncToList()
         // Network not in list, so construct a shiny new one.
         if (listNet == null)
         {
-            var listNet = { name: name, displayName: name, isupportsKey: "" };
-
-            // Collect the RPL_ISUPPORTS "network name" if available.
-            if (("primServ" in net) && net.primServ &&
-                ("supports" in net.primServ) && net.primServ.supports &&
-                ("network" in net.primServ.supports))
-            {
-                listNet.isupportsKey = net.primServ.supports["network"];
-            }
+            var listNet = { name: name, displayName: name };
 
             client.networkList.push(listNet);
             networkMap[client.networkList.length - 1] = true;
@@ -177,13 +153,11 @@ function networksSyncToList()
             if (listServ == null)
             {
                 listServ = { hostname: serv.hostname, port: serv.port,
-                             isSecure: serv.isSecure, password: null };
+                             isSecure: serv.isSecure };
                 listNet.servers.push(listServ);
             }
 
             listServ.isSecure = serv.isSecure;
-            // Update the saved password (!! FIXME: plaintext password !!).
-            listServ.password = serv.password;
         }
     }
 
@@ -200,19 +174,7 @@ function networksSyncToList()
         }
 
         var listNet = client.networkList[index];
-        // Not seen this network in the client.networks collection.
-        if (("isBuiltIn" in listNet) && listNet.isBuiltIn)
-        {
-            // Network is a built-in. Replace with dummy.
-            client.networkList[index] = { name: listNet.name, isDeleted: true };
-            index++;
-        }
-        else
-        {
-            // Network is not a built-in, just nuke.
-            // Note: don't do index++ here because we've removed the item.
-            client.networkList.splice(index, 1);
-        }
+        client.networkList.splice(index, 1);
         mapIndex++;
     }
 }
@@ -228,15 +190,8 @@ function networksSyncFromList()
         networkMap[listNet.name] = true;
 
         if ("isDeleted" in listNet)
-        {
-            /* This is a dummy entry that indicates a removed built-in network.
-             * Remove the network from client.networks if it exists, and then
-             * skip onto the next...
-             */
-            if (listNet.name in client.networks)
-                client.removeNetwork(listNet.name);
+            // Default networks are no longer hardcoded, so skip this entry.
             continue;
-        }
 
         // Create new network object if necessary.
         var net = null;
@@ -247,10 +202,6 @@ function networksSyncFromList()
         net = client.networks[listNet.name];
         net.clearServerList();
 
-        // Make sure real network knows if it is a built-in one.
-        if ("isBuiltIn" in listNet)
-            net.isBuiltIn = listNet.isBuiltIn;
-
         // Update server list.
         for (var j = 0; j < listNet.servers.length; j++)
         {
@@ -259,8 +210,6 @@ function networksSyncFromList()
             // Make sure these exist.
             if (!("isSecure" in listServ))
                 listServ.isSecure = false;
-            if (!("password" in listServ))
-                listServ.password = null;
 
             // NOTE: this must match the name given by CIRCServer.
             var servName = listServ.hostname + ":" + listServ.port;
@@ -269,12 +218,11 @@ function networksSyncFromList()
             if (!(servName in net.servers))
             {
                 net.addServer(listServ.hostname, listServ.port,
-                              listServ.isSecure, listServ.password);
+                              listServ.isSecure);
             }
             serv = net.servers[servName];
 
             serv.isSecure = listServ.isSecure;
-            serv.password = listServ.password;
         }
     }
 
@@ -289,21 +237,37 @@ function networksSyncFromList()
     }
 }
 
-function networksSaveList()
+function networksLoadList()
 {
-    try
+    var userNetworkList = new Array();
+
+    var networksFile = new nsLocalFile(client.prefs["profilePath"]);
+    networksFile.append("networks.txt");
+    if (networksFile.exists())
     {
-        var networksFile = new nsLocalFile(client.prefs["profilePath"]);
-        networksFile.append("networks.txt");
         var networksLoader = new TextSerializer(networksFile);
-        if (networksLoader.open(">"))
+        if (networksLoader.open("<"))
         {
-            networksLoader.serialize(client.networkList);
+            var item = networksLoader.deserialize();
+            if (isinstance(item, Array))
+                userNetworkList = item;
+            else
+                dd("Malformed networks file!");
             networksLoader.close();
         }
     }
-    catch(ex)
+
+    return userNetworkList;
+}
+
+function networksSaveList()
+{
+    var networksFile = new nsLocalFile(client.prefs["profilePath"]);
+    networksFile.append("networks.txt");
+    var networksLoader = new TextSerializer(networksFile);
+    if (networksLoader.open(">"))
     {
-        display("ERROR: " + formatException(ex), MT_ERROR);
+        networksLoader.serialize(client.networkList);
+        networksLoader.close();
     }
 }

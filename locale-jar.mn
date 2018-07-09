@@ -11,3 +11,4 @@ chatzilla-@LOCALE@.jar:
 	locale/@LOCALE@/chatzilla/config.dtd            (xul/locale/@LOCALE@/config.dtd) 
 	locale/@LOCALE@/chatzilla/channels.dtd          (xul/locale/@LOCALE@/channels.dtd) 
         locale/@LOCALE@/chatzilla/security-info.dtd     (xul/locale/@LOCALE@/security-info.dtd)
+        locale/@LOCALE@/chatzilla/networks-list.dtd     (xul/locale/@LOCALE@/networks-list.dtd)
