@@ -224,14 +224,6 @@ function ntree_loadData()
         var editName = document.getElementById("editor-network-name");
 
         editName.value = item.data.name;
-
-        var onchange = function ()
-        {
-            item.data.name = editName.value;
-            item.cell.setAttribute("label", item.data.getLabel());
-        };
-
-        editName.setAttribute("onchange", onchange);
     }
     else
     {
@@ -244,20 +236,6 @@ function ntree_loadData()
         editHostname.value = item.data.hostname;
         editPort.value = item.data.port;
         editSecure.checked = item.data.isSecure;
-
-        var onchange = function ()
-        {
-            item.data.hostname = editHostname.value;
-            item.data.port = editPort.value;
-            item.data.isSecure = editSecure.checked;
-            // If isSecure is false, just delete it.
-            if (!item.data.isSecure) delete item.data.isSecure;
-            item.cell.setAttribute("label", item.data.getLabel());
-        };
-
-        editHostname.setAttribute("onchange", onchange);
-        editPort.setAttribute("onchange", onchange);
-        editSecure.setAttribute("onchange", onchange);
     }
 }
 
@@ -626,7 +604,7 @@ function nwin_onAddServerObject()
     var networkIndex = (parentIndex >= 0 ? parentIndex : this.networkTree.selectedIndex());
     var networkItem = this.networkTree.treeObj.view.getItemAtIndex(networkIndex);
 
-    var obj = new ServerObject(rv.hostname, 6697, false, networkItem.data.name);
+    var obj = new ServerObject(rv.hostname, 6667, false, networkItem.data.name);
 
     this.networkTree.addObject(obj, networkItem);
 }
@@ -644,6 +622,37 @@ function nwin_onDeleteObject()
         return;
 
     this.networkTree.removeSelectedObject();
+}
+
+/* Network or server object change */
+NetworkWindow.prototype.onObjectChange =
+function nwin_onObjectChange()
+{
+    var index = this.networkTree.selectedIndex();
+    var item = this.networkTree.treeObj.view.getItemAtIndex(index);
+
+    if (item.data instanceof NetworkObject)
+    {
+        var editName = document.getElementById("editor-network-name");
+
+        item.data.name = editName.value;
+        item.cell.setAttribute("label", item.data.getLabel());
+    }
+    else
+    {
+        var editHostname = document.getElementById("editor-server-hostname");
+        var editPort = document.getElementById("editor-server-port");
+        var editSecure = document.getElementById("editor-server-isSecure");
+
+        item.data.hostname = editHostname.value;
+        item.data.port = editPort.value;
+        item.data.isSecure = !editSecure.checked;
+        // If isSecure is false, just delete it.
+        if (!item.data.isSecure)
+            delete item.data.isSecure;
+        item.cell.setAttribute("label", item.data.getLabel());
+    }
+
 }
 
 // End of NetworkWindow. //
