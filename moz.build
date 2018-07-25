@@ -4,8 +4,9 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 DIRS += [
-    'ff',
-    'sm',
+    'pm',
+    'bk',
+    'xr',
 ]
 
 CONFIGURE_SUBST_FILES += ['locales/Makefile']
