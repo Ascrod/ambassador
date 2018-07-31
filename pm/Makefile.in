@@ -9,10 +9,10 @@ VPATH		= @srcdir@
 
 include $(DEPTH)/config/autoconf.mk
 
-CHATZILLA_VERSION=$(shell grep "const __cz_version" "$(srcdir)/../xul/content/static.js" | sed "s|.*\"\([^\"]\{1,\}\)\".*|\1|")
+APP_VERSION=$(MOZ_APP_VERSION)
 
-XPI_NAME               = chatzilla
-INSTALL_EXTENSION_ID   = {59c81df5-4b7a-477b-912d-4e0fdf64e5f2}
-XPI_PKGNAME            = chatzilla-$(CHATZILLA_VERSION)
+XPI_NAME               = $(MOZ_APP_NAME)
+INSTALL_EXTENSION_ID   = $(MOZ_APP_ID)
+XPI_PKGNAME            = $(MOZ_APP_NAME)-$(MOZ_APP_VERSION)
 
 include $(topsrcdir)/config/rules.mk

@@ -15,7 +15,7 @@
   <Description about="urn:mozilla:install-manifest"
                em:id="@INSTALL_EXTENSION_ID@"
                em:name="ChatZilla @MOZ_LANG_TITLE@ Language Pack"
-               em:version="@CHATZILLA_VERSION@"
+               em:version="@APP_VERSION@"
                em:type="8"
                em:creator="@MOZ_LANGPACK_CREATOR@"
                em:homepageURL="@MOZ_LANGPACK_HOMEPAGE@">
@@ -25,7 +25,6 @@
 
     <em:iconURL>chrome://chatzilla/skin/images/logo.png</em:iconURL>
 
-    <!-- BEGIN COPY BETWEEN /xpi/resources/install.rdf AND /locales/generic/install.rdf -->
     <!-- ChatZilla supports Gecko 1.9.1 and higher.
          All applications listed below are the subset of supported versions
          which also use an appropriate version of Gecko. -->

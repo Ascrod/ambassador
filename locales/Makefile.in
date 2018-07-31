@@ -1,58 +1,65 @@
-#
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-
-DEPTH=../../..
-topsrcdir=@top_srcdir@
-srcdir=@srcdir@
-VPATH=@srcdir@
-relativesrcdir = extensions/irc/locales
-
-include $(srcdir)/../maxversions.mk
-
-EXTERNALLY_MANAGED_MAKE_FILE := 1
-STANDALONE_MAKEFILE := 1
-JAR_MANIFEST := $(srcdir)/jar.mn
-
-CHATZILLA_VERSION=$(shell grep "const __cz_version" "$(srcdir)/../xul/content/static.js" | sed "s|.*\"\([^\"]\{1,\}\)\".*|\1|")
-CHATZILLA_BASE_VERSION=$(shell echo "$(CHATZILLA_VERSION)" | sed "s|\([0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}\).*|\1|")
-
-XPI_NAME               = chatzilla
-INSTALL_EXTENSION_ID   = {59c81df5-4b7a-477b-912d-4e0fdf64e5f2}
-XPI_PKGNAME            = chatzilla-$(CHATZILLA_VERSION)
-
-# include config.mk before we override the AB_CD var it sets
 include $(topsrcdir)/config/config.mk
 
-# if the wanted language is not in all-locales, fall back to en-US
-ifeq (,$(filter $(AB_CD),$(shell cat $(srcdir)/all-locales)))
-override AB_CD = en-US
+SUBMAKEFILES += \
+	$(DEPTH)/$(MOZ_BRANDING_DIRECTORY)/Makefile \
+	$(DEPTH)/$(MOZ_BRANDING_DIRECTORY)/locales/Makefile \
+	$(NULL)
+
+# This makefile uses variable overrides from the libs-% target to
+# build non-default locales to non-default dist/ locations. Be aware!
+
+PWD := $(CURDIR)
+
+ZIP_IN ?= $(_ABS_DIST)/$(PACKAGE)
+WIN32_INSTALLER_IN ?= $(_ABS_DIST)/$(PKG_INST_PATH)$(PKG_INST_BASENAME).exe
+RETRIEVE_WINDOWS_INSTALLER = 1
+
+MOZ_LANGPACK_EID=langpack-$(AB_CD)@ascrod
+
+L10N_PREF_JS_EXPORTS = $(call MERGE_FILE,chatzilla-l10n.js)
+L10N_PREF_JS_EXPORTS_PATH = $(FINAL_TARGET)/$(PREF_DIR)
+L10N_PREF_JS_EXPORTS_FLAGS = $(PREF_PPFLAGS) --silence-missing-directive-warnings
+PP_TARGETS += L10N_PREF_JS_EXPORTS
+
+ifneq (,$(filter cocoa,$(MOZ_WIDGET_TOOLKIT)))
+MOZ_PKG_MAC_DSSTORE=$(_ABS_DIST)/branding/dsstore
+MOZ_PKG_MAC_BACKGROUND=$(_ABS_DIST)/branding/background.png
+MOZ_PKG_MAC_ICON=$(_ABS_DIST)/branding/disk.icns
+MOZ_PKG_MAC_EXTRA=--symlink "/Applications:/ "
 endif
 
-ifneq (en-US,$(AB_CD))
-XPI_NAME               = chatzilla-$(AB_CD)
-INSTALL_EXTENSION_ID   = langpack-$(AB_CD)@chatzilla.mozilla.org
-XPI_PKGNAME            = chatzilla-$(CHATZILLA_VERSION).$(AB_CD)
+ifeq (WINNT,$(OS_ARCH))
+UNINSTALLER_PACKAGE_HOOK = $(RM) -r $(STAGEDIST)/uninstall; \
+    $(NSINSTALL) -D $(STAGEDIST)/uninstall; \
+    cp ../installer/windows/l10ngen/helper.exe $(STAGEDIST)/uninstall; \
+    $(RM) $(_ABS_DIST)/l10n-stage/setup.exe; \
+    cp ../installer/windows/l10ngen/setup.exe $(_ABS_DIST)/l10n-stage; \
+    $(NULL)
 endif
 
-DEFINES += -DAB_CD=$(AB_CD) \
-           -DPALEMOON_MAXVERSION=$(PALEMOON_MAXVERSION) \
-           -DBASILISK_MAXVERSION=$(BASILISK_MAXVERSION) \
-           -DINSTALL_EXTENSION_ID="$(INSTALL_EXTENSION_ID)" \
-           -DCHATZILLA_VERSION=$(CHATZILLA_VERSION) \
-           -DCHATZILLA_BASE_VERSION=$(CHATZILLA_BASE_VERSION) \
-           $(NULL)
+include $(DEPTH)/config/autoconf.mk
+
+DEFINES += -DAB_CD=$(AB_CD)
 
 APP_DEFINES = $(firstword $(wildcard $(LOCALE_SRCDIR)/defines.inc) \
-                          $(srcdir)/en-US/defines.inc)
+	      $(srcdir)/en-US/defines.inc)
 
 TK_DEFINES = $(firstword \
-             $(wildcard $(call EXPAND_LOCALE_SRCDIR,toolkit/locales)/defines.inc) \
-             $(MOZILLA_DIR)/toolkit/locales/en-US/defines.inc)
+	     $(wildcard $(call EXPAND_LOCALE_SRCDIR,toolkit/locales)/defines.inc) \
+	     $(MOZILLA_DIR)/toolkit/locales/en-US/defines.inc)
 
 include $(topsrcdir)/config/rules.mk
+
+include $(topsrcdir)/toolkit/locales/l10n.mk
+
+$(STAGEDIST): $(DIST)/branding
+
+$(DIST)/branding:
+	$(NSINSTALL) -D $@
 
 ifneq (en-US,$(AB_CD))
 libs realchrome::
@@ -63,18 +70,31 @@ libs realchrome::
 	  $(srcdir)/generic/install.rdf -o $(DIST)/xpi-stage/$(XPI_NAME)/install.rdf)
 endif
 
-libs-%: AB_CD=$*
 libs-%:
-	# XXX: it would be nice if we could just do nothing if no langpack is being done
-	#  currently, we just go and (re)build en-US if called with a non-supported locale
-	$(MAKE) libs AB_CD=$*
+	$(NSINSTALL) -D $(DIST)/install
+	@$(MAKE) -C ../../../toolkit/locales libs-$*
+	@$(MAKE) -C $(DEPTH)/extensions/spellcheck/locales AB_CD=$* XPI_NAME=locale-$*
+	@$(MAKE) -C $(DEPTH)/intl/locales AB_CD=$* XPI_NAME=locale-$*
+
+repackage-win32-installer: WIN32_INSTALLER_OUT=$(_ABS_DIST)/$(PKG_INST_PATH)$(PKG_INST_BASENAME).exe
+repackage-win32-installer: $(call ESCAPE_WILDCARD,$(WIN32_INSTALLER_IN)) $(SUBMAKEFILES) libs-$(AB_CD)
+	@echo 'Repackaging $(WIN32_INSTALLER_IN) into $(WIN32_INSTALLER_OUT).'
+	$(MAKE) -C $(DEPTH)/$(MOZ_BRANDING_DIRECTORY) export
+	$(MAKE) -C ../installer/windows CONFIG_DIR=l10ngen l10ngen/setup.exe l10ngen/7zSD.sfx
+	$(MAKE) repackage-zip \
+	  AB_CD=$(AB_CD) \
+	  MOZ_PKG_FORMAT=SFX7Z \
+	  ZIP_IN='$(WIN32_INSTALLER_IN)' \
+	  ZIP_OUT='$(WIN32_INSTALLER_OUT)' \
+	  SFX_HEADER='$(PWD)/../installer/windows/l10ngen/7zSD.sfx \
+	              $(_ABS_SRCDIR)/installer/windows/app.tag'
 
 repackage-zip: $(STAGEDIST)
 ifneq (en-US,$(AB_CD))
 	$(RM) -rf $(STAGEDIST)/extensions/$(INSTALL_EXTENSION_ID)
 	mkdir $(STAGEDIST)/extensions/$(INSTALL_EXTENSION_ID)
-	if test -d "$(DIST)/xpi-stage/$(XPI_NAME)/chrome/chatzilla.jar"; then \
-	  $(RM) -r $(DIST)/xpi-stage/$(XPI_NAME)/chrome/chatzilla;\
+	if test -d "$(DIST)/xpi-stage/$(XPI_NAME)/chrome/$(XPI_NAME).jar"; then\
+	  $(RM) -r $(DIST)/xpi-stage/$(XPI_NAME)/chrome/$(XPI_NAME);\
 	fi
 	# use tar for copying as cp doesn't portably preserve timestamps
 	cd $(DIST)/xpi-stage/$(XPI_NAME) && \
@@ -82,5 +102,28 @@ ifneq (en-US,$(AB_CD))
 	@echo "$(AB_CD)"
 endif
 
-repackage-zip-%: $(STAGEDIST)
-	@$(MAKE) repackage-zip AB_CD=$* STAGEDIST=$(STAGEDIST)
+ifeq (WINNT,$(OS_ARCH))
+repackage-win32-installer-%: $(STAGEDIST)
+	@$(MAKE) repackage-win32-installer AB_CD=$* WIN32_INSTALLER_IN="$(WIN32_INSTALLER_IN)"
+
+repackage-zip-%: repackage-win32-installer-%
+else
+repackage-win32-installer-%: ;
+endif
+
+clobber-zip:
+	$(RM) $(STAGEDIST)/chrome/$(AB_CD).jar \
+	  $(STAGEDIST)/chrome/$(AB_CD).manifest \
+	  $(STAGEDIST)/defaults/pref/chatzilla-l10n.js
+	$(RM) -rf $(STAGEDIST)/dictionaries \
+	  $(STAGEDIST)/hyphenation/$(AB_CD) \
+	  $(STAGEDIST)/defaults/profile \
+	  $(STAGEDIST)/chrome/$(AB_CD)
+
+langpack: langpack-$(AB_CD)
+
+# This is a generic target that will make a langpack, repack ZIP (+tarball)
+# builds, and repack an installer if applicable. It is called from the
+# tinderbox scripts. Alter it with caution.
+installers-%: clobber-% langpack-% repackage-win32-installer-% repackage-zip-%
+	@echo "repackaging done"
