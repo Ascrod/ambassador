@@ -175,17 +175,15 @@ def version(fedir):
     """
     get version number from source files
     """
-    version_pattern = re.compile(r'const __cz_version\s+=\s*\"([^\"]+)\"')
-    for line in open(joinpath(fedir, 'xul', 'content', 'static.js'), 'r'):
-        match = version_pattern.match(line)
-        if match is None:
-            continue
-        return match.group(1)
-    print 'ERROR: Unable to get version number.'
-    sys.exit(1)
+    try:
+        return open(joinpath(fedir, 'config/version.txt')).read().strip()
+    except:
+        print 'ERROR: Unable to get version number.'
+        sys.exit(1)
 
 fedir     = getenv('FEDIR',     joinpath(pwd, '..'), dir=True, check=True)
-xpifiles  = getenv('XPIFILES',  joinpath(pwd, 'resources'), dir=True, check=True)
+branding  = getenv('BRANDING',  joinpath(fedir, 'branding'), dir=True, check=True)
+profile   = getenv('PROFILE',   joinpath(fedir, 'app/profile'), dir=True, check=True)
 xpiroot   = getenv('XPIROOT',   joinpath(pwd, 'xpi-tree'), dir=True)
 xrroot    = getenv('XRROOT',    joinpath(pwd, 'xr-tree'), dir=True)
 jarroot   = getenv('JARROOT',   joinpath(pwd, 'jar-tree'), dir=True)
@@ -201,10 +199,13 @@ version = version(fedir)
 xpiname = None
 buildid = time.strftime("%Y%m%d%H%M%S")
 theme_guid = '{972ce4c6-7e08-4474-a285-3208198ce6fd}'
+ext_guid = '{59c81df5-4b7a-477b-912d-4e0fdf64e5f2}'
+gre_ms = '4.1.4'
 
 if debug > 0:
     print 'FEDIR     = %s' % fedir
-    print 'XPIFILES  = %s' % xpifiles
+    print 'BRANDING  = %s' % branding
+    print 'PROFILE   = %s' % profile
     print 'XPIROOT   = %s' % xpiroot
     print 'XRROOT    = %s' % xrroot
     print 'JARROOT   = %s' % jarroot
@@ -318,11 +319,15 @@ def progress_sed(infile, outfile, patterns):
 def sed_version_buildid(inpath, outpath):
     echo('.')
     infile = joinpath(*inpath)
-    tempfile = joinpath(*outpath) + ".tmp"
+    tempfile1 = joinpath(*outpath) + ".tmp1"
+    tempfile2 = joinpath(*outpath) + ".tmp2"
     outfile = joinpath(*outpath)
-    sed(("@REVISION@", version), open(infile), open(tempfile, "w"))
-    sed(("@BUILDID@", buildid), open(tempfile), open(outfile, "w"))
-    rm(tempfile)
+    sed(("@MOZ_APP_VERSION@", version), open(infile), open(tempfile1, "w"))
+    sed(("@MOZ_APP_ID@", ext_guid), open(tempfile1), open(tempfile2, "w"))
+    sed(("@MOZ_BUILDID@", buildid), open(tempfile2), open(tempfile1, "w"))
+    sed(("@GRE_MILESTONE@", gre_ms), open(tempfile1), open(outfile, "w"))
+    rm(tempfile1)
+    rm(tempfile2)
 
 def progress_zip(indir, outfile):
     if debug > 1:
@@ -377,18 +382,18 @@ def do_build_base():
     print '                done'
 
     progress_echo('  Updating extension files')
-    progress_preprocess(joinpath(xpifiles, 'install.rdf'), joinpath(xpiroot, 'install.rdf'), {'CHATZILLA_VERSION': version, \
+    progress_preprocess(joinpath(pwd, 'install.rdf'), joinpath(xpiroot, 'install.rdf'), {'APP_VERSION': version, \
         'PALEMOON_MAXVERSION': pmversion, 'BASILISK_MAXVERSION': bkversion})
-    progress_copy(joinpath(xpifiles, 'chatzilla-window.ico'), joinpath(xpiroot, 'chrome', 'icons', 'default', 'chatzilla-window.ico'))
-    progress_copy(joinpath(xpifiles, 'chatzilla-window.xpm'), joinpath(xpiroot, 'chrome', 'icons', 'default', 'chatzilla-window.xpm'))
-    progress_copy(joinpath(xpifiles, 'chatzilla-window16.xpm'), joinpath(xpiroot, 'chrome', 'icons', 'default', 'chatzilla-window16.xpm'))
+    progress_copy(joinpath(branding, 'chatzilla-window.ico'), joinpath(xpiroot, 'chrome', 'icons', 'default', 'chatzilla-window.ico'))
+    progress_copy(joinpath(branding, 'chatzilla-window.xpm'), joinpath(xpiroot, 'chrome', 'icons', 'default', 'chatzilla-window.xpm'))
+    progress_copy(joinpath(branding, 'chatzilla-window16.xpm'), joinpath(xpiroot, 'chrome', 'icons', 'default', 'chatzilla-window16.xpm'))
     print '   done'
 
     progress_echo('  Constructing JAR package')
     jm = progress_jarmaker()
     progress_jarmaker_make(jm, joinpath(fedir, 'jar.mn'), fedir)
-    progress_jarmaker_make(jm, joinpath(fedir, 'sm', 'jar.mn'), joinpath(fedir, 'sm'))
-    progress_jarmaker_make(jm, joinpath(fedir, 'ff', 'jar.mn'), joinpath(fedir, 'ff'))
+    progress_jarmaker_make(jm, joinpath(fedir, 'pm', 'jar.mn'), joinpath(fedir, 'pm'))
+    progress_jarmaker_make(jm, joinpath(fedir, 'bk', 'jar.mn'), joinpath(fedir, 'bk'))
     progress_jarmaker_make(jm, joinpath(fedir, 'xr', 'jar.mn'), joinpath(fedir, 'xr'))
     progress_preprocess(joinpath(localedir, 'jar.mn'), joinpath(localedir, 'jar.mn.pp'), {'AB_CD': 'en-US'})
     # Define a preprocessor var for the next call to makeJar
@@ -399,36 +404,40 @@ def do_build_base():
 
     progress_echo('  Constructing XPI package')
     progress_copy(joinpath(jarroot, 'chatzilla.jar'), joinpath(xpiroot, 'chrome'))
-    progress_copy(joinpath(fedir, 'js', 'lib', 'chatzilla-service.js'), joinpath(xpiroot, 'components'))
+    progress_copy(joinpath(jarroot, 'en-US.jar'), joinpath(xpiroot, 'chrome'))
+    progress_copy(joinpath(fedir, 'components', 'chatzilla-service.js'), joinpath(xpiroot, 'components'))
     progress_move(joinpath(jarroot, '..', 'chrome.manifest'), joinpath(xpiroot, 'chrome.manifest'))
     progress_chmod(joinpath(xpiroot, 'chrome', 'chatzilla.jar'), 0664)
+    progress_chmod(joinpath(xpiroot, 'chrome', 'en-US.jar'), 0664)
     progress_chmod(joinpath(xpiroot, 'components', 'chatzilla-service.js'), 0664)
     progress_zip(xpiroot, joinpath(pwd, xpiname))
     print '         done'
 
     progress_echo('  Packaging XULRunner app')
     progress_copy(joinpath(jarroot, 'chatzilla.jar'), joinpath(xrroot, 'chrome'))
-    progress_copy(joinpath(fedir, 'js', 'lib', 'chatzilla-service.js'), joinpath(xrroot, 'components'))
+    progress_copy(joinpath(jarroot, 'en-US.jar'), joinpath(xrroot, 'chrome'))
+    progress_copy(joinpath(fedir, 'components', 'chatzilla-service.js'), joinpath(xrroot, 'components'))
     progress_copy(joinpath(xpiroot, 'chrome.manifest'), joinpath(xrroot, 'chrome.manifest'))
     progress_chmod(joinpath(xrroot, 'chrome', 'chatzilla.jar'), 0664)
+    progress_chmod(joinpath(xrroot, 'chrome', 'en-US.jar'), 0664)
     progress_chmod(joinpath(xrroot, 'components', 'chatzilla-service.js'), 0664)
 
     if "updates" in sys.argv:
-        sed_version_buildid((xpifiles, "update-prefs.xr.js"), (xrroot, "defaults", "preferences", "update-prefs.xr.js"))
+        sed_version_buildid((profile, "update-prefs.xr.js"), (xrroot, "defaults", "preferences", "update-prefs.xr.js"))
         channel = "dev" if "dev" in sys.argv else "release"
         open(joinpath(xrroot, "defaults", "preferences", "channel-prefs.js"), "w").write("pref(\"app.update.channel\", \"%s\");" % channel)
     else:
         echo('.')
 
-    sed_version_buildid((xpifiles, "chatzilla-prefs.xr.js"), (xrroot, "defaults", "preferences", "chatzilla-prefs.xr.js"))
-    sed_version_buildid((xpifiles, "themeinstall.rdf"), (xrroot, "extensions", theme_guid, "install.rdf"))
-    sed_version_buildid((xpifiles, "brand.dtd"), (xrroot, "chrome", "branding", "brand.dtd"))
-    sed_version_buildid((xpifiles, "brand.properties"), (xrroot, "chrome", "branding", "brand.properties"))
-    sed_version_buildid((xpifiles, "application.ini"), (xrroot, "application.ini"))
+    sed_version_buildid((profile, "chatzilla-prefs.xr.js"), (xrroot, "defaults", "preferences", "chatzilla-prefs.xr.js"))
+    sed_version_buildid((joinpath(profile, 'extensions', theme_guid), "install.rdf.in"), (xrroot, "extensions", theme_guid, "install.rdf"))
+    sed_version_buildid((joinpath(branding, 'locales/en-US'), "brand.dtd"), (xrroot, "chrome", "branding", "brand.dtd"))
+    sed_version_buildid((joinpath(branding, 'locales/en-US'), "brand.properties"), (xrroot, "chrome", "branding", "brand.properties"))
+    sed_version_buildid((joinpath(profile, '..'), "application.ini"), (xrroot, "application.ini"))
 
-    progress_copy(joinpath(xpifiles, "chatzilla-window.ico"), joinpath(xrroot, "chrome", "icons", "default", "chatzilla-window.ico"))
-    progress_copy(joinpath(xpifiles, "chatzilla-window.xpm"), joinpath(xrroot, "chrome", "icons", "default", "chatzilla-window.xpm"))
-    progress_copy(joinpath(xpifiles, "chatzilla-window16.xpm"), joinpath(xrroot, "chrome", "icons", "default", "chatzilla-window16.xpm"))
+    progress_copy(joinpath(branding, "chatzilla-window.ico"), joinpath(xrroot, "chrome", "icons", "default", "chatzilla-window.ico"))
+    progress_copy(joinpath(branding, "chatzilla-window.xpm"), joinpath(xrroot, "chrome", "icons", "default", "chatzilla-window.xpm"))
+    progress_copy(joinpath(branding, "chatzilla-window16.xpm"), joinpath(xrroot, "chrome", "icons", "default", "chatzilla-window16.xpm"))
     open(joinpath(xrroot, "icons", "updater.png"), "w").close()
 
     xrname = '%s.en-US.xulapp' % basename
@@ -453,7 +462,7 @@ def do_build_locale():
 
     progress_echo('  Updating extension files')
     progress_preprocess([joinpath(localedir, locale, 'defines.inc'), joinpath(localedir, 'generic', 'install.rdf')], joinpath(xpiroot, 'install.rdf.pp'),
-             {'IRC_STANDALONE_BUILD': '1', 'CHATZILLA_VERSION': version, 'CHATZILLA_BASE_VERSION': version, \
+             {'IRC_STANDALONE_BUILD': '1', 'APP_VERSION': version, \
         'AB_CD': locale, 'INSTALL_EXTENSION_ID': 'langpack-%s@chatzilla.mozilla.org' % locale, 'MOZ_LANG_TITLE': locale, \
         'PALEMOON_MAXVERSION': pmversion, 'BASILISK_MAXVERSION': bkversion})
     progress_sed(joinpath(xpiroot, 'install.rdf.pp'), joinpath(xpiroot, 'install.rdf'), ('chatzilla.jar', 'chatzilla-%s.jar' % locale))
