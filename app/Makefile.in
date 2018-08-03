@@ -10,7 +10,7 @@ AB_CD = en-US
 DEFINES += \
   -DAB_CD=$(AB_CD) \
   -DAPP_VERSION="$(MOZ_APP_VERSION)" \
-  -DCHATZILLA_ICO=\"$(DIST)/branding/chatzilla.ico\" \
+  -DCHATZILLA_ICO=\"$(DIST)/branding/chatzilla-window.ico\" \
   $(NULL)
 
 # Build a binary bootstrapping with XRE_main

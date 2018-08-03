@@ -6,6 +6,12 @@ DIRS += ['locales']
 
 JAR_MANIFESTS += ['jar.mn']
 
+BRANDING_FILES += [
+    'chatzilla-window.ico',
+    'chatzilla-window.xpm',
+    'chatzilla-window16.xpm',
+]
+
 JS_PREFERENCE_FILES += [
     'chatzilla-branding.js'
 ]
