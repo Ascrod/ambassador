@@ -636,7 +636,7 @@ function bc_getsecurityinfo()
 {
     var rv = {
         hostName: this.host,
-        cipherName: null,
+        cipherSuite: null,
         keyLength: null,
         protocolVersion: null,
         certTransparency: null,
@@ -653,7 +653,7 @@ function bc_getsecurityinfo()
     var sslSp = this._transport.securityInfo.QueryInterface(nsISSLStatusProvider);
     var sslStatus = sslSp.SSLStatus.QueryInterface(nsISSLStatus);
 
-    rv.cipherName = sslStatus.cipherName;
+    rv.cipherSuite = sslStatus.cipherSuite;
     rv.keyLength = sslStatus.keyLength;
 
     switch (sslStatus.protocolVersion)

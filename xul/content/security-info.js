@@ -34,7 +34,7 @@ function onLoad()
     var info = server.connection.getSecurityInfo();
 
     setText("security-hostname-value",  server.hostname);
-    setText("security-cipher-value",    info.cipherName);
+    setText("security-cipher-value",    info.cipherSuite);
     setText("security-keysize-value",   info.keyLength);
     setText("security-protocol-value",  info.protocolVersion);
 
