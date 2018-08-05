@@ -6,8 +6,23 @@ DIRS += ['locales']
 
 JAR_MANIFESTS += ['jar.mn']
 
+if CONFIG['MOZ_WIDGET_TOOLKIT'] == 'windows':
+    FINAL_TARGET_FILES += [
+        'chatzilla.VisualElementsManifest.xml',
+    ]
+    FINAL_TARGET_FILES.VisualElements += [
+        'VisualElements_150.png',
+        'VisualElements_70.png',
+    ]
+    BRANDING_FILES += [
+        'appname.bmp',
+        'branding.nsi',
+        'wizHeader.bmp',
+        'wizHeaderRTL.bmp',
+        'wizWatermark.bmp',
+    ]
+
 BRANDING_FILES += [
-    'branding.nsi',
     'chatzilla-window.ico',
     'chatzilla-window.xpm',
     'chatzilla-window16.xpm',

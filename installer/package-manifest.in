@@ -98,13 +98,13 @@
 @BINPATH@/gtk2/@DLL_PREFIX@mozgtk@DLL_SUFFIX@
 #endif
 
-[browser]
-; [Base Browser Files]
+[application]
+; [Base Application Files]
 #ifndef XP_UNIX
 @BINPATH@/@MOZ_APP_NAME@.exe
 @BINPATH@/@MOZ_APP_NAME@.VisualElementsManifest.xml
-@BINPATH@/browser/VisualElements/VisualElements_150.png
-@BINPATH@/browser/VisualElements/VisualElements_70.png
+@BINPATH@/VisualElements/VisualElements_150.png
+@BINPATH@/VisualElements/VisualElements_70.png
 #else
 @RESPATH@/@MOZ_APP_NAME@-bin
 @BINPATH@/@MOZ_APP_NAME@
