@@ -4,11 +4,6 @@
 
 include $(topsrcdir)/config/config.mk
 
-SUBMAKEFILES += \
-	$(DEPTH)/$(MOZ_BRANDING_DIRECTORY)/Makefile \
-	$(DEPTH)/$(MOZ_BRANDING_DIRECTORY)/locales/Makefile \
-	$(NULL)
-
 # This makefile uses variable overrides from the libs-% target to
 # build non-default locales to non-default dist/ locations. Be aware!
 
