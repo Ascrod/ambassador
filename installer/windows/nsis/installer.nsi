@@ -37,6 +37,8 @@ Var AddStartMenuSC
 Var AddTaskbarSC
 Var AddQuickLaunchSC
 Var AddDesktopSC
+; Despite not needing or wanting the Mozilla Maintenance Service, this
+; variable is necessary to keep common.nsh happy.
 Var InstallMaintenanceService
 Var PageName
 Var PreventRebootRequired
@@ -49,8 +51,6 @@ Var PreventRebootRequired
 ; On Vista and above attempt to elevate Standard Users in addition to users that
 ; are a member of the Administrators group.
 !define NONADMIN_ELEVATE
-
-!define AbortSurveyURL "http://www.kampyle.com/feedback_form/ff-feedback-form.php?site_code=8166124&form_id=12116&url="
 
 ; Other included files may depend upon these includes!
 ; The following includes are provided by NSIS.
@@ -133,8 +133,6 @@ ShowInstDetails nevershow
 ################################################################################
 # Modern User Interface - MUI
 
-!define MOZ_MUI_CUSTOM_ABORT
-!define MUI_CUSTOMFUNCTION_ABORT "CustomAbort"
 !define MUI_ICON setup.ico
 !define MUI_UNICON setup.ico
 !define MUI_WELCOMEPAGE_TITLE_3LINES
@@ -164,11 +162,6 @@ Page custom preOptions leaveOptions
 !define MUI_PAGE_CUSTOMFUNCTION_LEAVE leaveDirectory
 !define MUI_DIRECTORYPAGE_VERIFYONLEAVE
 !insertmacro MUI_PAGE_DIRECTORY
-
-; Custom Components Page
-!ifdef MOZ_MAINTENANCE_SERVICE
-Page custom preComponents leaveComponents
-!endif
 
 ; Custom Shortcuts Page
 Page custom preShortcuts leaveShortcuts
@@ -250,11 +243,11 @@ Section "-InstallStartCleanup"
   ${EndIf}
 
   ; setup the application model id registration value
-  ${InitHashAppModelId} "$INSTDIR" "Software\Mozilla\${AppName}\TaskBarIDs"
+  ${InitHashAppModelId} "$INSTDIR" "Software\Ascrod\${AppName}\TaskBarIDs"
 
   ; Remove the updates directory for Vista and above
-  ${CleanUpdateDirectories} "Mozilla\Pale Moon" "Mozilla\updates"
-
+  ${CleanUpdateDirectories} "Ascrod\ChatZilla" "Ascrod\updates"
+ 
   ${RemoveDeprecatedFiles}
   ${RemovePrecompleteEntries} "false"
 
@@ -334,30 +327,30 @@ Section "-Application" APP_IDX
 
   ${LogHeader} "Adding Registry Entries"
   SetShellVarContext current  ; Set SHCTX to HKCU
-  ${RegCleanMain} "Software\Mozilla"
+  ${RegCleanMain} "Software\Ascrod"
   ${RegCleanUninstall}
   ${UpdateProtocolHandlers}
 
   ClearErrors
-  WriteRegStr HKLM "Software\Mozilla" "${BrandShortName}InstallerTest" "Write Test"
+  WriteRegStr HKLM "Software\Ascrod" "${BrandShortName}InstallerTest" "Write Test"
   ${If} ${Errors}
     StrCpy $TmpVal "HKCU" ; used primarily for logging
   ${Else}
     SetShellVarContext all  ; Set SHCTX to HKLM
-    DeleteRegValue HKLM "Software\Mozilla" "${BrandShortName}InstallerTest"
+    DeleteRegValue HKLM "Software\Ascrod" "${BrandShortName}InstallerTest"
     StrCpy $TmpVal "HKLM" ; used primarily for logging
-    ${RegCleanMain} "Software\Mozilla"
+    ${RegCleanMain} "Software\Ascrod"
     ${RegCleanUninstall}
     ${UpdateProtocolHandlers}
 
-    ReadRegStr $0 HKLM "Software\mozilla.org\Mozilla" "CurrentVersion"
+    ReadRegStr $0 HKLM "Software\mozilla.org\Ascrod" "CurrentVersion"
     ${If} "$0" != "${GREVersion}"
-      WriteRegStr HKLM "Software\mozilla.org\Mozilla" "CurrentVersion" "${GREVersion}"
+      WriteRegStr HKLM "Software\mozilla.org\Ascrod" "CurrentVersion" "${GREVersion}"
     ${EndIf}
   ${EndIf}
 
   ${RemoveDeprecatedKeys}
-
+  
   ; The previous installer adds several regsitry values to both HKLM and HKCU.
   ; We now try to add to HKLM and if that fails to HKCU
 
@@ -368,23 +361,17 @@ Section "-Application" APP_IDX
   ; specify that only empty keys will be deleted.
   ${SetAppKeys}
 
-  ${FixClassKeys}
-
   ; Uninstall keys can only exist under HKLM on some versions of windows. Since
   ; it doesn't cause problems always add them.
   ${SetUninstallKeys}
 
-  ; On install always add the PaleMoonHTML and PaleMoonURL keys.
-  ; An empty string is used for the 5th param because PaleMoonHTML is not a
-  ; protocol handler.
+  ; On install always add the ChatZillaURL keys.
   ${GetLongPath} "$INSTDIR\${FileMainEXE}" $8
   StrCpy $2 "$\"$8$\" -osint -url $\"%1$\""
 
-  ; In Win8, the delegate execute handler picks up the value in PaleMoonURL and
-  ; PaleMoonHTML to launch the desktop browser when it needs to.
-  ${AddDisabledDDEHandlerValues} "PaleMoonHTML" "$2" "$8,1" \
-                                 "${AppRegName} Document" ""
-  ${AddDisabledDDEHandlerValues} "PaleMoonURL" "$2" "$8,1" "${AppRegName} URL" \
+  ; In Win8, the delegate execute handler picks up the value in ChatZillaURL
+  ; to launch the desktop client when it needs to.
+  ${AddDisabledDDEHandlerValues} "ChatZillaURL" "$2" "$8,1" "${AppRegName} URL" \
                                  "true"
 
   ; For pre win8, the following keys should only be set if we can write to HKLM.
@@ -392,7 +379,6 @@ Section "-Application" APP_IDX
   ${If} $TmpVal == "HKLM"
     ; Set the Start Menu Internet and Vista Registered App HKLM registry keys.
     ${SetStartMenuInternet} "HKLM"
-    ${FixShellIconHandler} "HKLM"
 
     ; If we are writing to HKLM and create either the desktop or start menu
     ; shortcuts set IconsVisible to 1 otherwise to 0.
@@ -411,7 +397,6 @@ Section "-Application" APP_IDX
   ${If} ${AtLeastWin8}
     ; Set the Start Menu Internet and Vista Registered App HKCU registry keys.
     ${SetStartMenuInternet} "HKCU"
-    ${FixShellIconHandler} "HKCU"
 
     ; If we create either the desktop or start menu shortcuts, then
     ; set IconsVisible to 1 otherwise to 0.
@@ -426,41 +411,6 @@ Section "-Application" APP_IDX
       WriteRegDWORD HKCU "$0" "IconsVisible" 0
     ${EndIf}
   ${EndIf}
-
-!ifdef MOZ_MAINTENANCE_SERVICE
-  ; If the maintenance service page was displayed then a value was already 
-  ; explicitly selected for installing the maintenance service and 
-  ; and so InstallMaintenanceService will already be 0 or 1.
-  ; If the maintenance service page was not displayed then 
-  ; InstallMaintenanceService will be equal to "".
-  ${If} $InstallMaintenanceService == ""
-    Call IsUserAdmin
-    Pop $R0
-    ${If} $R0 == "true"
-    ; Only proceed if we have HKLM write access
-    ${AndIf} $TmpVal == "HKLM"
-      ; On Windows < XP SP3 we do not install the maintenance service.
-      ${If} ${IsWinXP}
-      ${AndIf} ${AtMostServicePack} 2
-        StrCpy $InstallMaintenanceService "0"
-      ${Else}
-        ; The user is an admin, so we should default to installing the service.
-        StrCpy $InstallMaintenanceService "1"
-      ${EndIf}
-    ${Else}
-      ; The user is not admin, so we can't install the service.
-      StrCpy $InstallMaintenanceService "0"
-    ${EndIf}
-  ${EndIf}
-
-  ${If} $InstallMaintenanceService == "1"
-    ; The user wants to install the maintenance service, so execute
-    ; the pre-packaged maintenance service installer. 
-    ; This option can only be turned on if the user is an admin so there
-    ; is no need to use ExecShell w/ verb runas to enforce elevated.
-    nsExec::Exec "$\"$INSTDIR\maintenanceservice_installer.exe$\""
-  ${EndIf}
-!endif
 
   ; These need special handling on uninstall since they may be overwritten by
   ; an install into a different location.
@@ -578,13 +528,6 @@ Section "-Application" APP_IDX
       ${EndIf}
     ${EndUnless}
   ${EndIf}
-
-!ifdef MOZ_MAINTENANCE_SERVICE
-  ${If} $TmpVal == "HKLM"
-    ; Add the registry keys for allowed certificates.
-    ${AddMaintCertKeys}
-  ${EndIf}
-!endif
 SectionEnd
 
 ; Cleanup operations to perform at the end of the installation.
@@ -598,12 +541,12 @@ Section "-InstallEndCleanup"
     ${MUI_INSTALLOPTIONS_READ} $0 "summary.ini" "Field 4" "State"
     ${If} "$0" == "1"
       ; NB: this code is duplicated in stub.nsi. Please keep in sync.
-      ; For data migration in the app, we want to know what the default browser
+      ; For data migration in the app, we want to know what the default client
       ; value was before we changed it. To do so, we read it here and store it
       ; in our own registry key.
       StrCpy $0 ""
       ${If} ${AtLeastWinVista}
-        AppAssocReg::QueryCurrentDefault "http" "protocol" "effective"
+        AppAssocReg::QueryCurrentDefault "irc" "protocol" "effective"
         Pop $1
         ; If the method hasn't failed, $1 will contain the progid. Check:
         ${If} "$1" != "method failed"
@@ -613,17 +556,17 @@ Section "-InstallEndCleanup"
         ${EndIf}
       ${EndIf}
       ; If using the App Association Registry didn't happen or failed, fall back
-      ; to the effective http default:
+      ; to the effective irc default:
       ${If} "$0" == ""
-        ReadRegStr $0 HKCR "http\shell\open\command" ""
+        ReadRegStr $0 HKCR "irc\shell\open\command" ""
       ${EndIf}
       ; If we have something other than empty string now, write the value.
       ${If} "$0" != ""
         ClearErrors
-        WriteRegStr HKCU "Software\Mozilla\Pale Moon" "OldDefaultBrowserCommand" "$0"
+        WriteRegStr HKCU "Software\Ascrod\ChatZilla" "OldDefaultClientCommand" "$0"
       ${EndIf}
 
-      ${LogHeader} "Setting as the default browser"
+      ${LogHeader} "Setting as the default IRC client"
       ClearErrors
       ${GetParameters} $0
       ${GetOptions} "$0" "/UAC:" $0
@@ -634,11 +577,11 @@ Section "-InstallEndCleanup"
         UAC::ExecCodeSegment $0
       ${EndIf}
     ${ElseIfNot} ${Errors}
-      ${LogHeader} "Writing default-browser opt-out"
+      ${LogHeader} "Writing default-client opt-out"
       ClearErrors
-      WriteRegStr HKCU "Software\Mozilla\Pale Moon" "DefaultBrowserOptOut" "True"
+      WriteRegStr HKCU "Software\Ascrod\ChatZilla" "DefaultClientOptOut" "True"
       ${If} ${Errors}
-        ${LogMsg} "Error writing default-browser opt-out"
+        ${LogMsg} "Error writing default-client opt-out"
       ${EndIf}
     ${EndIf}
   ${EndUnless}
@@ -693,73 +636,6 @@ Section "-InstallEndCleanup"
     ${EndIf}
   ${EndIf}
 SectionEnd
-
-################################################################################
-# Install Abort Survey Functions
-
-Function CustomAbort
-  ${If} "${AB_CD}" == "en-US"
-  ${AndIf} "$PageName" != ""
-  ${AndIf} ${FileExists} "$EXEDIR\core\distribution\distribution.ini"
-    ReadINIStr $0 "$EXEDIR\core\distribution\distribution.ini" "Global" "about"
-    ClearErrors
-    ${WordFind} "$0" "Funnelcake" "E#" $1
-    ${Unless} ${Errors}
-      ; Yes = fill out the survey and exit, No = don't fill out survey and exit,
-      ; Cancel = don't exit.
-      MessageBox MB_YESNO|MB_ICONEXCLAMATION \
-                 "Would you like to tell us why you are canceling this installation?" \
-                 IDYes +1 IDNO CustomAbort_finish
-      ${If} "$PageName" == "Welcome"
-          GetFunctionAddress $0 AbortSurveyWelcome
-      ${ElseIf} "$PageName" == "Options"
-          GetFunctionAddress $0 AbortSurveyOptions
-      ${ElseIf} "$PageName" == "Directory"
-          GetFunctionAddress $0 AbortSurveyDirectory
-      ${ElseIf} "$PageName" == "Shortcuts"
-          GetFunctionAddress $0 AbortSurveyShortcuts
-      ${ElseIf} "$PageName" == "Summary"
-          GetFunctionAddress $0 AbortSurveySummary
-      ${EndIf}
-      ClearErrors
-      ${GetParameters} $1
-      ${GetOptions} "$1" "/UAC:" $2
-      ${If} ${Errors}
-        Call $0
-      ${Else}
-        UAC::ExecCodeSegment $0
-      ${EndIf}
-
-      CustomAbort_finish:
-      Return
-    ${EndUnless}
-  ${EndIf}
-
-  MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(MOZ_MUI_TEXT_ABORTWARNING)" \
-             IDYES +1 IDNO +2
-  Return
-  Abort
-FunctionEnd
-
-Function AbortSurveyWelcome
-  ExecShell "open" "${AbortSurveyURL}step1"
-FunctionEnd
-
-Function AbortSurveyOptions
-  ExecShell "open" "${AbortSurveyURL}step2"
-FunctionEnd
-
-Function AbortSurveyDirectory
-  ExecShell "open" "${AbortSurveyURL}step3"
-FunctionEnd
-
-Function AbortSurveyShortcuts
-  ExecShell "open" "${AbortSurveyURL}step4"
-FunctionEnd
-
-Function AbortSurveySummary
-  ExecShell "open" "${AbortSurveyURL}step5"
-FunctionEnd
 
 ################################################################################
 # Helper Functions
@@ -948,59 +824,6 @@ Function leaveShortcuts
   ${EndIf}
 FunctionEnd
 
-!ifdef MOZ_MAINTENANCE_SERVICE
-Function preComponents
-  ; If the service already exists, don't show this page
-  ServicesHelper::IsInstalled "MozillaMaintenance"
-  Pop $R9
-  ${If} $R9 == 1
-    ; The service already exists so don't show this page.
-    Abort
-  ${EndIf}
-
-  ; On Windows < XP SP3 we do not install the maintenance service.
-  ${If} ${IsWinXP}
-  ${AndIf} ${AtMostServicePack} 2
-    Abort
-  ${EndIf}
-
-  ; Don't show the custom components page if the
-  ; user is not an admin
-  Call IsUserAdmin
-  Pop $R9
-  ${If} $R9 != "true"
-    Abort
-  ${EndIf}
-
-  ; Only show the maintenance service page if we have write access to HKLM
-  ClearErrors
-  WriteRegStr HKLM "Software\Mozilla" \
-              "${BrandShortName}InstallerTest" "Write Test"
-  ${If} ${Errors}
-    ClearErrors
-    Abort
-  ${Else}
-    DeleteRegValue HKLM "Software\Mozilla" "${BrandShortName}InstallerTest"
-  ${EndIf}
-
-  StrCpy $PageName "Components"
-  ${CheckCustomCommon}
-  !insertmacro MUI_HEADER_TEXT "$(COMPONENTS_PAGE_TITLE)" "$(COMPONENTS_PAGE_SUBTITLE)"
-  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "components.ini"
-FunctionEnd
-
-Function leaveComponents
-  ${MUI_INSTALLOPTIONS_READ} $0 "components.ini" "Settings" "State"
-  ${If} $0 != 0
-    Abort
-  ${EndIf}
-  ${MUI_INSTALLOPTIONS_READ} $InstallMaintenanceService "components.ini" "Field 2" "State"
-  ${If} $InstallType == ${INSTALLTYPE_CUSTOM}
-    Call CheckExistingInstall
-  ${EndIf}
-FunctionEnd
-!endif
-
 Function preSummary
   StrCpy $PageName "Summary"
   ; Setup the summary.ini file for the Custom Summary Page
@@ -1046,17 +869,17 @@ Function preSummary
 
   ; Check if it is possible to write to HKLM
   ClearErrors
-  WriteRegStr HKLM "Software\Mozilla" "${BrandShortName}InstallerTest" "Write Test"
+  WriteRegStr HKLM "Software\Ascrod" "${BrandShortName}InstallerTest" "Write Test"
   ${Unless} ${Errors}
-    DeleteRegValue HKLM "Software\Mozilla" "${BrandShortName}InstallerTest"
-    ; Check if Pale Moon is the http handler for this user.
+    DeleteRegValue HKLM "Software\Ascrod" "${BrandShortName}InstallerTest"
+    ; Check if ChatZilla is the irc handler for this user.
     SetShellVarContext current ; Set SHCTX to the current user
-    ${IsHandlerForInstallDir} "http" $R9
+    ${IsHandlerForInstallDir} "irc" $R9
     ${If} $TmpVal == "HKLM"
       SetShellVarContext all ; Set SHCTX to all users
     ${EndIf}
-    ; If Pale Moon isn't the http handler for this user show the option to set
-    ; Pale Moon as the default browser.
+    ; If ChatZilla isn't the irc handler for this user show the option to set
+    ; ChatZilla as the default client.
     ${If} "$R9" != "true"
     ${AndIf} ${AtMostWin2008R2}
       WriteINIStr "$PLUGINSDIR\summary.ini" "Settings" NumFields "4"
@@ -1072,7 +895,7 @@ Function preSummary
 
   ${If} "$TmpVal" == "true"
     ; If there is already a Type entry in the "Field 4" section with a value of
-    ; checkbox then the set as the default browser checkbox is displayed and
+    ; checkbox then the set as the default client checkbox is displayed and
     ; this text must be moved below it.
     ReadINIStr $0 "$PLUGINSDIR\summary.ini" "Field 4" "Type"
     ${If} "$0" == "checkbox"
@@ -1180,7 +1003,6 @@ Function .onInit
 
   !insertmacro InitInstallOptionsFile "options.ini"
   !insertmacro InitInstallOptionsFile "shortcuts.ini"
-  !insertmacro InitInstallOptionsFile "components.ini"
   !insertmacro InitInstallOptionsFile "summary.ini"
 
   WriteINIStr "$PLUGINSDIR\options.ini" "Settings" NumFields "5"
@@ -1265,25 +1087,6 @@ Function .onInit
     WriteINIStr "$PLUGINSDIR\shortcuts.ini" "Field 4" Bottom "70"
     WriteINIStr "$PLUGINSDIR\shortcuts.ini" "Field 4" State  "1"
   ${EndUnless}
-
-  ; Setup the components.ini file for the Components Page
-  WriteINIStr "$PLUGINSDIR\components.ini" "Settings" NumFields "2"
-
-  WriteINIStr "$PLUGINSDIR\components.ini" "Field 1" Type   "label"
-  WriteINIStr "$PLUGINSDIR\components.ini" "Field 1" Text   "$(OPTIONAL_COMPONENTS_DESC)"
-  WriteINIStr "$PLUGINSDIR\components.ini" "Field 1" Left   "0"
-  WriteINIStr "$PLUGINSDIR\components.ini" "Field 1" Right  "-1"
-  WriteINIStr "$PLUGINSDIR\components.ini" "Field 1" Top    "5"
-  WriteINIStr "$PLUGINSDIR\components.ini" "Field 1" Bottom "25"
-
-  WriteINIStr "$PLUGINSDIR\components.ini" "Field 2" Type   "checkbox"
-  WriteINIStr "$PLUGINSDIR\components.ini" "Field 2" Text   "$(MAINTENANCE_SERVICE_CHECKBOX_DESC)"
-  WriteINIStr "$PLUGINSDIR\components.ini" "Field 2" Left   "0"
-  WriteINIStr "$PLUGINSDIR\components.ini" "Field 2" Right  "-1"
-  WriteINIStr "$PLUGINSDIR\components.ini" "Field 2" Top    "27"
-  WriteINIStr "$PLUGINSDIR\components.ini" "Field 2" Bottom "37"
-  WriteINIStr "$PLUGINSDIR\components.ini" "Field 2" State  "1"
-  WriteINIStr "$PLUGINSDIR\components.ini" "Field 2" Flags  "GROUP"
 
   ; There must always be a core directory.
   ${GetSize} "$EXEDIR\core\" "/S=0K" $R5 $R7 $R8

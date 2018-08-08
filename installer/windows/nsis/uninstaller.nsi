@@ -36,11 +36,7 @@ RequestExecutionLevel user
 ; prevents compiling of the reg write logging.
 !define NO_LOG
 
-!define MaintUninstallKey \
- "Software\Microsoft\Windows\CurrentVersion\Uninstall\MozillaMaintenanceService"
-
 Var TmpVal
-Var MaintCertKey
 
 ; Other included files may depend upon these includes!
 ; The following includes are provided by NSIS.
@@ -168,56 +164,6 @@ UninstPage custom un.preConfirm
 ChangeUI IDD_VERIFY "${NSISDIR}\Contrib\UIs\default.exe"
 
 ################################################################################
-# Helper Functions
-
-; This function is used to uninstall the maintenance service if the
-; application currently being uninstalled is the last application to use the 
-; maintenance service.
-Function un.UninstallServiceIfNotUsed
-  ; $0 will store if a subkey exists
-  ; $1 will store the first subkey if it exists or an empty string if it doesn't
-  ; Backup the old values
-  Push $0
-  Push $1
-
-  ; The maintenance service always uses the 64-bit registry on x64 systems
-  ${If} ${RunningX64}
-    SetRegView 64
-  ${EndIf}
-
-  ; Figure out the number of subkeys
-  StrCpy $0 0
-  ${Do}
-    EnumRegKey $1 HKLM "Software\Mozilla\MaintenanceService" $0
-    ${If} "$1" == ""
-      ${ExitDo}
-    ${EndIf}
-    IntOp $0 $0 + 1
-  ${Loop}
-
-  ; Restore back the registry view
-  ${If} ${RunningX64}
-    SetRegView lastUsed
-  ${EndIf}
-  ${If} $0 == 0
-    ; Get the path of the maintenance service uninstaller
-    ReadRegStr $1 HKLM ${MaintUninstallKey} "UninstallString"
-
-    ; If the uninstall string does not exist, skip executing it
-    StrCmp $1 "" doneUninstall
-
-    ; $1 is already a quoted string pointing to the install path
-    ; so we're already protected against paths with spaces
-    nsExec::Exec "$1 /S"
-doneUninstall:
-  ${EndIf}
-
-  ; Restore the old value of $1 and $0
-  Pop $1
-  Pop $0
-FunctionEnd
-
-################################################################################
 # Install Sections
 ; Empty section required for the installer to compile as an uninstaller
 Section ""
@@ -244,10 +190,10 @@ Section "Uninstall"
   ${EndIf}
 
   ; setup the application model id registration value
-  ${un.InitHashAppModelId} "$INSTDIR" "Software\Mozilla\${AppName}\TaskBarIDs"
+  ${un.InitHashAppModelId} "$INSTDIR" "Software\Ascrod\${AppName}\TaskBarIDs"
 
   SetShellVarContext current  ; Set SHCTX to HKCU
-  ${un.RegCleanMain} "Software\Mozilla"
+  ${un.RegCleanMain} "Software\Ascrod"
   ${un.RegCleanUninstall}
   ${un.DeleteShortcuts}
 
@@ -258,54 +204,35 @@ Section "Uninstall"
   ${EndIf}
 
   ; Remove the updates directory for Vista and above
-  ${un.CleanUpdateDirectories} "Mozilla\PaleMoon" "Mozilla\updates"
+  ${un.CleanUpdateDirectories} "Ascrod\ChatZilla" "Ascrod\updates"
 
   ; Remove any app model id's stored in the registry for this install path
-  DeleteRegValue HKCU "Software\Mozilla\${AppName}\TaskBarIDs" "$INSTDIR"
-  DeleteRegValue HKLM "Software\Mozilla\${AppName}\TaskBarIDs" "$INSTDIR"
+  DeleteRegValue HKCU "Software\Ascrod\${AppName}\TaskBarIDs" "$INSTDIR"
+  DeleteRegValue HKLM "Software\Ascrod\${AppName}\TaskBarIDs" "$INSTDIR"
 
   ClearErrors
-  WriteRegStr HKLM "Software\Mozilla" "${BrandShortName}InstallerTest" "Write Test"
+  WriteRegStr HKLM "Software\Ascrod" "${BrandShortName}InstallerTest" "Write Test"
   ${If} ${Errors}
     StrCpy $TmpVal "HKCU" ; used primarily for logging
   ${Else}
     SetShellVarContext all  ; Set SHCTX to HKLM
-    DeleteRegValue HKLM "Software\Mozilla" "${BrandShortName}InstallerTest"
+    DeleteRegValue HKLM "Software\Ascrod" "${BrandShortName}InstallerTest"
     StrCpy $TmpVal "HKLM" ; used primarily for logging
-    ${un.RegCleanMain} "Software\Mozilla"
+    ${un.RegCleanMain} "Software\Ascrod"
     ${un.RegCleanUninstall}
     ${un.DeleteShortcuts}
     ${un.SetAppLSPCategories}
   ${EndIf}
 
-  ${un.RegCleanAppHandler} "PaleMoonURL"
-  ${un.RegCleanAppHandler} "PaleMoonHTML"
-  ${un.RegCleanProtocolHandler} "ftp"
-  ${un.RegCleanProtocolHandler} "http"
-  ${un.RegCleanProtocolHandler} "https"
-
-  ClearErrors
-  ReadRegStr $R9 HKCR "PaleMoonHTML" ""
-  ; Don't clean up the file handlers if the PaleMoonHTML key still exists since
-  ; there should be a second installation that may be the default file handler
-  ${If} ${Errors}
-    ${un.RegCleanFileHandler}  ".htm"   "PaleMoonHTML"
-    ${un.RegCleanFileHandler}  ".html"  "PaleMoonHTML"
-    ${un.RegCleanFileHandler}  ".shtml" "PaleMoonHTML"
-    ${un.RegCleanFileHandler}  ".xht"   "PaleMoonHTML"
-    ${un.RegCleanFileHandler}  ".xhtml" "PaleMoonHTML"
-    ${un.RegCleanFileHandler}  ".oga"  "PaleMoonHTML"
-    ${un.RegCleanFileHandler}  ".ogg"  "PaleMoonHTML"
-    ${un.RegCleanFileHandler}  ".ogv"  "PaleMoonHTML"
-    ${un.RegCleanFileHandler}  ".pdf"  "PaleMoonHTML"
-    ${un.RegCleanFileHandler}  ".webm"  "PaleMoonHTML"
-  ${EndIf}
+  ${un.RegCleanAppHandler} "ChatZillaURL"
+  ${un.RegCleanProtocolHandler} "irc"
+  ${un.RegCleanProtocolHandler} "ircs"
 
   SetShellVarContext all  ; Set SHCTX to HKLM
-  ${un.GetSecondInstallPath} "Software\Mozilla" $R9
+  ${un.GetSecondInstallPath} "Software\Ascrod" $R9
   ${If} $R9 == "false"
     SetShellVarContext current  ; Set SHCTX to HKCU
-    ${un.GetSecondInstallPath} "Software\Mozilla" $R9
+    ${un.GetSecondInstallPath} "Software\Ascrod" $R9
   ${EndIf}
 
   StrCpy $0 "Software\Clients\StartMenuInternet\${FileMainEXE}\shell\open\command"
@@ -317,7 +244,7 @@ Section "Uninstall"
   ; The StartMenuInternet registry key is independent of the default browser
   ; settings. The XPInstall base un-installer always removes this key if it is
   ; uninstalling the default browser and it will always replace the keys when
-  ; installing even if there is another install of PaleMoon that is set as the
+  ; installing even if there is another install of ChatZilla that is set as the
   ; default browser. Now the key is always updated on install but it is only
   ; removed if it refers to this install location.
   ${If} "$INSTDIR" == "$R1"
@@ -333,7 +260,7 @@ Section "Uninstall"
   ; The StartMenuInternet registry key is independent of the default browser
   ; settings. The XPInstall base un-installer always removes this key if it is
   ; uninstalling the default browser and it will always replace the keys when
-  ; installing even if there is another install of PaleMoon that is set as the
+  ; installing even if there is another install of ChatZilla that is set as the
   ; default browser. Now the key is always updated on install but it is only
   ; removed if it refers to this install location.
   ${If} "$INSTDIR" == "$R1"
@@ -351,7 +278,7 @@ Section "Uninstall"
     StrCpy $0 "Software\Microsoft\MediaPlayer\ShimInclusionList\plugin-container.exe"
     DeleteRegKey HKLM "$0"
     DeleteRegKey HKCU "$0"
-    StrCpy $0 "Software\Classes\MIME\Database\Content Type\application/x-xpinstall;app=PaleMoon"
+    StrCpy $0 "Software\Classes\MIME\Database\Content Type\application/x-xpinstall;app=ChatZilla"
     DeleteRegKey HKLM "$0"
     DeleteRegKey HKCU "$0"
   ${Else}
@@ -419,8 +346,8 @@ Section "Uninstall"
   ; Remove the installation directory if it is empty
   RmDir "$INSTDIR"
 
-  ; If PaleMoon.exe was successfully deleted yet we still need to restart to
-  ; remove other files create a dummy PaleMoon.exe.moz-delete to prevent the
+  ; If ChatZilla.exe was successfully deleted yet we still need to restart to
+  ; remove other files create a dummy ChatZilla.exe.moz-delete to prevent the
   ; installer from allowing an install without restart when it is required
   ; to complete an uninstall.
   ${If} ${RebootFlag}
@@ -443,30 +370,12 @@ Section "Uninstall"
   ; clients registry key by the OS under some conditions.
   System::Call "shell32::SHChangeNotify(i ${SHCNE_ASSOCCHANGED}, i 0, i 0, i 0)"
 
-  ; Users who uninstall then reinstall expecting PaleMoon to use a clean profile
-  ; may be surprised during first-run. This key is checked during startup of PaleMoon and
+  ; Users who uninstall then reinstall expecting ChatZilla to use a clean profile
+  ; may be surprised during first-run. This key is checked during startup of ChatZilla and
   ; subsequently deleted after checking. If the value is found during startup
-  ; the browser will offer to Reset PaleMoon. We use the UpdateChannel to match
-  ; uninstalls of PaleMoon-release with reinstalls of PaleMoon-release, for example.
-  WriteRegStr HKCU "Software\Mozilla\PaleMoon" "Uninstalled-${UpdateChannel}" "True"
-
-!ifdef MOZ_MAINTENANCE_SERVICE
-  ; Get the path the allowed cert is at and remove it
-  ; Keep this block of code last since it modfies the reg view
-  ServicesHelper::PathToUniqueRegistryPath "$INSTDIR"
-  Pop $MaintCertKey
-  ${If} $MaintCertKey != ""
-    ; Always use the 64bit registry for certs on 64bit systems.
-    ${If} ${RunningX64}
-      SetRegView 64
-    ${EndIf}
-    DeleteRegKey HKLM "$MaintCertKey"
-    ${If} ${RunningX64}
-      SetRegView lastused
-    ${EndIf}
-  ${EndIf}
-  Call un.UninstallServiceIfNotUsed
-!endif
+  ; the browser will offer to Reset ChatZilla. We use the UpdateChannel to match
+  ; uninstalls of ChatZilla-release with reinstalls of ChatZilla-release, for example.
+  WriteRegStr HKCU "Software\Ascrod\ChatZilla" "Uninstalled-${UpdateChannel}" "True"
 
   ${un.IsFirewallSvcRunning}
   Pop $0

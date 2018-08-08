@@ -27,9 +27,9 @@
 !define AB_CD                 "@AB_CD@"
 
 !define FileMainEXE           "@MOZ_APP_NAME@.exe"
-!define WindowClass           "Pale MoonMessageWindow"
-!define DDEApplication        "Pale Moon"
-!define AppRegName            "Pale Moon"
+!define WindowClass           "ChatZillaMessageWindow"
+!define DDEApplication        "ChatZilla"
+!define AppRegName            "ChatZilla"
 
 !ifndef DEV_EDITION
 !define BrandShortName        "@MOZ_APP_DISPLAYNAME@"
