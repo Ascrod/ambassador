@@ -1,5 +1,5 @@
 <!ENTITY  brandShortName        "ChatZilla">
 <!ENTITY  brandFullName         "ChatZilla @REVISION@">
-<!ENTITY  vendorShortName       "">
+<!ENTITY  vendorShortName       "Ascrod">
 <!ENTITY  logoTrademark         "">
 <!ENTITY  releaseURL            "https://github.com/ascrod/chatzilla-uxp/">
