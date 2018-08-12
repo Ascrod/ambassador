@@ -1,0 +1,57 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+include $(topsrcdir)/config/config.mk
+
+include $(srcdir)/../maxversions.mk
+
+PACKAGE_FILE = chatzilla.pkg
+
+DIST_FILES = install.rdf
+
+XPI_NAME               = $(MOZ_APP_NAME)
+INSTALL_EXTENSION_ID   = $(MOZ_APP_ID)
+XPI_PKGNAME            = $(MOZ_APP_NAME)-$(MOZ_APP_VERSION)
+
+DEFINES += -DAPP_VERSION=$(MOZ_APP_VERSION) \
+           -DPALEMOON_MAXVERSION=$(PALEMOON_MAXVERSION) \
+           -DBASILISK_MAXVERSION=$(BASILISK_MAXVERSION) \
+           $(NULL)
+
+include $(topsrcdir)/config/rules.mk
+
+libs realchrome:: $(FINAL_TARGET)/chrome
+	$(call py_action,jar_maker,     \
+	  $(QUIET) -d $(FINAL_TARGET)   \
+	  $(MAKE_JARS_FLAGS)            \
+	  $(srcdir)/../jar.mn )
+	$(call py_action,jar_maker,     \
+	  $(QUIET) -d $(FINAL_TARGET)   \
+	  $(MAKE_JARS_FLAGS)            \
+	  $(srcdir)/../pm/jar.mn)
+	$(call py_action,jar_maker,     \
+	  $(QUIET) -d $(FINAL_TARGET)   \
+	  $(MAKE_JARS_FLAGS)            \
+	  $(srcdir)/../bk/jar.mn)
+	$(call py_action,jar_maker,     \
+	  $(QUIET) -d $(FINAL_TARGET)   \
+	  $(MAKE_JARS_FLAGS)            \
+	  $(srcdir)/../xr/jar.mn)
+	$(call py_action,preprocessor   \
+	  $(DEFINES) $(ACDEFINES)       \
+	  $(srcdir)/../locales/jar.mn   \
+	  -o $(DIST)/xpi-stage/$(XPI_NAME)/jar.mn.pp)
+	$(call py_action,jar_maker,     \
+	  $(QUIET) -d $(FINAL_TARGET)   \
+	  $(MAKE_JARS_FLAGS)            \
+	  -s $(srcdir)/../locales       \
+	  -c $(srcdir)/../locales/en-US \
+	  $(DIST)/xpi-stage/$(XPI_NAME)/jar.mn.pp)
+	$(RM) $(DIST)/xpi-stage/$(XPI_NAME)/jar.mn.pp
+
+
+export::
+	$(NSINSTALL) -D $(FINAL_TARGET)/chrome/icons/default
+	$(INSTALL) $(srcdir)/../branding/chatzilla-window* $(FINAL_TARGET)/chrome/icons/default
+

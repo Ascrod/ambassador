@@ -3,24 +3,21 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+CONFIGURE_SUBST_FILES += ['installer/Makefile']
+
 DIRS += [
-    'ff',
-    'sm',
+    'locales',
+    'app',
+    'xpi',
 ]
 
-CONFIGURE_SUBST_FILES += ['locales/Makefile']
-NO_JS_MANIFEST = True
-USE_EXTENSION_MANIFEST = True
+if CONFIG['MAKENSISU']:
+    DIRS += ['installer/windows']
 
-XPI_NAME = 'chatzilla'
-export('XPI_NAME')
+NO_JS_MANIFEST = True
 
 JAR_MANIFESTS += ['jar.mn']
 
 EXTRA_COMPONENTS += [
-    'js/lib/chatzilla-service.js',
-]
-
-FINAL_TARGET_PP_FILES += [
-    'xpi/resources/install.rdf',
+    'components/chatzilla-service.js',
 ]

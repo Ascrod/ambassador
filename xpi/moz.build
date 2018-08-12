@@ -1,0 +1,24 @@
+# vim: set filetype=python:
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+DIRS += [
+#    '../pm',
+#    '../bk',
+#    '../xr',
+]
+
+NO_JS_MANIFEST = True
+USE_EXTENSION_MANIFEST = True
+
+EXTRA_COMPONENTS += [
+    '../components/chatzilla-service.js',
+]
+
+XPI_NAME = CONFIG['MOZ_APP_NAME']
+export('XPI_NAME')
+
+FINAL_TARGET_PP_FILES += [
+    'install.rdf',
+]

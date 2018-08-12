@@ -11,6 +11,7 @@
 
   <overlaytarget id="scripts-overlay-target">
 
+    <script src="chrome://global/content/findUtils.js"/>
     <script src="chrome://global/content/globalOverlay.js"/>
     <script src="chrome://global/content/nsTransferable.js"/>
 
