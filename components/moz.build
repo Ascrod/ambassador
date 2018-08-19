@@ -3,16 +3,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-CONFIGURE_SUBST_FILES += ['installer/Makefile']
-
-DIRS += [
-    'components',
-    'locales',
-    'app',
-    'xpi',
+EXTRA_COMPONENTS += [
+    'AppComponents.manifest',
+    'chatzilla-service.js',
 ]
-
-if CONFIG['MAKENSISU']:
-    DIRS += ['installer/windows']
-
-JAR_MANIFESTS += ['jar.mn']

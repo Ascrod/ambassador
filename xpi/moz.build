@@ -13,6 +13,7 @@ NO_JS_MANIFEST = True
 USE_EXTENSION_MANIFEST = True
 
 EXTRA_COMPONENTS += [
+    '../components/AppComponents.manifest',
     '../components/chatzilla-service.js',
 ]
 
