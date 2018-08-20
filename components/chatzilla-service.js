@@ -12,8 +12,6 @@ const RDFS_CONTRACTID =
     "@mozilla.org/rdf/rdf-service;1";
 const CATMAN_CONTRACTID =
     "@mozilla.org/categorymanager;1";
-const PPMM_CONTRACTID =
-    "@mozilla.org/parentprocessmessagemanager;1";
 
 const CLINE_SERVICE_CONTRACTID =
     "@mozilla.org/commandlinehandler/general-startup;1?type=chat";
@@ -22,12 +20,30 @@ const CLINE_SERVICE_CID =
 const STARTUP_CID =
     Components.ID("{ae6ad015-433b-42ab-9afc-1636af5a7fc4}");
 
+const STANDARDURL_CONTRACTID =
+    "@mozilla.org/network/standard-url;1";
+const IOSERVICE_CONTRACTID =
+    "@mozilla.org/network/io-service;1";
 
-Cu.import("chrome://chatzilla/content/lib/js/protocol-handlers.jsm");
-/* global ChatZillaProtocols */
-/* global IRCProtocolHandlerFactory, IRCSProtocolHandlerFactory */
-/* global IRCPROT_HANDLER_CID, IRCSPROT_HANDLER_CID */
+const IRCPROT_HANDLER_CONTRACTID =
+    "@mozilla.org/network/protocol;1?name=irc";
+const IRCSPROT_HANDLER_CONTRACTID =
+    "@mozilla.org/network/protocol;1?name=ircs";
+this.IRCPROT_HANDLER_CID =
+    Components.ID("{f21c35f4-1dd1-11b2-a503-9bf8a539ea39}");
+this.IRCSPROT_HANDLER_CID =
+    Components.ID("{f21c35f4-1dd1-11b2-a503-9bf8a539ea3a}");
 
+const IRC_MIMETYPE = "application/x-irc";
+const IRCS_MIMETYPE = "application/x-ircs";
+
+//XXXgijs: Because necko is annoying and doesn't expose this error flag, we
+//         define our own constant for it. Throwing something else will show
+//         ugly errors instead of seeminly doing nothing.
+const NS_ERROR_MODULE_NETWORK_BASE = 0x804b0000;
+const NS_ERROR_NO_CONTENT = NS_ERROR_MODULE_NETWORK_BASE + 17;
+
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 function spawnChatZilla(uri, count)
 {
@@ -174,18 +190,15 @@ ProcessHandler.prototype =
         if (topic !== "profile-after-change")
             return;
 
-        const ppmm = Cc[PPMM_CONTRACTID].getService(Ci.nsIMessageBroadcaster);
-        ppmm.loadProcessScript("chrome://chatzilla/content/lib/js/chatzilla-protocol-script.js", true);
-        ppmm.addMessageListener("ChatZilla:SpawnChatZilla", this);
-    },
-
-    /* nsIMessageListener */
-    receiveMessage(msg)
-    {
-        if (msg.name !== "ChatZilla:SpawnChatZilla")
-            return;
-
-        spawnChatZilla(msg.data.uri);
+        const compMgr = Components.manager.QueryInterface(Ci.nsIComponentRegistrar);
+        compMgr.registerFactory(IRCPROT_HANDLER_CID,
+                                "IRC protocol handler",
+                                IRCPROT_HANDLER_CONTRACTID,
+                                IRCProtocolHandlerFactory);
+        compMgr.registerFactory(IRCSPROT_HANDLER_CID,
+                                "IRC protocol handler",
+                                IRCSPROT_HANDLER_CONTRACTID,
+                                IRCSProtocolHandlerFactory);
     },
 };
 
@@ -205,6 +218,155 @@ const StartupFactory =
     },
 };
 
+function IRCProtocolHandler(isSecure)
+{
+    this.isSecure = isSecure;
+}
+
+var protocolFlags = Ci.nsIProtocolHandler.URI_NORELATIVE |
+                    Ci.nsIProtocolHandler.ALLOWS_PROXY;
+if ("URI_DANGEROUS_TO_LOAD" in Ci.nsIProtocolHandler) {
+    protocolFlags |= Ci.nsIProtocolHandler.URI_LOADABLE_BY_ANYONE;
+}
+if ("URI_NON_PERSISTABLE" in Ci.nsIProtocolHandler) {
+    protocolFlags |= Ci.nsIProtocolHandler.URI_NON_PERSISTABLE;
+}
+if ("URI_DOES_NOT_RETURN_DATA" in Ci.nsIProtocolHandler) {
+    protocolFlags |= Ci.nsIProtocolHandler.URI_DOES_NOT_RETURN_DATA;
+}
+
+IRCProtocolHandler.prototype =
+{
+    protocolFlags: protocolFlags,
+
+    allowPort(port, scheme)
+    {
+        // Allow all ports to connect, so long as they are irc: or ircs:
+        return (scheme === 'irc' || scheme === 'ircs');
+    },
+
+    newURI(spec, charset, baseURI)
+    {
+        const cls = Cc[STANDARDURL_CONTRACTID];
+        const url = cls.createInstance(Ci.nsIStandardURL);
+        const port = this.isSecure ? 6697 : 6667;
+
+        url.init(Ci.nsIStandardURL.URLTYPE_STANDARD, port, spec, charset, baseURI);
+
+        return url.QueryInterface(Ci.nsIURI);
+    },
+
+    newChannel(URI)
+    {
+        const ios = Cc[IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
+        if (!ios.allowPort(URI.port, URI.scheme))
+            throw Cr.NS_ERROR_FAILURE;
+
+        return new BogusChannel(URI, this.isSecure);
+    },
+};
+
+
+this.IRCProtocolHandlerFactory =
+{
+    createInstance(outer, iid)
+    {
+        if (outer != null)
+            throw Cr.NS_ERROR_NO_AGGREGATION;
+
+        if (!iid.equals(Ci.nsIProtocolHandler) && !iid.equals(Ci.nsISupports))
+            throw Cr.NS_ERROR_INVALID_ARG;
+
+        const protHandler = new IRCProtocolHandler(false);
+        protHandler.scheme = "irc";
+        protHandler.defaultPort = 6667;
+        return protHandler;
+    },
+};
+
+this.IRCSProtocolHandlerFactory =
+{
+    createInstance(outer, iid)
+    {
+        if (outer != null)
+            throw Cr.NS_ERROR_NO_AGGREGATION;
+
+        if (!iid.equals(Ci.nsIProtocolHandler) && !iid.equals(Ci.nsISupports))
+            throw Cr.NS_ERROR_INVALID_ARG;
+
+        const protHandler = new IRCProtocolHandler(true);
+        protHandler.scheme = "ircs";
+        protHandler.defaultPort = 6697;
+        return protHandler;
+    },
+};
+
+/* Bogus IRC channel used by the IRCProtocolHandler */
+function BogusChannel(URI, isSecure)
+{
+    this.URI = URI;
+    this.originalURI = URI;
+    this.isSecure = isSecure;
+    this.contentType = this.isSecure ? IRCS_MIMETYPE : IRC_MIMETYPE;
+}
+
+BogusChannel.prototype =
+{
+    /* nsISupports */
+    QueryInterface: XPCOMUtils.generateQI([Ci.nsIChannel, Ci.nsIRequest]),
+
+    /* nsIChannel */
+    loadAttributes: null,
+    contentLength: 0,
+    owner: null,
+    loadGroup: null,
+    notificationCallbacks: null,
+    securityInfo: null,
+
+    open(observer, context)
+    {
+        spawnChatZilla(this.URI.spec);
+        // We don't throw this (a number, not a real 'resultcode') because it
+        // upsets xpconnect if we do (error in the js console).
+        Components.returnCode = NS_ERROR_NO_CONTENT;
+    },
+
+    asyncOpen(observer, context)
+    {
+        spawnChatZilla(this.URI.spec);
+        // We don't throw this (a number, not a real 'resultcode') because it
+        // upsets xpconnect if we do (error in the js console).
+        Components.returnCode = NS_ERROR_NO_CONTENT;
+    },
+
+    asyncRead(listener, context)
+    {
+        throw Cr.NS_ERROR_NOT_IMPLEMENTED;
+    },
+
+    /* nsIRequest */
+    isPending()
+    {
+        return true;
+    },
+
+    status: Cr.NS_OK,
+
+    cancel(status)
+    {
+        this.status = status;
+    },
+
+    suspend()
+    {
+        throw Cr.NS_ERROR_NOT_IMPLEMENTED;
+    },
+
+    resume()
+    {
+        throw Cr.NS_ERROR_NOT_IMPLEMENTED;
+    },
+};
 
 const ChatZillaModule =
 {
