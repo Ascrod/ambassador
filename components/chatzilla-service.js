@@ -8,10 +8,6 @@ const MEDIATOR_CONTRACTID =
     "@mozilla.org/appshell/window-mediator;1";
 const ASS_CONTRACTID =
     "@mozilla.org/appshell/appShellService;1";
-const RDFS_CONTRACTID =
-    "@mozilla.org/rdf/rdf-service;1";
-const CATMAN_CONTRACTID =
-    "@mozilla.org/categorymanager;1";
 
 const CLINE_SERVICE_CONTRACTID =
     "@mozilla.org/commandlinehandler/general-startup;1?type=chat";
@@ -29,9 +25,9 @@ const IRCPROT_HANDLER_CONTRACTID =
     "@mozilla.org/network/protocol;1?name=irc";
 const IRCSPROT_HANDLER_CONTRACTID =
     "@mozilla.org/network/protocol;1?name=ircs";
-this.IRCPROT_HANDLER_CID =
+const IRCPROT_HANDLER_CID =
     Components.ID("{f21c35f4-1dd1-11b2-a503-9bf8a539ea39}");
-this.IRCSPROT_HANDLER_CID =
+const IRCSPROT_HANDLER_CID =
     Components.ID("{f21c35f4-1dd1-11b2-a503-9bf8a539ea3a}");
 
 const IRC_MIMETYPE = "application/x-irc";
@@ -110,7 +106,6 @@ function spawnChatZilla(uri, count)
     return true;
 }
 
-
 function CommandLineService()
 {
 }
@@ -118,16 +113,8 @@ function CommandLineService()
 CommandLineService.prototype =
 {
     /* nsISupports */
-    QueryInterface(iid)
-    {
-        if (iid.equals(Ci.nsISupports))
-            return this;
-
-        if (Ci.nsICommandLineHandler && iid.equals(Ci.nsICommandLineHandler))
-            return this;
-
-        throw Cr.NS_ERROR_NO_INTERFACE;
-    },
+    QueryInterface: XPCOMUtils.generateQI([Ci.nsICommandLineHandler]),
+    classID: CLINE_SERVICE_CID,
 
     /* nsICommandLineHandler */
     handle(cmdLine)
@@ -148,9 +135,8 @@ CommandLineService.prototype =
         }
     },
 
-    helpInfo: "-chat [<ircurl>]  Start with an IRC chat client.\n",
+    helpInfo: "  --chat [<ircurl>]                            Start with an IRC chat client.\n",
 };
-
 
 /* factory for command line handler service (CommandLineService) */
 const CommandLineFactory =
@@ -164,142 +150,64 @@ const CommandLineFactory =
     },
 };
 
-
-function ProcessHandler()
+function makeProtocolHandler(aProtocol, aDefaultPort, aClassID)
 {
-}
+    return {
+        /* nsISupports */
+        QueryInterface: XPCOMUtils.generateQI([Ci.nsIProtocolHandler]),
+        classID: aClassID,
 
-ProcessHandler.prototype =
-{
-    /* nsISupports */
-    QueryInterface(iid)
-    {
-        if (iid.equals(Ci.nsISupports) ||
-            iid.equals(Ci.nsIObserver) ||
-            iid.equals(Ci.nsIMessageListener))
+        /* nsIProtocolHandler */
+        protocolFlags:  Ci.nsIProtocolHandler.URI_NORELATIVE |
+                        Ci.nsIProtocolHandler.ALLOWS_PROXY |
+                        Ci.nsIProtocolHandler.URI_LOADABLE_BY_ANYONE |
+                        Ci.nsIProtocolHandler.URI_NON_PERSISTABLE |
+                        Ci.nsIProtocolHandler.URI_DOES_NOT_RETURN_DATA,
+
+        defaultPort: aDefaultPort,
+        scheme: aProtocol,
+
+        allowPort(port, scheme)
         {
-            return this;
-        }
+            // Allow all ports to connect, so long as they are irc: or ircs:
+            return (scheme === 'irc' || scheme === 'ircs');
+        },
 
-        throw Cr.NS_ERROR_NO_INTERFACE;
-    },
+        newURI(spec, charset, baseURI)
+        {
+            const cls = Cc[STANDARDURL_CONTRACTID];
+            const url = cls.createInstance(Ci.nsIStandardURL);
+            const port = aDefaultPort;
 
-    /* nsIObserver */
-    observe(subject, topic, data)
-    {
-        if (topic !== "profile-after-change")
-            return;
+            url.init(Ci.nsIStandardURL.URLTYPE_STANDARD, port, spec, charset, baseURI);
 
-        const compMgr = Components.manager.QueryInterface(Ci.nsIComponentRegistrar);
-        compMgr.registerFactory(IRCPROT_HANDLER_CID,
-                                "IRC protocol handler",
-                                IRCPROT_HANDLER_CONTRACTID,
-                                IRCProtocolHandlerFactory);
-        compMgr.registerFactory(IRCSPROT_HANDLER_CID,
-                                "IRC protocol handler",
-                                IRCSPROT_HANDLER_CONTRACTID,
-                                IRCSProtocolHandlerFactory);
-    },
-};
+            return url.QueryInterface(Ci.nsIURI);
+        },
 
+        newChannel(URI)
+        {
+            const ios = Cc[IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
+            if (!ios.allowPort(URI.port, URI.scheme))
+                throw Cr.NS_ERROR_FAILURE;
 
-const StartupFactory =
+            return new BogusChannel(URI, aClassID == IRCSPROT_HANDLER_CID);
+        },
+    };
+}
+
+function IRCProtocolHandler()
 {
-    createInstance(outer, iid)
-    {
-        if (outer)
-            throw Cr.NS_ERROR_NO_AGGREGATION;
-
-        if (!iid.equals(Ci.nsISupports))
-            throw Cr.NS_ERROR_NO_INTERFACE;
-
-        // startup:
-        return new ProcessHandler();
-    },
-};
-
-function IRCProtocolHandler(isSecure)
-{
-    this.isSecure = isSecure;
-}
-
-var protocolFlags = Ci.nsIProtocolHandler.URI_NORELATIVE |
-                    Ci.nsIProtocolHandler.ALLOWS_PROXY;
-if ("URI_DANGEROUS_TO_LOAD" in Ci.nsIProtocolHandler) {
-    protocolFlags |= Ci.nsIProtocolHandler.URI_LOADABLE_BY_ANYONE;
-}
-if ("URI_NON_PERSISTABLE" in Ci.nsIProtocolHandler) {
-    protocolFlags |= Ci.nsIProtocolHandler.URI_NON_PERSISTABLE;
-}
-if ("URI_DOES_NOT_RETURN_DATA" in Ci.nsIProtocolHandler) {
-    protocolFlags |= Ci.nsIProtocolHandler.URI_DOES_NOT_RETURN_DATA;
 }
 
 IRCProtocolHandler.prototype =
+    makeProtocolHandler("irc", 6667, IRCPROT_HANDLER_CID);
+
+function IRCSProtocolHandler()
 {
-    protocolFlags: protocolFlags,
+}
 
-    allowPort(port, scheme)
-    {
-        // Allow all ports to connect, so long as they are irc: or ircs:
-        return (scheme === 'irc' || scheme === 'ircs');
-    },
-
-    newURI(spec, charset, baseURI)
-    {
-        const cls = Cc[STANDARDURL_CONTRACTID];
-        const url = cls.createInstance(Ci.nsIStandardURL);
-        const port = this.isSecure ? 6697 : 6667;
-
-        url.init(Ci.nsIStandardURL.URLTYPE_STANDARD, port, spec, charset, baseURI);
-
-        return url.QueryInterface(Ci.nsIURI);
-    },
-
-    newChannel(URI)
-    {
-        const ios = Cc[IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
-        if (!ios.allowPort(URI.port, URI.scheme))
-            throw Cr.NS_ERROR_FAILURE;
-
-        return new BogusChannel(URI, this.isSecure);
-    },
-};
-
-
-this.IRCProtocolHandlerFactory =
-{
-    createInstance(outer, iid)
-    {
-        if (outer != null)
-            throw Cr.NS_ERROR_NO_AGGREGATION;
-
-        if (!iid.equals(Ci.nsIProtocolHandler) && !iid.equals(Ci.nsISupports))
-            throw Cr.NS_ERROR_INVALID_ARG;
-
-        const protHandler = new IRCProtocolHandler(false);
-        protHandler.scheme = "irc";
-        protHandler.defaultPort = 6667;
-        return protHandler;
-    },
-};
-
-this.IRCSProtocolHandlerFactory =
-{
-    createInstance(outer, iid)
-    {
-        if (outer != null)
-            throw Cr.NS_ERROR_NO_AGGREGATION;
-
-        if (!iid.equals(Ci.nsIProtocolHandler) && !iid.equals(Ci.nsISupports))
-            throw Cr.NS_ERROR_INVALID_ARG;
-
-        const protHandler = new IRCProtocolHandler(true);
-        protHandler.scheme = "ircs";
-        protHandler.defaultPort = 6697;
-        return protHandler;
-    },
-};
+IRCSProtocolHandler.prototype =
+    makeProtocolHandler("ircs", 6697, IRCSPROT_HANDLER_CID);
 
 /* Bogus IRC channel used by the IRCProtocolHandler */
 function BogusChannel(URI, isSecure)
@@ -368,92 +276,6 @@ BogusChannel.prototype =
     },
 };
 
-const ChatZillaModule =
-{
-    registerSelf(compMgr, fileSpec, location, type)
-    {
-        compMgr = compMgr.QueryInterface(Ci.nsIComponentRegistrar);
-        const catman = Cc[CATMAN_CONTRACTID].getService(Ci.nsICategoryManager);
-
-        debug("*** Registering -chat handler.\n");
-        compMgr.registerFactoryLocation(CLINE_SERVICE_CID,
-                                            "ChatZilla CommandLine Service",
-                                        CLINE_SERVICE_CONTRACTID,
-                                        fileSpec, location, type);
-        catman.addCategoryEntry("command-line-argument-handlers",
-                                "chatzilla command line handler",
-                                CLINE_SERVICE_CONTRACTID, true, true);
-        catman.addCategoryEntry("command-line-handler",
-                                "m-irc",
-                                CLINE_SERVICE_CONTRACTID, true, true);
-
-        debug("*** Registering irc protocol handler.\n");
-            ChatZillaProtocols.initObsolete(compMgr, fileSpec, location, type);
-
-        debug("*** Registering done.\n");
-    },
-
-    unregisterSelf(compMgr, fileSpec, location)
-    {
-        compMgr = compMgr.QueryInterface(Ci.nsIComponentRegistrar);
-
-        const catman = Cc[CATMAN_CONTRACTID].getService(Ci.nsICategoryManager);
-        catman.deleteCategoryEntry("command-line-argument-handlers",
-                                   "chatzilla command line handler", true);
-        catman.deleteCategoryEntry("command-line-handler",
-                                   "m-irc", true);
-    },
-
-    getClassObject(compMgr, cid, iid)
-    {
-        // Checking if we're disabled in the Chrome Registry.
-        var rv;
-        try
-        {
-            const rdfSvc = Cc[RDFS_CONTRACTID].getService(Ci.nsIRDFService);
-            const rdfDS = rdfSvc.GetDataSource("rdf:chrome");
-            const resSelf = rdfSvc.GetResource("urn:mozilla:package:chatzilla");
-            const resDisabled = rdfSvc.GetResource("http://www.mozilla.org/rdf/chrome#disabled");
-            rv = rdfDS.GetTarget(resSelf, resDisabled, true);
-        }
-        catch (e)
-        {
-        }
-        if (rv)
-            throw Cr.NS_ERROR_NO_INTERFACE;
-
-        if (cid.equals(CLINE_SERVICE_CID))
-            return CommandLineFactory;
-
-        if (cid.equals(IRCPROT_HANDLER_CID))
-            return IRCProtocolHandlerFactory;
-
-        if (cid.equals(IRCSPROT_HANDLER_CID))
-            return IRCSProtocolHandlerFactory;
-
-        if (cid.equals(STARTUP_CID))
-            return StartupFactory;
-
-        if (!iid.equals(Ci.nsIFactory))
-            throw Cr.NS_ERROR_NOT_IMPLEMENTED;
-
-        throw Cr.NS_ERROR_NO_INTERFACE;
-    },
-
-    canUnload(compMgr)
-    {
-        return true;
-    },
-};
-
-
 /* entrypoint */
-function NSGetModule(compMgr, fileSpec)
-{
-    return ChatZillaModule;
-}
-
-function NSGetFactory(cid)
-{
-    return ChatZillaModule.getClassObject(null, cid, null);
-}
+var components = [CommandLineService, IRCProtocolHandler, IRCSProtocolHandler];
+const NSGetFactory = XPCOMUtils.generateNSGetFactory(components);
