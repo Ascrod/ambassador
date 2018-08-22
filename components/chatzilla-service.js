@@ -9,12 +9,14 @@ const MEDIATOR_CONTRACTID =
 const ASS_CONTRACTID =
     "@mozilla.org/appshell/appShellService;1";
 
-const CLINE_SERVICE_CONTRACTID =
-    "@mozilla.org/commandlinehandler/general-startup;1?type=chat";
-const CLINE_SERVICE_CID =
-    Components.ID("{38a95514-1dd2-11b2-97e7-9da958640f2c}");
-const STARTUP_CID =
+const APP_CLINE_SERVICE_CONTRACTID =
+    "@mozilla.org/commandlinehandler/general-startup;1?type=chat-app";
+const APP_CLINE_SERVICE_CID =
     Components.ID("{ae6ad015-433b-42ab-9afc-1636af5a7fc4}");
+const ADDON_CLINE_SERVICE_CONTRACTID =
+    "@mozilla.org/commandlinehandler/general-startup;1?type=chat-addon";
+const ADDON_CLINE_SERVICE_CID =
+    Components.ID("{38a95514-1dd2-11b2-97e7-9da958640f2c}");
 
 const STANDARDURL_CONTRACTID =
     "@mozilla.org/network/standard-url;1";
@@ -106,15 +108,15 @@ function spawnChatZilla(uri, count)
     return true;
 }
 
-function CommandLineService()
+function AddonCommandLineService()
 {
 }
 
-CommandLineService.prototype =
+AddonCommandLineService.prototype =
 {
     /* nsISupports */
     QueryInterface: XPCOMUtils.generateQI([Ci.nsICommandLineHandler]),
-    classID: CLINE_SERVICE_CID,
+    classID: ADDON_CLINE_SERVICE_CID,
 
     /* nsICommandLineHandler */
     handle(cmdLine)
@@ -138,18 +140,31 @@ CommandLineService.prototype =
     helpInfo: "  --chat [<ircurl>]                            Start with an IRC chat client.\n",
 };
 
-/* factory for command line handler service (CommandLineService) */
-const CommandLineFactory =
+function AppCommandLineService()
 {
-    createInstance(outer, iid)
+}
+
+AppCommandLineService.prototype =
+{
+    /* nsISupports */
+    QueryInterface: XPCOMUtils.generateQI([Ci.nsICommandLineHandler]),
+    classID: APP_CLINE_SERVICE_CID,
+
+    /* nsICommandLineHandler */
+    handle(cmdLine)
     {
-        if (outer != null)
-            throw Cr.NS_ERROR_NO_AGGREGATION;
+        var uri;
+        if (cmdLine.length)
+        {
+            var uri = cmdLine.getArgument(0);
+        }
 
-        return new CommandLineService().QueryInterface(iid);
+        spawnChatZilla(uri || null)
+        cmdLine.preventDefault = true;
     },
-};
 
+    helpInfo: "",
+};
 function makeProtocolHandler(aProtocol, aDefaultPort, aClassID)
 {
     return {
@@ -277,5 +292,5 @@ BogusChannel.prototype =
 };
 
 /* entrypoint */
-var components = [CommandLineService, IRCProtocolHandler, IRCSProtocolHandler];
+var components = [AddonCommandLineService, AppCommandLineService, IRCProtocolHandler, IRCSProtocolHandler];
 const NSGetFactory = XPCOMUtils.generateNSGetFactory(components);

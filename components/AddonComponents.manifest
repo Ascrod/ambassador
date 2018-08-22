@@ -1,7 +1,7 @@
-component {ae6ad015-433b-42ab-9afc-1636af5a7fc4} chatzilla-service.js
+component {38a95514-1dd2-11b2-97e7-9da958640f2c} chatzilla-service.js
 component {f21c35f4-1dd1-11b2-a503-9bf8a539ea39} chatzilla-service.js
 component {f21c35f4-1dd1-11b2-a503-9bf8a539ea3a} chatzilla-service.js
-contract @mozilla.org/commandlinehandler/general-startup;1?type=chat-app {ae6ad015-433b-42ab-9afc-1636af5a7fc4}
-category command-line-handler m-irc @mozilla.org/commandlinehandler/general-startup;1?type=chat-app
+contract @mozilla.org/commandlinehandler/general-startup;1?type=chat-addon {38a95514-1dd2-11b2-97e7-9da958640f2c}
+category command-line-handler m-irc @mozilla.org/commandlinehandler/general-startup;1?type=chat-addon
 contract @mozilla.org/network/protocol;1?name=irc {f21c35f4-1dd1-11b2-a503-9bf8a539ea39}
 contract @mozilla.org/network/protocol;1?name=ircs {f21c35f4-1dd1-11b2-a503-9bf8a539ea3a}
