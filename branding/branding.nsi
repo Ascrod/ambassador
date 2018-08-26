@@ -8,10 +8,10 @@
 # instead of BrandFullName and typically should not be modified.
 !define BrandFullNameInternal "Ambassador"
 !define CompanyName           "Ascrod"
-!define URLInfoAbout          "https://www.github.com/ascrod/chatzilla-uxp/"
-!define URLUpdateInfo         "https://www.github.com/ascrod/chatzilla-uxp/"
+!define URLInfoAbout          "https://www.github.com/ascrod/ambassador/"
+!define URLUpdateInfo         "https://www.github.com/ascrod/ambassador/"
 
-!define URLManualDownload "https://www.github.com/ascrod/chatzilla-uxp/README"
+!define URLManualDownload "https://www.github.com/ascrod/ambassador/README"
 !define Channel "release"
 
 # Dialog units are used so the UI displays correctly with the system's DPI

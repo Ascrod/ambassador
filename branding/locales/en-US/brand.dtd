@@ -2,4 +2,4 @@
 <!ENTITY  brandFullName         "Ambassador @REVISION@">
 <!ENTITY  vendorShortName       "Ascrod">
 <!ENTITY  logoTrademark         "">
-<!ENTITY  releaseURL            "https://github.com/ascrod/chatzilla-uxp/">
+<!ENTITY  releaseURL            "https://github.com/ascrod/ambassador/">

@@ -6,7 +6,7 @@
 
 <!ENTITY loading.label  "Please wait, loading…">
 
-<!ENTITY homepage.url   "http://chatzilla.hacksrus.com/">
+<!ENTITY homepage.url   "https://github.com/Ascrod/ambassador/">
 <!ENTITY homepage.label "Ambassador Homepage">
 
 <!ENTITY object.add.label       "Add…">

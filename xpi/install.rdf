@@ -51,7 +51,7 @@
     <em:contributor>James Ross</em:contributor>
     <em:contributor>Samuel Sieb</em:contributor>
     <em:iconURL>chrome://chatzilla/skin/images/logo.png</em:iconURL>
-    <em:homepageURL>http://chatzilla.hacksrus.com/</em:homepageURL>
+    <em:homepageURL>https://github/ascrod/ambassador/</em:homepageURL>
     <em:aboutURL>chrome://chatzilla/content/about/about.xul</em:aboutURL>
     <em:optionsURL>chrome://chatzilla/content/config.xul</em:optionsURL>
     <em:multiprocessCompatible>true</em:multiprocessCompatible>
