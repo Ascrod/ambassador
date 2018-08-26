@@ -3,10 +3,10 @@
 <assemblyIdentity
         version="1.0.0.0"
         processorArchitecture="*"
-        name="ChatZilla"
+        name="Ambassador"
         type="win32"
 />
-<description>ChatZilla</description>
+<description>Ambassador</description>
 <dependency>
         <dependentAssembly>
                 <assemblyIdentity

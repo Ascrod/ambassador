@@ -26,12 +26,12 @@ include $(topsrcdir)/config/config.mk
 
 ifdef LOCALE_MERGEDIR
 PPL_LOCALE_ARGS = \
-  --l10n-dir=$(LOCALE_MERGEDIR)/application/chatzilla/installer \
-  --l10n-dir=$(call EXPAND_LOCALE_SRCDIR,application/chatzilla/locales)/installer \
-  --l10n-dir=$(topsrcdir)/application/chatzilla/locales/en-US/installer \
+  --l10n-dir=$(LOCALE_MERGEDIR)/application/ambassador/installer \
+  --l10n-dir=$(call EXPAND_LOCALE_SRCDIR,application/ambassador/locales)/installer \
+  --l10n-dir=$(topsrcdir)/application/ambassador/locales/en-US/installer \
   $(NULL)
 else
-PPL_LOCALE_ARGS=$(call EXPAND_LOCALE_SRCDIR,application/chatzilla/locales)/installer
+PPL_LOCALE_ARGS=$(call EXPAND_LOCALE_SRCDIR,application/ambassador/locales)/installer
 endif
 
 OVERRIDE_DEFAULT_GOAL := installer

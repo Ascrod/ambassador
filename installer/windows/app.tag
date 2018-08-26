@@ -1,4 +1,4 @@
 ;!@Install@!UTF-8!
-Title="ChatZilla"
+Title="Ambassador"
 RunProgram="setup.exe"
 ;!@InstallEnd@!

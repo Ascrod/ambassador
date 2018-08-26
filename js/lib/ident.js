@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// RFC1413-ish identification server for ChatZilla
+// RFC1413-ish identification server for Ambassador
 // One Ident Server is used for all networks. When multiple networks are in the
 // process of connecting, it won't stop listening until they're all done.
 
@@ -188,7 +188,7 @@ function ident_listener_request(e)
             // charset defaults to US-ASCII
             // anything except an OS username should use OTHER
             // however, ircu sucks, so we can't do that.
-            this.connection.sendData(response("USERID : CHATZILLA :" + 
+            this.connection.sendData(response("USERID : AMBASSADOR :" +
                                               responses[i].username));
             found = true;
             break;

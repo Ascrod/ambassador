@@ -3,41 +3,41 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 installer:
-	@$(MAKE) -C application/chatzilla/installer installer
+	@$(MAKE) -C application/ambassador/installer installer
 
 package:
-	@$(MAKE) -C application/chatzilla/installer
+	@$(MAKE) -C application/ambassador/installer
 
 package-compare:
-	@$(MAKE) -C application/chatzilla/installer package-compare
+	@$(MAKE) -C application/ambassador/installer package-compare
 
 stage-package:
-	@$(MAKE) -C application/chatzilla/installer stage-package
+	@$(MAKE) -C application/ambassador/installer stage-package
 
 sdk:
-	@$(MAKE) -C application/chatzilla/installer make-sdk
+	@$(MAKE) -C application/ambassador/installer make-sdk
 
 install::
-	@$(MAKE) -C application/chatzilla/installer install
+	@$(MAKE) -C application/ambassador/installer install
 
 clean::
-	@$(MAKE) -C application/chatzilla/installer clean
+	@$(MAKE) -C application/ambassador/installer clean
 
 distclean::
-	@$(MAKE) -C application/chatzilla/installer distclean
+	@$(MAKE) -C application/ambassador/installer distclean
 
 source-package::
-	@$(MAKE) -C application/chatzilla/installer source-package
+	@$(MAKE) -C application/ambassador/installer source-package
 
 upload::
-	@$(MAKE) -C application/chatzilla/installer upload
+	@$(MAKE) -C application/ambassador/installer upload
 
 source-upload::
-	@$(MAKE) -C application/chatzilla/installer source-upload
+	@$(MAKE) -C application/ambassador/installer source-upload
 
 hg-bundle::
-	@$(MAKE) -C application/chatzilla/installer hg-bundle
+	@$(MAKE) -C application/ambassador/installer hg-bundle
 
 l10n-check::
-	@$(MAKE) -C application/chatzilla/locales l10n-check
+	@$(MAKE) -C application/ambassador/locales l10n-check
 

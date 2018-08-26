@@ -6,7 +6,7 @@
 
 # BrandFullNameInternal is used for some registry and file system values
 # instead of BrandFullName and typically should not be modified.
-!define BrandFullNameInternal "ChatZilla"
+!define BrandFullNameInternal "Ambassador"
 !define CompanyName           "Ascrod"
 !define URLInfoAbout          "https://www.github.com/ascrod/chatzilla-uxp/"
 !define URLUpdateInfo         "https://www.github.com/ascrod/chatzilla-uxp/"

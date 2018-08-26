@@ -6,7 +6,7 @@ include $(topsrcdir)/config/config.mk
 
 include $(srcdir)/../maxversions.mk
 
-PACKAGE_FILE = chatzilla.pkg
+PACKAGE_FILE = ambassador.pkg
 
 DIST_FILES = install.rdf
 

@@ -2,12 +2,12 @@
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
-<!ENTITY window.title  "ChatZilla Preferences">
+<!ENTITY window.title  "Ambassador Preferences">
 
 <!ENTITY loading.label  "Please wait, loading…">
 
 <!ENTITY homepage.url   "http://chatzilla.hacksrus.com/">
-<!ENTITY homepage.label "ChatZilla Homepage">
+<!ENTITY homepage.label "Ambassador Homepage">
 
 <!ENTITY object.add.label       "Add…">
 <!ENTITY object.add.hint        "Add a new network, channel or user to set preferences on">

@@ -204,7 +204,7 @@ Section "Uninstall"
   ${EndIf}
 
   ; Remove the updates directory for Vista and above
-  ${un.CleanUpdateDirectories} "Ascrod\ChatZilla" "Ascrod\updates"
+  ${un.CleanUpdateDirectories} "Ascrod\Ambassador" "Ascrod\updates"
 
   ; Remove any app model id's stored in the registry for this install path
   DeleteRegValue HKCU "Software\Ascrod\${AppName}\TaskBarIDs" "$INSTDIR"
@@ -224,7 +224,7 @@ Section "Uninstall"
     ${un.SetAppLSPCategories}
   ${EndIf}
 
-  ${un.RegCleanAppHandler} "ChatZillaURL"
+  ${un.RegCleanAppHandler} "AmbassadorURL"
   ${un.RegCleanProtocolHandler} "irc"
   ${un.RegCleanProtocolHandler} "ircs"
 
@@ -244,7 +244,7 @@ Section "Uninstall"
   ; The StartMenuInternet registry key is independent of the default browser
   ; settings. The XPInstall base un-installer always removes this key if it is
   ; uninstalling the default browser and it will always replace the keys when
-  ; installing even if there is another install of ChatZilla that is set as the
+  ; installing even if there is another install of Ambassador that is set as the
   ; default browser. Now the key is always updated on install but it is only
   ; removed if it refers to this install location.
   ${If} "$INSTDIR" == "$R1"
@@ -260,7 +260,7 @@ Section "Uninstall"
   ; The StartMenuInternet registry key is independent of the default browser
   ; settings. The XPInstall base un-installer always removes this key if it is
   ; uninstalling the default browser and it will always replace the keys when
-  ; installing even if there is another install of ChatZilla that is set as the
+  ; installing even if there is another install of Ambassador that is set as the
   ; default browser. Now the key is always updated on install but it is only
   ; removed if it refers to this install location.
   ${If} "$INSTDIR" == "$R1"
@@ -278,7 +278,7 @@ Section "Uninstall"
     StrCpy $0 "Software\Microsoft\MediaPlayer\ShimInclusionList\plugin-container.exe"
     DeleteRegKey HKLM "$0"
     DeleteRegKey HKCU "$0"
-    StrCpy $0 "Software\Classes\MIME\Database\Content Type\application/x-xpinstall;app=ChatZilla"
+    StrCpy $0 "Software\Classes\MIME\Database\Content Type\application/x-xpinstall;app=Ambassador"
     DeleteRegKey HKLM "$0"
     DeleteRegKey HKCU "$0"
   ${Else}
@@ -346,8 +346,8 @@ Section "Uninstall"
   ; Remove the installation directory if it is empty
   RmDir "$INSTDIR"
 
-  ; If ChatZilla.exe was successfully deleted yet we still need to restart to
-  ; remove other files create a dummy ChatZilla.exe.moz-delete to prevent the
+  ; If Ambassador.exe was successfully deleted yet we still need to restart to
+  ; remove other files create a dummy Ambassador.exe.moz-delete to prevent the
   ; installer from allowing an install without restart when it is required
   ; to complete an uninstall.
   ${If} ${RebootFlag}
@@ -370,12 +370,12 @@ Section "Uninstall"
   ; clients registry key by the OS under some conditions.
   System::Call "shell32::SHChangeNotify(i ${SHCNE_ASSOCCHANGED}, i 0, i 0, i 0)"
 
-  ; Users who uninstall then reinstall expecting ChatZilla to use a clean profile
-  ; may be surprised during first-run. This key is checked during startup of ChatZilla and
+  ; Users who uninstall then reinstall expecting Ambassador to use a clean profile
+  ; may be surprised during first-run. This key is checked during startup of Ambassador and
   ; subsequently deleted after checking. If the value is found during startup
-  ; the browser will offer to Reset ChatZilla. We use the UpdateChannel to match
-  ; uninstalls of ChatZilla-release with reinstalls of ChatZilla-release, for example.
-  WriteRegStr HKCU "Software\Ascrod\ChatZilla" "Uninstalled-${UpdateChannel}" "True"
+  ; the browser will offer to Reset Ambassador. We use the UpdateChannel to match
+  ; uninstalls of Ambassador-release with reinstalls of Ambassador-release, for example.
+  WriteRegStr HKCU "Software\Ascrod\Ambassador" "Uninstalled-${UpdateChannel}" "True"
 
   ${un.IsFirewallSvcRunning}
   Pop $0

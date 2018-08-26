@@ -246,7 +246,7 @@ Section "-InstallStartCleanup"
   ${InitHashAppModelId} "$INSTDIR" "Software\Ascrod\${AppName}\TaskBarIDs"
 
   ; Remove the updates directory for Vista and above
-  ${CleanUpdateDirectories} "Ascrod\ChatZilla" "Ascrod\updates"
+  ${CleanUpdateDirectories} "Ascrod\Ambassador" "Ascrod\updates"
  
   ${RemoveDeprecatedFiles}
   ${RemovePrecompleteEntries} "false"
@@ -365,13 +365,13 @@ Section "-Application" APP_IDX
   ; it doesn't cause problems always add them.
   ${SetUninstallKeys}
 
-  ; On install always add the ChatZillaURL keys.
+  ; On install always add the AmbassadorURL keys.
   ${GetLongPath} "$INSTDIR\${FileMainEXE}" $8
   StrCpy $2 "$\"$8$\" -osint -url $\"%1$\""
 
-  ; In Win8, the delegate execute handler picks up the value in ChatZillaURL
+  ; In Win8, the delegate execute handler picks up the value in AmbassadorURL
   ; to launch the desktop client when it needs to.
-  ${AddDisabledDDEHandlerValues} "ChatZillaURL" "$2" "$8,1" "${AppRegName} URL" \
+  ${AddDisabledDDEHandlerValues} "AmbassadorURL" "$2" "$8,1" "${AppRegName} URL" \
                                  "true"
 
   ; For pre win8, the following keys should only be set if we can write to HKLM.
@@ -563,7 +563,7 @@ Section "-InstallEndCleanup"
       ; If we have something other than empty string now, write the value.
       ${If} "$0" != ""
         ClearErrors
-        WriteRegStr HKCU "Software\Ascrod\ChatZilla" "OldDefaultClientCommand" "$0"
+        WriteRegStr HKCU "Software\Ascrod\Ambassador" "OldDefaultClientCommand" "$0"
       ${EndIf}
 
       ${LogHeader} "Setting as the default IRC client"
@@ -579,7 +579,7 @@ Section "-InstallEndCleanup"
     ${ElseIfNot} ${Errors}
       ${LogHeader} "Writing default-client opt-out"
       ClearErrors
-      WriteRegStr HKCU "Software\Ascrod\ChatZilla" "DefaultClientOptOut" "True"
+      WriteRegStr HKCU "Software\Ascrod\Ambassador" "DefaultClientOptOut" "True"
       ${If} ${Errors}
         ${LogMsg} "Error writing default-client opt-out"
       ${EndIf}
@@ -872,14 +872,14 @@ Function preSummary
   WriteRegStr HKLM "Software\Ascrod" "${BrandShortName}InstallerTest" "Write Test"
   ${Unless} ${Errors}
     DeleteRegValue HKLM "Software\Ascrod" "${BrandShortName}InstallerTest"
-    ; Check if ChatZilla is the irc handler for this user.
+    ; Check if Ambassador is the irc handler for this user.
     SetShellVarContext current ; Set SHCTX to the current user
     ${IsHandlerForInstallDir} "irc" $R9
     ${If} $TmpVal == "HKLM"
       SetShellVarContext all ; Set SHCTX to all users
     ${EndIf}
-    ; If ChatZilla isn't the irc handler for this user show the option to set
-    ; ChatZilla as the default client.
+    ; If Ambassador isn't the irc handler for this user show the option to set
+    ; Ambassador as the default client.
     ${If} "$R9" != "true"
     ${AndIf} ${AtMostWin2008R2}
       WriteINIStr "$PLUGINSDIR\summary.ini" "Settings" NumFields "4"

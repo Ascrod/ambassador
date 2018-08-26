@@ -10,5 +10,5 @@ if CONFIG['MOZ_EXTENSIONS']:
 
 DIRS += [
     '/%s' % CONFIG['MOZ_BRANDING_DIRECTORY'],
-    '/application/chatzilla',
+    '/application/ambassador',
 ]

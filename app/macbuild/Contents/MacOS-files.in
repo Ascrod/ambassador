@@ -1,7 +1,7 @@
 /*.app/***
 /*.dylib
 /certutil
-chatzilla-bin
+ambassador-bin
 /gtest/***
 /pk12util
 /ssltunnel

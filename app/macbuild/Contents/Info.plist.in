@@ -3,13 +3,13 @@
 <plist version="1.0">
 <dict>
 <key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
-           <key>CFBundleIdentifier</key><string>com.ascrod.chatzilla</string>
+           <key>CFBundleIdentifier</key><string>com.ascrod.ambassador</string>
           <key>CFBundlePackageType</key><string>APPL</string>
            <key>CFBundleExecutable</key><string>xulrunner</string>
          <key>NSAppleScriptEnabled</key><true/>
-                 <key>CFBundleName</key><string>ChatZilla</string>
-          <key>CFBundleDisplayName</key><string>ChatZilla</string>
-        <key>CFBundleGetInfoString</key><string>ChatZilla @REVISION@</string>
+                 <key>CFBundleName</key><string>Ambassador</string>
+          <key>CFBundleDisplayName</key><string>Ambassador</string>
+        <key>CFBundleGetInfoString</key><string>Ambassador @REVISION@</string>
    <key>CFBundleShortVersionString</key><string>@REVISION@</string>
               <key>CFBundleVersion</key><string>@REVISION@.@BUILDID@</string>
          <!--<key>CFBundleIconFile</key><string>TODO</string>-->

@@ -5,7 +5,7 @@
 
 # Application Basename and Vendor
 # MOZ_APP_BASENAME and MOZ_APP_VENDOR must not have spaces.
-MOZ_APP_NAME=chatzilla
+MOZ_APP_NAME=ambassador
 MOZ_APP_BASENAME=$MOZ_APP_NAME
 MOZ_APP_VERSION=`cat ${_topsrcdir}/$MOZ_BUILD_APP/config/version.txt`
 MOZ_APP_VERSION_DISPLAY=$MOZ_APP_VERSION

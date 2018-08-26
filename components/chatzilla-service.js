@@ -55,7 +55,7 @@ function spawnChatZilla(uri, count)
     // Claiming that a ChatZilla window is loading.
     if ("ChatZillaStarting" in hiddenWin)
     {
-        dump("cz-service: ChatZilla claiming to be starting.\n");
+        dump("cz-service: Ambassador claiming to be starting.\n");
         if (w && ("client" in w) && ("initialized" in w.client) &&
             w.client.initialized)
         {

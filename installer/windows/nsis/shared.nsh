@@ -10,12 +10,12 @@
   System::Call "kernel32::ProcessIdToSessionId(i $0, *i ${NSIS_MAX_STRLEN} r9)"
 
   ; Determine if we're the protected UserChoice default or not. If so fix the
-  ; start menu tile.  In case there are 2 ChatZilla installations, we only do
+  ; start menu tile.  In case there are 2 Ambassador installations, we only do
   ; this if the application being updated is the default.
   ReadRegStr $0 HKCU "Software\Microsoft\Windows\Shell\Associations\UrlAssociations\irc\UserChoice" "ProgId"
-  ${If} $0 == "ChatZillaURL"
+  ${If} $0 == "AmbassadorURL"
   ${AndIf} $9 != 0 ; We're not running in session 0
-    ReadRegStr $0 HKCU "Software\Classes\ChatZillaURL\shell\open\command" ""
+    ReadRegStr $0 HKCU "Software\Classes\AmbassadorURL\shell\open\command" ""
     ${GetPathFromString} "$0" $0
     ${GetParent} "$0" $0
     ${If} ${FileExists} "$0"
@@ -276,7 +276,7 @@
 !macroend
 !define ShowShortcuts "!insertmacro ShowShortcuts"
 
-; Adds the protocol and file handler registry entries for making ChatZilla the
+; Adds the protocol and file handler registry entries for making Ambassador the
 ; default handler (uses SHCTX).
 !macro SetHandlers
   ${GetLongPath} "$INSTDIR\${FileMainEXE}" $8
@@ -284,7 +284,7 @@
   StrCpy $0 "SOFTWARE\Classes"
   StrCpy $2 "$\"$8$\" -osint -url $\"%1$\""
 
-  ${AddDisabledDDEHandlerValues} "ChatZillaURL" "$2" "$8,1" "${AppRegName} URL" \
+  ${AddDisabledDDEHandlerValues} "AmbassadorURL" "$2" "$8,1" "${AppRegName} URL" \
                                  "true"
   ; An empty string is used for the 4th & 5th params because the following
   ; protocol handlers already have a display name and the additional keys
@@ -294,7 +294,7 @@
 !macroend
 !define SetHandlers "!insertmacro SetHandlers"
 
-; Adds the HKLM\Software\Clients\StartMenuInternet\CHATZILLA.EXE registry
+; Adds the HKLM\Software\Clients\StartMenuInternet\AMBASSADOR.EXE registry
 ; entries (does not use SHCTX).
 ;
 ; The values for StartMenuInternet are only valid under HKLM and there can only
@@ -355,8 +355,8 @@
 
   WriteRegStr ${RegKey} "$0\Capabilities\StartMenu" "StartMenuInternet" "$R9"
 
-  WriteRegStr ${RegKey} "$0\Capabilities\URLAssociations" "irc"   "ChatZillaURL"
-  WriteRegStr ${RegKey} "$0\Capabilities\URLAssociations" "ircs"  "ChatZillaURL"
+  WriteRegStr ${RegKey} "$0\Capabilities\URLAssociations" "irc"   "AmbassadorURL"
+  WriteRegStr ${RegKey} "$0\Capabilities\URLAssociations" "ircs"  "AmbassadorURL"
 
   ; Vista Registered Application
   WriteRegStr ${RegKey} "Software\RegisteredApplications" "${AppRegName}" "$0\Capabilities"
@@ -634,7 +634,7 @@
         ${If} $AddTaskbarSC == ""
           ; No need to check the default on Win8 and later
           ${If} ${AtMostWin2008R2}
-            ; Check if the ChatZilla is the irc handler for this user
+            ; Check if the Ambassador is the irc handler for this user
             SetShellVarContext current ; Set SHCTX to the current user
             ${IsHandlerForInstallDir} "irc" $R9
             ${If} $TmpVal == "HKLM"
