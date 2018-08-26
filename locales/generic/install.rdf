@@ -25,9 +25,6 @@
 
     <em:iconURL>chrome://chatzilla/skin/images/logo.png</em:iconURL>
 
-    <!-- ChatZilla supports Gecko 1.9.1 and higher.
-         All applications listed below are the subset of supported versions
-         which also use an appropriate version of Gecko. -->
     <!-- For maxVersion of applications that follow the rapid cycle pattern,
          use '(x)a1' (*-central) on default,
          and '(x-1).*' (*-aurora/beta/release) for branches. -->

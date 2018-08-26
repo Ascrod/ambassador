@@ -28,7 +28,7 @@
     <em:description>The default theme.</em:description>
 
     <!-- Front End Integration Hooks (used by Theme Manager)-->
-    <em:creator>ChatZilla Contributors</em:creator>
+    <em:creator>Ascrod</em:creator>
     <em:internalName>modern/1.0</em:internalName>
     <em:appManaged>true</em:appManaged>
     <em:locked>true</em:locked>

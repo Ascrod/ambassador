@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #filter emptyLines
 
-#define MOZ_LANGPACK_CREATOR The ChatZilla Team
+#define MOZ_LANGPACK_CREATOR Ascrod
 
 #define MOZ_LANGPACK_HOMEPAGE https://github.com/Ascrod/ambassador/
 

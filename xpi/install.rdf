@@ -13,9 +13,6 @@
     <em:version>@APP_VERSION@</em:version>
     <em:type>2</em:type>
 
-    <!-- ChatZilla supports Gecko 1.9.1 and higher.
-         All applications listed below are the subset of supported versions
-         which also use an appropriate version of Gecko. -->
     <!-- For maxVersion of applications that follow the rapid cycle pattern,
          use '(x)a1' (*-central) on default,
          and '(x-1).*' (*-aurora/beta/release) for branches. -->
@@ -44,12 +41,7 @@
     <!-- front-end metadata -->
     <em:name>Ambassador</em:name>
     <em:description>A clean, easy to use and highly extensible Internet Relay Chat (IRC) client.</em:description>
-    <em:creator>The ChatZilla Team</em:creator>
-    <em:contributor>Lim Chee Aun (graphics)</em:contributor>
-    <em:contributor>Robert Ginda</em:contributor>
-    <em:contributor>Gijs Kruitbosch</em:contributor>
-    <em:contributor>James Ross</em:contributor>
-    <em:contributor>Samuel Sieb</em:contributor>
+    <em:creator>Ascrod</em:creator>
     <em:iconURL>chrome://chatzilla/skin/images/logo.png</em:iconURL>
     <em:homepageURL>https://github/ascrod/ambassador/</em:homepageURL>
     <em:aboutURL>chrome://chatzilla/content/about/about.xul</em:aboutURL>
