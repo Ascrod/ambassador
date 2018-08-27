@@ -22,7 +22,7 @@
   onclose="return onClose();" onmouseover="onMouseOver(event);"
   persist="width height screenX screenY sizemode" windowtype="irc:chatzilla">
 
-  <html:link rel="icon" href="chrome://chatzilla/skin/images/logo.png" style="display:none"/>
+  <html:link rel="icon" href="chrome://chatzilla/skin/images/icon32.png" style="display:none"/>
   
   <overlaytarget id="scripts-overlay-target"/>
   <overlaytarget id="popup-overlay-target"/>

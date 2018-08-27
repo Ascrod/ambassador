@@ -4,6 +4,7 @@
 
 chatzilla.jar:
 % content branding %content/branding/ contentaccessible=yes
-  content/branding/chatzilla-window.ico         (chatzilla-window.ico)
-  content/branding/chatzilla-window.xpm         (chatzilla-window.xpm)
-  content/branding/chatzilla-window16.xpm       (chatzilla-window16.xpm)
+  content/branding/icon16.png   (default16.png)
+  content/branding/icon32.png   (default32.png)
+  content/branding/icon48.png   (default48.png)
+  content/branding/icon64.png   (logo-64.png)

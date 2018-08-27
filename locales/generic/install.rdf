@@ -23,7 +23,7 @@
     @MOZ_LANGPACK_CONTRIBUTORS@
 #endif
 
-    <em:iconURL>chrome://chatzilla/skin/images/logo.png</em:iconURL>
+    <em:iconURL>chrome://chatzilla/skin/images/icon64.png</em:iconURL>
 
     <!-- For maxVersion of applications that follow the rapid cycle pattern,
          use '(x)a1' (*-central) on default,

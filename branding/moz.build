@@ -21,12 +21,26 @@ if CONFIG['MOZ_WIDGET_TOOLKIT'] == 'windows':
         'wizHeaderRTL.bmp',
         'wizWatermark.bmp',
     ]
-
-BRANDING_FILES += [
-    'chatzilla-window.ico',
-    'chatzilla-window.xpm',
-    'chatzilla-window16.xpm',
-]
+#elif CONFIG['MOZ_WIDGET_TOOLKIT'] == 'cocoa':
+#    BRANDING_FILES += [
+#        'background.png',
+#        'disk.icns',
+#        'dsstore',
+#        'ambassador.icns',
+#    ]
+elif 'gtk' in CONFIG['MOZ_WIDGET_TOOLKIT']:
+    BRANDING_FILES += [
+        'default16.png',
+        'default32.png',
+        'default48.png',
+        'mozicon128.png',
+    ]
+    FINAL_TARGET_FILES.icon += ['mozicon128.png']
+    FINAL_TARGET_FILES.chrome.icons.default += [
+        'default16.png',
+        'default32.png',
+        'default48.png',
+    ]
 
 JS_PREFERENCE_FILES += [
     'chatzilla-branding.js'
