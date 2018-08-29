@@ -5,8 +5,8 @@
 #expand const __cz_version   = "__MOZ_APP_VERSION__";
 #expand const __cz_guid      = "__MOZ_APP_ID__";
 const __cz_condition = "green";
-const __cz_suffix    = "uxp";
-const __cz_locale    = "0.9.92";
+const __cz_suffix    = "";
+const __cz_locale    = "1.0.0";
 
 var warn;
 var ASSERT;
