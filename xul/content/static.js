@@ -14,7 +14,7 @@ var TEST;
 
 if (DEBUG)
 {
-    _dd_pfx = "cz: ";
+    _dd_pfx = "ab: ";
     warn = function (msg) { dumpln ("** WARNING " + msg + " **"); }
     TEST = ASSERT = function _assert(expr, msg) {
                  if (!expr) {

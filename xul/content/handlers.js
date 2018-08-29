@@ -19,8 +19,8 @@ function showErrorDlg(message)
     const XUL_KEY = "http://www.mozilla.org/keymaster/" +
                     "gatekeeper/there.is.only.xul";
 
-    const TITLE = "ChatZilla run-time error";
-    const HEADER = "There was a run-time error with ChatZilla. " +
+    const TITLE = "Ambassador run-time error";
+    const HEADER = "There was a run-time error with Ambassador. " +
                    "Please report the following information:";
 
     const OL_JS = "document.getElementById('tb').value = '%S';";
@@ -48,7 +48,7 @@ function showErrorDlg(message)
 
 function onLoad()
 {
-    dd ("Initializing ChatZilla {");
+    dd ("Initializing Ambassador {");
     try
     {
         init();
@@ -117,7 +117,7 @@ function onClose()
 
 function onUnload()
 {
-    dd("Shutting down ChatZilla.");
+    dd("Shutting down Ambassador.");
 
     /* Disable every loaded & enabled plugin to give them all a chance to
      * clean up anything beyond the ChatZilla window (e.g. libraries). All

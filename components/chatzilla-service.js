@@ -55,11 +55,11 @@ function spawnChatZilla(uri, count)
     // Claiming that a ChatZilla window is loading.
     if ("ChatZillaStarting" in hiddenWin)
     {
-        dump("cz-service: Ambassador claiming to be starting.\n");
+        dump("ab-service: Ambassador claiming to be starting.\n");
         if (w && ("client" in w) && ("initialized" in w.client) &&
             w.client.initialized)
         {
-            dump("cz-service: It lied. It's finished starting.\n");
+            dump("ab-service: It lied. It's finished starting.\n");
             // It's actually loaded ok.
             delete hiddenWin.ChatZillaStarting;
         }
@@ -71,7 +71,7 @@ function spawnChatZilla(uri, count)
 
         if ((new Date() - hiddenWin.ChatZillaStarting) > 10000)
         {
-            dump("cz-service: Continuing to be unable to talk to existing window!\n");
+            dump("ab-service: Continuing to be unable to talk to existing window!\n");
         }
         else
         {
@@ -86,7 +86,7 @@ function spawnChatZilla(uri, count)
     // We have a window.
     if (w)
     {
-        dump("cz-service: Existing, fully loaded window. Using.\n");
+        dump("ab-service: Existing, fully loaded window. Using.\n");
         // Window is working and initialized ok. Use it.
         w.focus();
         if (uri)
@@ -94,7 +94,7 @@ function spawnChatZilla(uri, count)
         return true;
     }
 
-    dump("cz-service: No windows, starting new one.\n");
+    dump("ab-service: No windows, starting new one.\n");
     // Ok, no available window, loading or otherwise, so start ChatZilla.
     const args = new Object();
     if (uri)
