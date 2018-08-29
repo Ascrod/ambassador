@@ -44,7 +44,7 @@ chatzilla.jar:
 	content/chatzilla/messages.js                (xul/content/messages.js) 
 	content/chatzilla/menus.js                   (xul/content/menus.js) 
 	content/chatzilla/mungers.js                 (xul/content/mungers.js) 
-	content/chatzilla/static.js                  (xul/content/static.js) 
+*	content/chatzilla/static.js                  (xul/content/static.js)
 	content/chatzilla/networks.js                (xul/content/networks.js)
 	content/chatzilla/networks-list.xul          (xul/content/networks-list.xul)
 	content/chatzilla/networks-list.js           (xul/content/networks-list.js)

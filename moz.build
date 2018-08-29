@@ -16,3 +16,6 @@ if CONFIG['MAKENSISU']:
     DIRS += ['installer/windows']
 
 JAR_MANIFESTS += ['jar.mn']
+
+DEFINES['MOZ_APP_VERSION'] = CONFIG['MOZ_APP_VERSION']
+DEFINES['MOZ_APP_ID'] = CONFIG['MOZ_APP_ID']

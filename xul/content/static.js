@@ -2,10 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-const __cz_version   = "0.9.93";
+#expand const __cz_version   = "__MOZ_APP_VERSION__";
+#expand const __cz_guid      = "__MOZ_APP_ID__";
 const __cz_condition = "green";
 const __cz_suffix    = "uxp";
-const __cz_guid      = "59c81df5-4b7a-477b-912d-4e0fdf64e5f2";
 const __cz_locale    = "0.9.92";
 
 var warn;
@@ -433,7 +433,7 @@ function getVersionInfo()
     if (app)
     {
         // Use the XUL host app info, and platform build ID.
-        if (app.ID == "{" + __cz_guid + "}")
+        if (app.ID == __cz_guid)
         {
             /* We ARE the app, in other words, we're running in XULrunner.
              * Because of this, we must disregard app.(name|vendor|version).
@@ -502,7 +502,7 @@ function initApplicationCompatibility()
             case "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}":
                 client.host = "Firefox";
                 break;
-            case "{" + __cz_guid + "}":
+            case __cz_guid:
                 // We ARE the app, in other words, we're running in XULRunner.
                 client.host = "XULRunner";
                 break;
