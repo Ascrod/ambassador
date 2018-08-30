@@ -4,6 +4,6 @@
 
 chatzilla.jar:
 % content chatzilla-xr %content/chatzilla/xr/
-% overlay chrome://chatzilla/content/chatzilla.xul chrome://chatzilla/content/xr/overlay.xul application={59c81df5-4b7a-477b-912d-4e0fdf64e5f2}
-% locale branding en-US chrome/branding/ application={59c81df5-4b7a-477b-912d-4e0fdf64e5f2}
+% overlay chrome://chatzilla/content/chatzilla.xul chrome://chatzilla/content/xr/overlay.xul application={4523665a-317f-4a66-9376-3763d1ad1978}
+% locale branding en-US chrome/branding/ application={4523665a-317f-4a66-9376-3763d1ad1978}
 	content/chatzilla/xr/overlay.xul             (../xul/content/xr/overlay.xul)

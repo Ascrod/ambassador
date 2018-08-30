@@ -14,7 +14,7 @@ MOZ_APP_VERSION_DISPLAY=$MOZ_APP_VERSION
 # This is a unique identifier used for the application
 # Most frequently the AppID is used for targetApplication
 # in extensions and for chrome manifests
-MOZ_APP_ID={59c81df5-4b7a-477b-912d-4e0fdf64e5f2}
+MOZ_APP_ID={4523665a-317f-4a66-9376-3763d1ad1978}
 
 # Use static Application INI File
 MOZ_APP_STATIC_INI=1
