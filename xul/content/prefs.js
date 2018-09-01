@@ -233,7 +233,7 @@ function initPrefs()
          ["userLog",            false,    "global.log"],
          ["userMaxLines",       200,      "global.maxLines"],
          ["usermode",           "+i",     ".ident"],
-         ["username",           "chatzilla", ".ident"],
+         ["username",           "ambassador", ".ident"],
          ["warnOnClose",        true,     "global"]
         ];
 
