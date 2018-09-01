@@ -4784,7 +4784,13 @@ function cmdCertificateManager(e)
 
 function cmdFlushSSL(e)
 {
-        var sdr = getService("@mozilla.org/security/sdr;1", "nsISecretDecoderRing");
-        sdr.logout();
-        display("Flushed SSL session cache.");
+    if (client.host != "XULRunner")
+    {
+        display(getMsg(MSG_ERR_FLUSHSSL_USEHOST), MT_ERROR);
+        return;
+    }
+
+    var sdr = getService("@mozilla.org/security/sdr;1", "nsISecretDecoderRing");
+    sdr.logout();
+    display(getMsg(MSG_FLUSHSSL_SUCCESS));
 }
