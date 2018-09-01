@@ -4770,6 +4770,17 @@ function cmdUpdate(e)
     var prompter = newObject("@mozilla.org/updates/update-prompt;1",
                              "nsIUpdatePrompt");
 
+    if (client.host != "XULRunner")
+    {
+        display(getMsg(MSG_ERR_UPDATE_USEHOST), MT_ERROR);
+        return;
+    }
+    else if (!um)
+    {
+        display(getMsg(MSG_ERR_UPDATE_DISABLED), MT_ERROR);
+        return;
+    }
+
     if (um.activeUpdate && um.activeUpdate.state == "pending")
         prompter.showUpdateDownloaded(um.activeUpdate);
     else
