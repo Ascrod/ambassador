@@ -112,14 +112,6 @@ function initMenus()
          ["-"],
          ["print"],
          ["save"],
-         ["-"],
-         ["add-ons",     {visibleif: XULRunner}],
-         ["jsconsole",   {visibleif: XULRunner}],
-         ["about-config",{visibleif: XULRunner}],
-         ["passmgr"],
-         ["certmgr"],
-         ["flush-ssl",   {visibleif: XULRunner}],
-         ["update",      {visibleif: XULRunner}],
          ["-",           {visibleif: NotMac}],
          ["exit",        {visibleif: Win}],
          ["quit",        {visibleif: NotMac + " and " + NotWin}]
@@ -242,6 +234,23 @@ function initMenus()
          ["toggle-timestamps",
                  {type: "checkbox",
                   checkedif: "cx.sourceObject.prefs['timestamps']"}]
+        ]
+    };
+
+    client.menuSpecs["mainmenu:tools"] = {
+        label: MSG_MNU_TOOLS,
+        accesskey: getAccessKeyForMenu('MSG_MNU_TOOLS'),
+        getContext: getDefaultContext,
+        items:
+        [
+         ["add-ons",     {visibleif: XULRunner}],
+         ["jsconsole",   {visibleif: XULRunner}],
+         ["about-config",{visibleif: XULRunner}],
+         ["passmgr"],
+         ["certmgr"],
+         ["flush-ssl",   {visibleif: XULRunner}],
+         ["-",           {visibleif: XULRunner}],
+         ["update",      {visibleif: XULRunner}],
         ]
     };
 
