@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Ambassador
+GenericName=IRC Client
+Comment=A simple, straightforward IRC client.
+Keywords=IM;Chat;
+Exec=ambassador %u
+Terminal=false
+Type=Application
+Icon=ambassador
+Categories=Network;IRCClient
+MimeType=x-scheme-handler/irc;x-scheme-handler/ircs;
+StartupNotify=True
