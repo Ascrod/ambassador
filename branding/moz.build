@@ -15,6 +15,7 @@ if CONFIG['MOZ_WIDGET_TOOLKIT'] == 'windows':
         'VisualElements_70.png',
     ]
     BRANDING_FILES += [
+        'ambassador.ico',
         'appname.bmp',
         'branding.nsi',
         'wizHeader.bmp',
