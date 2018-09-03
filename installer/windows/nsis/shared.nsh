@@ -282,7 +282,7 @@
   ${GetLongPath} "$INSTDIR\${FileMainEXE}" $8
 
   StrCpy $0 "SOFTWARE\Classes"
-  StrCpy $2 "$\"$8$\" -osint -url $\"%1$\""
+  StrCpy $2 "$\"$8$\" $\"%1$\""
 
   ${AddDisabledDDEHandlerValues} "AmbassadorURL" "$2" "$8,1" "${AppRegName} URL" \
                                  "true"
@@ -341,12 +341,6 @@
   ${EndIf}
 
   WriteRegStr ${RegKey} "$0\shell\open\command" "" "$\"$8$\""
-
-  WriteRegStr ${RegKey} "$0\shell\properties" "" "$(CONTEXT_OPTIONS)"
-  WriteRegStr ${RegKey} "$0\shell\properties\command" "" "$\"$8$\" -preferences"
-
-  WriteRegStr ${RegKey} "$0\shell\safemode" "" "$(CONTEXT_SAFE_MODE)"
-  WriteRegStr ${RegKey} "$0\shell\safemode\command" "" "$\"$8$\" -safe-mode"
 
   ; Vista Capabilities registry keys
   WriteRegStr ${RegKey} "$0\Capabilities" "ApplicationDescription" "$(REG_APP_DESC)"
@@ -490,7 +484,7 @@
 !macro UpdateProtocolHandlers
   ; Store the command to open the app with an url in a register for easy access.
   ${GetLongPath} "$INSTDIR\${FileMainEXE}" $8
-  StrCpy $2 "$\"$8$\" -osint -url $\"%1$\""
+  StrCpy $2 "$\"$8$\" $\"%1$\""
 
   ; An empty string is used for the 4th & 5th params because the following
   ; protocol handlers already have a display name and the additional keys

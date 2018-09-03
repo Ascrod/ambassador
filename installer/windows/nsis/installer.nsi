@@ -367,7 +367,7 @@ Section "-Application" APP_IDX
 
   ; On install always add the AmbassadorURL keys.
   ${GetLongPath} "$INSTDIR\${FileMainEXE}" $8
-  StrCpy $2 "$\"$8$\" -osint -url $\"%1$\""
+  StrCpy $2 "$\"$8$\" $\"%1$\""
 
   ; In Win8, the delegate execute handler picks up the value in AmbassadorURL
   ; to launch the desktop client when it needs to.
