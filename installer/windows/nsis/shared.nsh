@@ -70,9 +70,9 @@
       ${SetClientsIRC} "HKLM"
     ${EndIf}
 
-    ReadRegStr $0 HKLM "Software\mozilla.org\Ascrod" "CurrentVersion"
+    ReadRegStr $0 HKLM "Software\mozilla.org\Mozilla" "CurrentVersion"
     ${If} "$0" != "${GREVersion}"
-      WriteRegStr HKLM "Software\mozilla.org\Ascrod" "CurrentVersion" "${GREVersion}"
+      WriteRegStr HKLM "Software\mozilla.org\Mozilla" "CurrentVersion" "${GREVersion}"
     ${EndIf}
   ${EndIf}
 
@@ -585,7 +585,7 @@
       ${If} ${AtLeastWin7}
         ; If we didn't run the stub installer, AddTaskbarSC will be empty.
         ; We determine whether to pin based on whether we're the default
-        ; browser, or if we're on win8 or later, we always pin.
+        ; application, or if we're on win8 or later, we always pin.
         ${If} $AddTaskbarSC == ""
           ; No need to check the default on Win8 and later
           ${If} ${AtMostWin2008R2}
@@ -896,7 +896,7 @@
 !define IsFirewallSvcRunning "!insertmacro IsFirewallSvcRunning"
 !define un.IsFirewallSvcRunning "!insertmacro IsFirewallSvcRunning"
 
-; Sets this installation as the default browser by setting the registry keys
+; Sets this installation as the default application by setting the registry keys
 ; under HKEY_CURRENT_USER via registry calls and using the AppAssocReg NSIS
 ; plugin for Vista and above. This is a function instead of a macro so it is
 ; easily called from an elevated instance of the binary. Since this can be

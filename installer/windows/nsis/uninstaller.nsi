@@ -256,12 +256,6 @@ Section "Uninstall"
   ${If} $R9 == "false"
     DeleteRegKey HKLM "$0"
     DeleteRegKey HKCU "$0"
-    StrCpy $0 "Software\Microsoft\MediaPlayer\ShimInclusionList\${FileMainEXE}"
-    DeleteRegKey HKLM "$0"
-    DeleteRegKey HKCU "$0"
-    StrCpy $0 "Software\Microsoft\MediaPlayer\ShimInclusionList\plugin-container.exe"
-    DeleteRegKey HKLM "$0"
-    DeleteRegKey HKCU "$0"
     StrCpy $0 "Software\Classes\MIME\Database\Content Type\application/x-xpinstall;app=Ambassador"
     DeleteRegKey HKLM "$0"
     DeleteRegKey HKCU "$0"
@@ -323,10 +317,6 @@ Section "Uninstall"
     Delete /REBOOTOK "$INSTDIR\update-settings.ini"
   ${EndIf}
 
-  ; Explicitly remove empty webapprt dir in case it exists (bug 757978).
-  RmDir "$INSTDIR\webapprt\components"
-  RmDir "$INSTDIR\webapprt"
-
   ; Remove the installation directory if it is empty
   RmDir "$INSTDIR"
 
@@ -353,13 +343,6 @@ Section "Uninstall"
   ; removed and other ugly things will happen like recreation of the app's
   ; clients registry key by the OS under some conditions.
   System::Call "shell32::SHChangeNotify(i ${SHCNE_ASSOCCHANGED}, i 0, i 0, i 0)"
-
-  ; Users who uninstall then reinstall expecting Ambassador to use a clean profile
-  ; may be surprised during first-run. This key is checked during startup of Ambassador and
-  ; subsequently deleted after checking. If the value is found during startup
-  ; the browser will offer to Reset Ambassador. We use the UpdateChannel to match
-  ; uninstalls of Ambassador-release with reinstalls of Ambassador-release, for example.
-  WriteRegStr HKCU "Software\Ascrod\Ambassador" "Uninstalled-${UpdateChannel}" "True"
 
   ${un.IsFirewallSvcRunning}
   Pop $0

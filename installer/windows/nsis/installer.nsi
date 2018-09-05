@@ -343,9 +343,9 @@ Section "-Application" APP_IDX
     ${RegCleanUninstall}
     ${UpdateProtocolHandlers}
 
-    ReadRegStr $0 HKLM "Software\mozilla.org\Ascrod" "CurrentVersion"
+    ReadRegStr $0 HKLM "Software\mozilla.org\Mozilla" "CurrentVersion"
     ${If} "$0" != "${GREVersion}"
-      WriteRegStr HKLM "Software\mozilla.org\Ascrod" "CurrentVersion" "${GREVersion}"
+      WriteRegStr HKLM "Software\mozilla.org\Mozilla" "CurrentVersion" "${GREVersion}"
     ${EndIf}
   ${EndIf}
 
@@ -390,11 +390,6 @@ Section "-Application" APP_IDX
   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\App Paths\${FileMainEXE}"
   ${WriteRegStr2} $TmpVal "$0" "" "$INSTDIR\${FileMainEXE}" 0
   ${WriteRegStr2} $TmpVal "$0" "Path" "$INSTDIR" 0
-
-  StrCpy $0 "Software\Microsoft\MediaPlayer\ShimInclusionList\$R9"
-  ${CreateRegKey} "$TmpVal" "$0" 0
-  StrCpy $0 "Software\Microsoft\MediaPlayer\ShimInclusionList\plugin-container.exe"
-  ${CreateRegKey} "$TmpVal" "$0" 0
 
   ${If} $TmpVal == "HKLM"
     ; Set the permitted LSP Categories for WinVista and above
@@ -676,9 +671,7 @@ Function CheckExistingInstall
 FunctionEnd
 
 Function LaunchApp
-!ifndef DEV_EDITION
   ${ManualCloseAppPrompt} "${WindowClass}" "$(WARN_MANUALLY_CLOSE_APP_LAUNCH)"
-!endif
 
   ClearErrors
   ${GetParameters} $0
