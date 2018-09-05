@@ -58,33 +58,16 @@
     ; Add the Firewall entries after an update
     Call AddFirewallEntries
 
-    ; Only update the Clients\StartMenuInternet registry key values in HKLM if
-    ; they don't exist or this installation is the same as the one set in those
-    ; keys.
-    ${StrFilter} "${FileMainEXE}" "+" "" "" $1
-    ReadRegStr $0 HKLM "Software\Clients\StartMenuInternet\$1\DefaultIcon" ""
+    ; Only update the Clients\IRC registry key values in HKLM if they don't exist or
+	; this installation is the same as the one set in those keys.
+    ReadRegStr $0 HKLM "Software\Clients\IRC\${AppRegName}\DefaultIcon" ""
     ${GetPathFromString} "$0" $0
     ${GetParent} "$0" $0
     ${If} ${FileExists} "$0"
       ${GetLongPath} "$0" $0
     ${EndIf}
     ${If} "$0" == "$INSTDIR"
-      ${SetStartMenuInternet} "HKLM"
-    ${EndIf}
-
-    ; Only update the Clients\StartMenuInternet registry key values in HKCU if
-    ; they don't exist or this installation is the same as the one set in those
-    ; keys.  This is only done in Windows 8 to avoid a UAC prompt.
-    ${If} ${AtLeastWin8}
-      ReadRegStr $0 HKCU "Software\Clients\StartMenuInternet\$1\DefaultIcon" ""
-      ${GetPathFromString} "$0" $0
-      ${GetParent} "$0" $0
-      ${If} ${FileExists} "$0"
-        ${GetLongPath} "$0" $0
-      ${EndIf}
-      ${If} "$0" == "$INSTDIR"
-        ${SetStartMenuInternet} "HKCU"
-      ${EndIf}
+      ${SetClientsIRC} "HKLM"
     ${EndIf}
 
     ReadRegStr $0 HKLM "Software\mozilla.org\Ascrod" "CurrentVersion"
@@ -131,10 +114,9 @@
 
   SetShellVarContext all      ; Set SHCTX to all users (e.g. HKLM)
   ${SetHandlers} ; Uses SHCTX
-  ${SetStartMenuInternet} "HKLM"
+  ${SetClientsIRC} "HKLM"
   ${ShowShortcuts}
-  ${StrFilter} "${FileMainEXE}" "+" "" "" $R9
-  WriteRegStr HKLM "Software\Clients\StartMenuInternet" "" "$R9"
+  WriteRegStr HKLM "Software\Clients\IRC" "" "${AppRegName}"
 !macroend
 !define SetAsDefaultAppGlobal "!insertmacro SetAsDefaultAppGlobal"
 
@@ -142,8 +124,7 @@
 ; application from Open With for the file types the application handles
 ; (bug 370480).
 !macro HideShortcuts
-  ${StrFilter} "${FileMainEXE}" "+" "" "" $0
-  StrCpy $R1 "Software\Clients\StartMenuInternet\$0\InstallInfo"
+  StrCpy $R1 "Software\Clients\IRC\${AppRegName}\InstallInfo"
   WriteRegDWORD HKLM "$R1" "IconsVisible" 0
   ${If} ${AtLeastWin8}
     WriteRegDWORD HKCU "$R1" "IconsVisible" 0
@@ -204,8 +185,7 @@
 ; Adds shortcuts for this installation. This should also add the application
 ; to Open With for the file types the application handles (bug 370480).
 !macro ShowShortcuts
-  ${StrFilter} "${FileMainEXE}" "+" "" "" $0
-  StrCpy $R1 "Software\Clients\StartMenuInternet\$0\InstallInfo"
+  StrCpy $R1 "Software\Clients\IRC\${AppRegName}\InstallInfo"
   WriteRegDWORD HKLM "$R1" "IconsVisible" 1
   ${If} ${AtLeastWin8}
     WriteRegDWORD HKCU "$R1" "IconsVisible" 1
@@ -294,29 +274,12 @@
 !macroend
 !define SetHandlers "!insertmacro SetHandlers"
 
-; Adds the HKLM\Software\Clients\StartMenuInternet\AMBASSADOR.EXE registry
-; entries (does not use SHCTX).
-;
-; The values for StartMenuInternet are only valid under HKLM and there can only
-; be one installation registerred under StartMenuInternet per application since
-; the key name is derived from the main application executable.
-; http://support.microsoft.com/kb/297878
-;
-; In Windows 8 this changes slightly, you can store StartMenuInternet entries in
-; HKCU.  The icon in start menu for StartMenuInternet is deprecated as of Win7,
-; but the subkeys are what's important.  Control panel default programs looks
-; for them only in HKLM pre win8.
-;
-; Note: we might be able to get away with using the full path to the
-; application executable for the key name in order to support multiple
-; installations.
-!macro SetStartMenuInternet RegKey
+; Adds the HKLM\Software\Clients\IRC registry entries.
+!macro SetClientsIRC RegKey
   ${GetLongPath} "$INSTDIR\${FileMainEXE}" $8
   ${GetLongPath} "$INSTDIR\uninstall\helper.exe" $7
 
-  ${StrFilter} "${FileMainEXE}" "+" "" "" $R9
-
-  StrCpy $0 "Software\Clients\StartMenuInternet\$R9"
+  StrCpy $0 "Software\Clients\IRC\${AppRegName}"
 
   WriteRegStr ${RegKey} "$0" "" "${BrandFullName}"
 
@@ -347,15 +310,13 @@
   WriteRegStr ${RegKey} "$0\Capabilities" "ApplicationIcon" "$8,0"
   WriteRegStr ${RegKey} "$0\Capabilities" "ApplicationName" "${BrandShortName}"
 
-  WriteRegStr ${RegKey} "$0\Capabilities\StartMenu" "StartMenuInternet" "$R9"
-
   WriteRegStr ${RegKey} "$0\Capabilities\URLAssociations" "irc"   "AmbassadorURL"
   WriteRegStr ${RegKey} "$0\Capabilities\URLAssociations" "ircs"  "AmbassadorURL"
 
   ; Vista Registered Application
   WriteRegStr ${RegKey} "Software\RegisteredApplications" "${AppRegName}" "$0\Capabilities"
 !macroend
-!define SetStartMenuInternet "!insertmacro SetStartMenuInternet"
+!define SetClientsIRC "!insertmacro SetClientsIRC"
 
 ; Add Software\Ascrod\ registry entries (uses SHCTX).
 !macro SetAppKeys
@@ -941,40 +902,28 @@
 ; easily called from an elevated instance of the binary. Since this can be
 ; called by an elevated instance logging is not performed in this function.
 Function SetAsDefaultAppUserHKCU
-  ; Only set as the user's StartMenuInternet browser if the StartMenuInternet
+  ; Only set as the user's main IRC client if the IRC
   ; registry keys are for this install.
-  ${StrFilter} "${FileMainEXE}" "+" "" "" $R9
   ClearErrors
-  ReadRegStr $0 HKCU "Software\Clients\StartMenuInternet\$R9\DefaultIcon" ""
-  ${If} ${Errors}
-  ${OrIf} ${AtMostWin2008R2}
-    ClearErrors
-    ReadRegStr $0 HKLM "Software\Clients\StartMenuInternet\$R9\DefaultIcon" ""
-  ${EndIf}
+  ReadRegStr $0 HKCU "Software\Clients\IRC\${ClientRegName}\DefaultIcon" ""
   ${Unless} ${Errors}
     ${GetPathFromString} "$0" $0
     ${GetParent} "$0" $0
     ${If} ${FileExists} "$0"
       ${GetLongPath} "$0" $0
       ${If} "$0" == "$INSTDIR"
-        WriteRegStr HKCU "Software\Clients\StartMenuInternet" "" "$R9"
+        WriteRegStr HKCU "Software\Clients\IRC" "" "${AppRegName}"
       ${EndIf}
     ${EndIf}
   ${EndUnless}
 
   SetShellVarContext current  ; Set SHCTX to the current user (e.g. HKCU)
 
-  ${If} ${AtLeastWin8}
-    ${SetStartMenuInternet} "HKCU"
-  ${EndIf}
-
   ${SetHandlers}
 
   ${If} ${AtLeastWinVista}
     ; Only register as the handler on Vista and above if the app registry name
-    ; exists under the RegisteredApplications registry key. The protocol and
-    ; file handlers set previously at the user level will associate this install
-    ; as the default browser.
+    ; exists under the RegisteredApplications registry key.
     ClearErrors
     ReadRegStr $0 HKLM "Software\RegisteredApplications" "${AppRegName}"
     ${Unless} ${Errors}
@@ -1009,41 +958,16 @@ FunctionEnd
 !ifdef NO_LOG
 
 Function SetAsDefaultAppUser
-  ; On Win8, we want to avoid having a UAC prompt since we'll already have
-  ; another action for control panel default browser selection popping up
-  ; to the user.  Win8 is the first OS where the start menu keys can be
-  ; added into HKCU.  The call to SetAsDefaultAppUserHKCU will have already
-  ; set the HKCU keys for SetStartMenuInternet.
-  ${If} ${AtLeastWin8}
-    ; Check if this is running in an elevated process
-    ClearErrors
-    ${GetParameters} $0
-    ${GetOptions} "$0" "/UAC:" $0
-    ${If} ${Errors} ; Not elevated
-      Call SetAsDefaultAppUserHKCU
-    ${Else} ; Elevated - execute the function in the unelevated process
-      GetFunctionAddress $0 SetAsDefaultAppUserHKCU
-      UAC::ExecCodeSegment $0
-    ${EndIf}
-    Return ; Nothing more needs to be done
-  ${EndIf}
-
-  ; Before Win8, it is only possible to set this installation of the application
-  ; as the StartMenuInternet handler if it was added to the HKLM
-  ; StartMenuInternet registry keys.
+  ; It is only possible to set this installation of the application
+  ; as the IRC handler if it was added to the HKLM IRC registry keys.
   ; http://support.microsoft.com/kb/297878
+  ${GetParameters} $R0
 
-  ; Check if this install location registered as the StartMenuInternet client
-  ${StrFilter} "${FileMainEXE}" "+" "" "" $R9
   ClearErrors
-  ReadRegStr $0 HKCU "Software\Clients\StartMenuInternet\$R9\DefaultIcon" ""
-  ${If} ${Errors}
-  ${OrIf} ${AtMostWin2008R2}
-    ClearErrors
-    ReadRegStr $0 HKLM "Software\Clients\StartMenuInternet\$R9\DefaultIcon" ""
-  ${EndIf}
-
+  ${GetOptions} "$R0" "IRC" $R1
   ${Unless} ${Errors}
+	ClearErrors
+    ReadRegStr $0 HKLM "Software\Clients\IRC\${AppRegName}\DefaultIcon" ""
     ${GetPathFromString} "$0" $0
     ${GetParent} "$0" $0
     ${If} ${FileExists} "$0"
@@ -1069,8 +993,6 @@ Function SetAsDefaultAppUser
   ; a) is a member of the administrators group (e.g. elevation is required)
   ; b) is not a member of the administrators group and chooses to elevate
   ${ElevateUAC}
-
-  ${SetStartMenuInternet} "HKLM"
 
   SetShellVarContext all  ; Set SHCTX to all users (e.g. HKLM)
 
