@@ -19,7 +19,7 @@ dialog {
 }
 
 #logo {
-    background: url(chrome://chatzilla/skin/images/icon32.png);
+    background: url(chrome://ambassador/skin/images/icon32.png);
     background-repeat: no-repeat;
     width:  32px;
     height: 32px;

@@ -4,16 +4,16 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
 
-<!DOCTYPE overlay SYSTEM "chrome://chatzilla/locale/chatzillaOverlay.dtd" >
+<!DOCTYPE overlay SYSTEM "chrome://ambassador/locale/chatzillaOverlay.dtd" >
 
 <!-- This is the overlay that addes "Chatzilla" to the (global) task menu. -->
 
-<?xml-stylesheet href="chrome://chatzilla/skin/chatzillaOverlay.css" type="text/css"?> 
+<?xml-stylesheet href="chrome://ambassador/skin/chatzillaOverlay.css" type="text/css"?> 
 
 <overlay id="ChatzillaTaskMenuID"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-<script type="application/x-javascript" src="chrome://chatzilla/content/chatzillaOverlay.js"/>
+<script type="application/x-javascript" src="chrome://ambassador/content/chatzillaOverlay.js"/>
 
 <keyset id="tasksKeys">
   <key id="key_irc"  key="&ircCmd.commandkey;" command="Tasks:IRC" modifiers="accel"/>

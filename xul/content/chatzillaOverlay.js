@@ -5,7 +5,7 @@
 function toIRC() 
 {
 
-	toOpenWindowByType("irc:chatzilla", "chrome://chatzilla/content/chatzilla.xul");
+	toOpenWindowByType("irc:chatzilla", "chrome://ambassador/content/chatzilla.xul");
 
 }
 

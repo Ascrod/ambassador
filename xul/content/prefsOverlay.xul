@@ -4,7 +4,7 @@
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
    
-<!DOCTYPE overlay SYSTEM "chrome://chatzilla/locale/pref-irc.dtd">
+<!DOCTYPE overlay SYSTEM "chrome://ambassador/locale/pref-irc.dtd">
 
 <overlay id="ovCZPrefs" 
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
@@ -12,7 +12,7 @@
   <treechildren id="panelChildren">
     <treeitem container="false" id="chatzillaItem" insertbefore="advancedItem">
       <treerow>
-        <treecell url="chrome://chatzilla/content/pref-irc.xul" 
+        <treecell url="chrome://ambassador/content/pref-irc.xul" 
             label="&pref-irc.window.title;"/>
       </treerow>
     </treeitem>
@@ -23,7 +23,7 @@
               insertbefore="securityItem"
               label="&pref-irc.window.title;"
               prefpane="chatzilla_pane"
-              url="chrome://chatzilla/content/pref-irc-toolkit.xul"/>
+              url="chrome://ambassador/content/pref-irc-toolkit.xul"/>
   </treechildren>
 
   <!-- Startup code (Mozilla/SeaMonkey 1.x) -->

@@ -1373,7 +1373,7 @@ function cmdNetworks(e)
 
 function cmdEditNetworks(e)
 {
-    window.openDialog("chrome://chatzilla/content/networks-list.xul", "",
+    window.openDialog("chrome://ambassador/content/networks-list.xul", "",
                       "chrome,resizable,dialog",
                       { client: client, opener: window });
 }
@@ -2249,7 +2249,7 @@ function cmdGotoURL(e)
         ((action == "goto-url-newtab") && !browserWin) ||
         ((action == "goto-url") && !browserWin) ||
         ((action == "goto-url") && browserWin &&
-         (location.indexOf("chrome://chatzilla/content/") == 0)))
+         (location.indexOf("chrome://ambassador/content/") == 0)))
     {
         try
         {
@@ -2330,7 +2330,7 @@ function cmdJoin(e)
             return;
         }
 
-        window.openDialog("chrome://chatzilla/content/channels.xul", "",
+        window.openDialog("chrome://ambassador/content/channels.xul", "",
                           "resizable=yes",
                           { client: client, network: e.network || null,
                             opener: window });
@@ -2726,7 +2726,7 @@ function cmdAbout(e)
         if ("aboutDialog" in client)
             return client.aboutDialog.focus();
 
-        window.openDialog("chrome://chatzilla/content/about/about.xul", "",
+        window.openDialog("chrome://ambassador/content/about/about.xul", "",
                           "chrome,dialog", { client: client });
     }
     else
@@ -3803,7 +3803,7 @@ function cmdDoCommand(e)
     if (e.cmdName == "cmd_mozillaPrefs")
     {
         // open Mozilla/SeaMonkey preferences
-        const PREF_URL = 'chrome://chatzilla/content/pref-irc.xul';
+        const PREF_URL = 'chrome://ambassador/content/pref-irc.xul';
         if (goPreferences.length == 1) // SeaMonkey 2.x
             goPreferences('navigator_pane');
         else // Mozilla, SeaMonkey 1.x, etc.
@@ -3814,7 +3814,7 @@ function cmdDoCommand(e)
         var prefWin = getWindowByType("irc:chatzilla:config");
         if (!prefWin)
         {
-            window.openDialog('chrome://chatzilla/content/config.xul', '',
+            window.openDialog('chrome://ambassador/content/config.xul', '',
                               'chrome,resizable,dialog=no', window);
         }
         else
@@ -4557,7 +4557,7 @@ function cmdInputTextDirection(e)
 
 function cmdInstallPlugin(e)
 {
-    var ipURL = "chrome://chatzilla/content/install-plugin/install-plugin.xul";
+    var ipURL = "chrome://ambassador/content/install-plugin/install-plugin.xul";
     var ctx = {};
     var pluginDownloader =
     {

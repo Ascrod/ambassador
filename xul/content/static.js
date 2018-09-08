@@ -2589,7 +2589,7 @@ function displaySecurityInfo()
         return;
     }
 
-    window.openDialog("chrome://chatzilla/content/security-info.xul", "",
+    window.openDialog("chrome://ambassador/content/security-info.xul", "",
                       "resizable=yes",
                       { client: client, server: o.server, opener: window });
 }
@@ -5815,7 +5815,7 @@ function showEventAlerts (type, event, message, nick, o, thisp, msgtype)
     try
     {
         client.alert.service.showAlertNotification(
-            "chrome://chatzilla/skin/images/icon32.png",
+            "chrome://ambassador/skin/images/icon32.png",
             "ChatZilla - " + source + " - " + event,
             message, clickable, tabId, listener);
     }

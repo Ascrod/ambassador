@@ -3,9 +3,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #mini-irc {                                                           
-  list-style-image: url("chrome://chatzilla/skin/images/icon16.png");
+  list-style-image: url("chrome://ambassador/skin/images/icon16.png");
 }
 
 #tasksMenuIRC {
-  list-style-image: url("chrome://chatzilla/skin/images/icon16.png");
+  list-style-image: url("chrome://ambassador/skin/images/icon16.png");
 }

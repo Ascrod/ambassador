@@ -42,10 +42,10 @@
     <em:name>Ambassador</em:name>
     <em:description>A clean, easy to use and highly extensible Internet Relay Chat (IRC) client.</em:description>
     <em:creator>Ascrod</em:creator>
-    <em:iconURL>chrome://chatzilla/skin/images/icon64.png</em:iconURL>
+    <em:iconURL>chrome://ambassador/skin/images/icon64.png</em:iconURL>
     <em:homepageURL>https://github/ascrod/ambassador/</em:homepageURL>
-    <em:aboutURL>chrome://chatzilla/content/about/about.xul</em:aboutURL>
-    <em:optionsURL>chrome://chatzilla/content/config.xul</em:optionsURL>
+    <em:aboutURL>chrome://ambassador/content/about/about.xul</em:aboutURL>
+    <em:optionsURL>chrome://ambassador/content/config.xul</em:optionsURL>
     <em:multiprocessCompatible>true</em:multiprocessCompatible>
 
     <!-- Force unpack the xpi, otherwise window icons do not work

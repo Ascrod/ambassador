@@ -4,16 +4,16 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
 
-<!DOCTYPE overlay SYSTEM "chrome://chatzilla/locale/browserOverlay.dtd" >
+<!DOCTYPE overlay SYSTEM "chrome://ambassador/locale/browserOverlay.dtd" >
 
 <!-- This is the overlay that adds a "Chatzilla" button to the toolbar palette. -->
 
-<?xml-stylesheet href="chrome://chatzilla/skin/browserOverlay.css" type="text/css"?> 
+<?xml-stylesheet href="chrome://ambassador/skin/browserOverlay.css" type="text/css"?> 
 
 <overlay id="ChatzillaBrowserToolbar"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-<script type="application/x-javascript" src="chrome://chatzilla/content/chatzillaOverlay.js"/>
+<script type="application/x-javascript" src="chrome://ambassador/content/chatzillaOverlay.js"/>
 
 <toolbarpalette id="BrowserToolbarPalette">
   <toolbarbutton id="tb-chatzilla-open" oncommand="toIRC()" 

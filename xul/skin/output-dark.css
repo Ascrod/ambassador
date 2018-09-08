@@ -7,7 +7,7 @@
  *  see output-base.css for details. 
  */
 
-@import url(chrome://chatzilla/content/output-base.css);
+@import url(chrome://ambassador/content/output-base.css);
 
 .chatzilla-body {                   /* The topmost container in the ChatZilla */
     background: black;              /* output window. */

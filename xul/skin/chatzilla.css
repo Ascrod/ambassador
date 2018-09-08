@@ -31,15 +31,15 @@ window {
 }
 
 #button-multiline-expand {
-    list-style-image:url("chrome://chatzilla/skin/images/multiline-expand.png");
+    list-style-image:url("chrome://ambassador/skin/images/multiline-expand.png");
 }
 
 #button-multiline-contract {
-    list-style-image:url("chrome://chatzilla/skin/images/multiline-contract.png");
+    list-style-image:url("chrome://ambassador/skin/images/multiline-contract.png");
 }
 
 #button-input {
-    list-style-image:url("chrome://chatzilla/skin/images/input-send.png");
+    list-style-image:url("chrome://ambassador/skin/images/input-send.png");
 }
 
 .highlight-menu-item:hover {
@@ -152,104 +152,104 @@ treecol {
 
 /* no mode */
 treechildren:-moz-tree-image {
-    list-style-image: url(chrome://chatzilla/skin/images/no-symbol.png);
+    list-style-image: url(chrome://ambassador/skin/images/no-symbol.png);
 }
 
 treechildren::-moz-tree-image {
-    list-style-image: url(chrome://chatzilla/skin/images/no-symbol.png);
+    list-style-image: url(chrome://ambassador/skin/images/no-symbol.png);
 }
 
 #user-list[mode="graphic"] treechildren:-moz-tree-image {
-    list-style-image: url(chrome://chatzilla/skin/images/no-graphic.png);
+    list-style-image: url(chrome://ambassador/skin/images/no-graphic.png);
 }
 
 #user-list[mode="graphic"] treechildren::-moz-tree-image {
-    list-style-image: url(chrome://chatzilla/skin/images/no-graphic.png);
+    list-style-image: url(chrome://ambassador/skin/images/no-graphic.png);
 }
 
 /* voice */
 treechildren:-moz-tree-image(voice-true) {
-    list-style-image: url(chrome://chatzilla/skin/images/voice-symbol.png);
+    list-style-image: url(chrome://ambassador/skin/images/voice-symbol.png);
 }
 
 treechildren::-moz-tree-image(voice-true) {
-    list-style-image: url(chrome://chatzilla/skin/images/voice-symbol.png);
+    list-style-image: url(chrome://ambassador/skin/images/voice-symbol.png);
 }
 
 #user-list[mode="graphic"] treechildren:-moz-tree-image(voice-true) {
-    list-style-image: url(chrome://chatzilla/skin/images/voice-graphic.png);
+    list-style-image: url(chrome://ambassador/skin/images/voice-graphic.png);
 }
 
 #user-list[mode="graphic"] treechildren::-moz-tree-image(voice-true) {
-    list-style-image: url(chrome://chatzilla/skin/images/voice-graphic.png);
+    list-style-image: url(chrome://ambassador/skin/images/voice-graphic.png);
 }
 
 /* half-chanop */
 treechildren:-moz-tree-image(halfop-true) {
-    list-style-image: url(chrome://chatzilla/skin/images/halfop-symbol.png);
+    list-style-image: url(chrome://ambassador/skin/images/halfop-symbol.png);
 }
 
 treechildren::-moz-tree-image(halfop-true) {
-    list-style-image: url(chrome://chatzilla/skin/images/halfop-symbol.png);
+    list-style-image: url(chrome://ambassador/skin/images/halfop-symbol.png);
 }
 
 #user-list[mode="graphic"] treechildren:-moz-tree-image(halfop-true) {
-    list-style-image: url(chrome://chatzilla/skin/images/halfop-graphic.png);
+    list-style-image: url(chrome://ambassador/skin/images/halfop-graphic.png);
 }
 
 #user-list[mode="graphic"] treechildren::-moz-tree-image(halfop-true) {
-    list-style-image: url(chrome://chatzilla/skin/images/halfop-graphic.png);
+    list-style-image: url(chrome://ambassador/skin/images/halfop-graphic.png);
 }
 
 /* chanop */
 treechildren:-moz-tree-image(op-true) {
-    list-style-image: url(chrome://chatzilla/skin/images/op-symbol.png);
+    list-style-image: url(chrome://ambassador/skin/images/op-symbol.png);
 }
 
 treechildren::-moz-tree-image(op-true) {
-    list-style-image: url(chrome://chatzilla/skin/images/op-symbol.png);
+    list-style-image: url(chrome://ambassador/skin/images/op-symbol.png);
 }
 
 #user-list[mode="graphic"] treechildren:-moz-tree-image(op-true) {
-    list-style-image: url(chrome://chatzilla/skin/images/op-graphic.png);
+    list-style-image: url(chrome://ambassador/skin/images/op-graphic.png);
 }
 
 #user-list[mode="graphic"] treechildren::-moz-tree-image(op-true) {
-    list-style-image: url(chrome://chatzilla/skin/images/op-graphic.png);
+    list-style-image: url(chrome://ambassador/skin/images/op-graphic.png);
 }
 
 /* admin */
 treechildren:-moz-tree-image(admin-true) {
-    list-style-image: url(chrome://chatzilla/skin/images/admin-symbol.png);
+    list-style-image: url(chrome://ambassador/skin/images/admin-symbol.png);
 }
 
 treechildren::-moz-tree-image(admin-true) {
-    list-style-image: url(chrome://chatzilla/skin/images/admin-symbol.png);
+    list-style-image: url(chrome://ambassador/skin/images/admin-symbol.png);
 }
 
 #user-list[mode="graphic"] treechildren:-moz-tree-image(admin-true) {
-    list-style-image: url(chrome://chatzilla/skin/images/admin-graphic.png);
+    list-style-image: url(chrome://ambassador/skin/images/admin-graphic.png);
 }
 
 #user-list[mode="graphic"] treechildren::-moz-tree-image(admin-true) {
-    list-style-image: url(chrome://chatzilla/skin/images/admin-graphic.png);
+    list-style-image: url(chrome://ambassador/skin/images/admin-graphic.png);
 }
 
 /* founder */
 treechildren:-moz-tree-image(founder-true) {
-    list-style-image: url(chrome://chatzilla/skin/images/founder-symbol.png);
+    list-style-image: url(chrome://ambassador/skin/images/founder-symbol.png);
 }
 
 treechildren::-moz-tree-image(founder-true) {
-    list-style-image: url(chrome://chatzilla/skin/images/founder-symbol.png);
+    list-style-image: url(chrome://ambassador/skin/images/founder-symbol.png);
 }
 
 #user-list[mode="graphic"] treechildren:-moz-tree-image(founder-true) {
-    list-style-image: url(chrome://chatzilla/skin/images/founder-graphic.png);
+    list-style-image: url(chrome://ambassador/skin/images/founder-graphic.png);
 }
 
 #user-list[mode="graphic"] treechildren::-moz-tree-image(founder-true) {
-    list-style-image: url(chrome://chatzilla/skin/images/founder-graphic.png);
+    list-style-image: url(chrome://ambassador/skin/images/founder-graphic.png);
 }
 
 /* away */
@@ -336,15 +336,15 @@ progressmeter[mode="undetermined"] {
 }
 
 #security-button[level="high"] > image {
-    list-style-image: url("chrome://chatzilla/skin/images/secure.png");
+    list-style-image: url("chrome://ambassador/skin/images/secure.png");
 }
 
 #security-button[level="low"] > image {
-    list-style-image: url("chrome://chatzilla/skin/images/secure-low.png");
+    list-style-image: url("chrome://ambassador/skin/images/secure-low.png");
 }
 
 #security-button[level="broken"] > image {
-    list-style-image: url("chrome://chatzilla/skin/images/secure-broken.png");
+    list-style-image: url("chrome://ambassador/skin/images/secure-broken.png");
 }
 
 /* prevent margins of a value-less label from shifting the image */
@@ -353,27 +353,27 @@ progressmeter[mode="undetermined"] {
 }
 
 #alert-status[alertstate="off"] {
-    list-style-image: url("chrome://chatzilla/skin/images/spbubble-off.png");
+    list-style-image: url("chrome://ambassador/skin/images/spbubble-off.png");
 }
 
 #alert-status[alertstate="on"] {
-    list-style-image: url("chrome://chatzilla/skin/images/spbubble-on.png");
+    list-style-image: url("chrome://ambassador/skin/images/spbubble-on.png");
 }
 
 #logging-status[loggingstate="off"] {
-    list-style-image: url("chrome://chatzilla/skin/images/logging-off.png");
+    list-style-image: url("chrome://ambassador/skin/images/logging-off.png");
 }
 
 #logging-status[loggingstate="on"] {
-    list-style-image: url("chrome://chatzilla/skin/images/logging-on.png");
+    list-style-image: url("chrome://ambassador/skin/images/logging-on.png");
 }
 
 #offline-status[offlinestate="offline"] {
-    list-style-image: url("chrome://chatzilla/skin/images/offline.png");
+    list-style-image: url("chrome://ambassador/skin/images/offline.png");
 }
 
 #offline-status[offlinestate="online"] {
-    list-style-image: url("chrome://chatzilla/skin/images/online.png");
+    list-style-image: url("chrome://ambassador/skin/images/online.png");
 }
 
 /* Focus styling for a11y reasons */

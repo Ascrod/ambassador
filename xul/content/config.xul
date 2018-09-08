@@ -3,7 +3,7 @@
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
-<!DOCTYPE dialog SYSTEM "chrome://chatzilla/locale/config.dtd">
+<!DOCTYPE dialog SYSTEM "chrome://ambassador/locale/config.dtd">
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="config.css" type="text/css"?>
@@ -21,14 +21,14 @@
     onunload="gPrefWindow.onClose();"
     title="&window.title;">
 
-  <script src="chrome://chatzilla/content/lib/js/utils.js"/>
-  <script src="chrome://chatzilla/content/lib/js/file-utils.js"/>
-  <script src="chrome://chatzilla/content/lib/js/pref-manager.js"/>
-  <script src="chrome://chatzilla/content/lib/js/message-manager.js"/>
-  <script src="chrome://chatzilla/content/prefs.js"/>
-  <script src="chrome://chatzilla/content/messages.js"/>
+  <script src="chrome://ambassador/content/lib/js/utils.js"/>
+  <script src="chrome://ambassador/content/lib/js/file-utils.js"/>
+  <script src="chrome://ambassador/content/lib/js/pref-manager.js"/>
+  <script src="chrome://ambassador/content/lib/js/message-manager.js"/>
+  <script src="chrome://ambassador/content/prefs.js"/>
+  <script src="chrome://ambassador/content/messages.js"/>
   <script src="config.js"/>
-  <script src="chrome://chatzilla/content/static.js"/>
+  <script src="chrome://ambassador/content/static.js"/>
 
   <tooltip id="czPrefTip" orient="vertical" 
       onpopupshowing="return gPrefWindow.onTooltipPopupShowing(this);">

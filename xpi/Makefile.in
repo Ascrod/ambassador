@@ -32,7 +32,7 @@ libs realchrome:: $(FINAL_TARGET)/chrome
 	$(call py_action,preprocessor   \
 	  $(DEFINES) $(ACDEFINES)       \
 	  $(srcdir)/../xul/content/static.js  \
-	  -o $(DIST)/xpi-stage/$(XPI_NAME)/chrome/chatzilla/content/chatzilla/static.js)
+	  -o $(DIST)/xpi-stage/$(XPI_NAME)/chrome/ambassador/content/ambassador/static.js)
 	$(call py_action,jar_maker,     \
 	  $(QUIET) -d $(FINAL_TARGET)   \
 	  $(MAKE_JARS_FLAGS)            \

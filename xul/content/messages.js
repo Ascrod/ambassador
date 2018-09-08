@@ -4,7 +4,7 @@
 
 function initMessages()
 {
-    var path = "chrome://chatzilla/locale/chatzilla.properties";
+    var path = "chrome://ambassador/locale/chatzilla.properties";
     
     client.messageManager = new MessageManager(client.entities);
     client.messageManager.enableHankakuToZenkaku = true;

@@ -1,7 +1,7 @@
 // Default Prefs
 
 // This is needed to start Ambassador.
-pref("toolkit.defaultChromeURI", "chrome://chatzilla/content/chatzilla.xul");
+pref("toolkit.defaultChromeURI", "chrome://ambassador/content/chatzilla.xul");
 
 // Enable the extension manager...
 pref("xpinstall.dialog.confirm", "chrome://mozapps/content/xpinstall/xpinstallConfirm.xul");

@@ -101,7 +101,7 @@ function spawnChatZilla(uri, count)
         args.url = uri;
 
     hiddenWin.ChatZillaStarting = new Date();
-    hiddenWin.openDialog("chrome://chatzilla/content/chatzilla.xul", "_blank",
+    hiddenWin.openDialog("chrome://ambassador/content/chatzilla.xul", "_blank",
                  "chrome,menubar,toolbar,status,resizable,dialog=no",
                  args);
 

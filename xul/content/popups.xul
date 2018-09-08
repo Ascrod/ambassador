@@ -6,9 +6,9 @@
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
-<!DOCTYPE overlay SYSTEM "chrome://chatzilla/locale/chatzilla.dtd" >
+<!DOCTYPE overlay SYSTEM "chrome://ambassador/locale/chatzilla.dtd" >
 
-<?xml-stylesheet href="chrome://chatzilla/content/output-base.css" type="text/css"?>
+<?xml-stylesheet href="chrome://ambassador/content/output-base.css" type="text/css"?>
 
 <overlay id="chatzilla-popup-overlay"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
