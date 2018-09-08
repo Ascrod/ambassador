@@ -3811,7 +3811,7 @@ function cmdDoCommand(e)
     }
     else if (e.cmdName == "cmd_chatzillaPrefs")
     {
-        var prefWin = getWindowByType("irc:chatzilla:config");
+        var prefWin = getWindowByType("irc:ambassador:config");
         if (!prefWin)
         {
             window.openDialog('chrome://ambassador/content/config.xul', '',

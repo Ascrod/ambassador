@@ -4,7 +4,7 @@
 
 const MEDIATOR_CONTRACTID   = "@mozilla.org/appshell/window-mediator;1";
 const nsIWindowMediator     = Components.interfaces.nsIWindowMediator;
-const NETWORK_WINDOWTYPE     = "irc:chatzilla:networks";
+const NETWORK_WINDOWTYPE     = "irc:ambassador:networks";
 
 var ASSERT = function(cond, msg) { if (!cond) { alert(msg); } return cond; }
 var client;

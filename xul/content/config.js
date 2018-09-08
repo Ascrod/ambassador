@@ -6,7 +6,7 @@ const MEDIATOR_CONTRACTID   = "@mozilla.org/appshell/window-mediator;1";
 
 const nsIWindowMediator     = Components.interfaces.nsIWindowMediator;
 
-const CONFIG_WINDOWTYPE     = "irc:chatzilla:config";
+const CONFIG_WINDOWTYPE     = "irc:ambassador:config";
 
 /* Now we create and set up some required items from other Chatzilla JS files 
  * that we really have no reason to load, but the ones we do need won't work 

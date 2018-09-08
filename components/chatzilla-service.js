@@ -50,7 +50,7 @@ function spawnChatZilla(uri, count)
     const hiddenWin = ass.hiddenDOMWindow;
 
     // Ok, not starting currently, so check if we've got existing windows.
-    const w = wm.getMostRecentWindow("irc:chatzilla");
+    const w = wm.getMostRecentWindow("irc:ambassador");
 
     // Claiming that a ChatZilla window is loading.
     if ("ChatZillaStarting" in hiddenWin)

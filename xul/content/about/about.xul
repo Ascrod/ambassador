@@ -9,7 +9,7 @@
 <?xml-stylesheet href="chrome://ambassador/skin/about.css" type="text/css"?>
 
 <dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    windowtype="irc:chatzilla:about"
+    windowtype="irc:ambassador:about"
     buttons="accept"
     onload="onLoad()"
     onunload="onUnload()"

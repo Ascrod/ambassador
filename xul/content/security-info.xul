@@ -10,7 +10,7 @@
 
 <dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         xmlns:html="http://www.w3.org/1999/xhtml"
-        windowtype="irc:chatzilla:security-info"
+        windowtype="irc:ambassador:security-info"
         onload="onLoad()"
         id="chatzilla-window"
         buttons="accept"

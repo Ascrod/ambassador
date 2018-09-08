@@ -100,7 +100,7 @@ function initMenus()
     var NetConnected    = "(cx.network and cx.network.isConnected())";
     var NetDisconnected = "(cx.network and !cx.network.isConnected())";
 
-    client.menuSpecs["mainmenu:chatzilla"] = {
+    client.menuSpecs["mainmenu:ambassador"] = {
         label: MSG_MNU_CHATZILLA,
         accesskey: getAccessKeyForMenu('MSG_MNU_CHATZILLA'),
         getContext: getDefaultContext,
