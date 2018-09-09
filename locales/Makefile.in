@@ -15,7 +15,7 @@ RETRIEVE_WINDOWS_INSTALLER = 1
 
 MOZ_LANGPACK_EID=langpack-$(AB_CD)@ascrod
 
-L10N_PREF_JS_EXPORTS = $(call MERGE_FILE,chatzilla-l10n.js)
+L10N_PREF_JS_EXPORTS = $(call MERGE_FILE,ambassador-l10n.js)
 L10N_PREF_JS_EXPORTS_PATH = $(FINAL_TARGET)/$(PREF_DIR)
 L10N_PREF_JS_EXPORTS_FLAGS = $(PREF_PPFLAGS) --silence-missing-directive-warnings
 PP_TARGETS += L10N_PREF_JS_EXPORTS
@@ -109,7 +109,7 @@ endif
 clobber-zip:
 	$(RM) $(STAGEDIST)/chrome/$(AB_CD).jar \
 	  $(STAGEDIST)/chrome/$(AB_CD).manifest \
-	  $(STAGEDIST)/defaults/pref/chatzilla-l10n.js
+	  $(STAGEDIST)/defaults/pref/ambassador-l10n.js
 	$(RM) -rf $(STAGEDIST)/dictionaries \
 	  $(STAGEDIST)/hyphenation/$(AB_CD) \
 	  $(STAGEDIST)/defaults/profile \

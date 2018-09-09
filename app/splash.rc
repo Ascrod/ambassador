@@ -6,7 +6,7 @@
 #include <windows.h>
 #include "nsNativeAppSupportWin.h"
 
-1 24 "chatzilla.exe.manifest"
+1 24 "ambassador.exe.manifest"
 
 IDI_APPICON ICON CHATZILLA_ICO
 IDI_APPLICATION ICON CHATZILLA_ICO

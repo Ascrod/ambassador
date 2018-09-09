@@ -45,7 +45,7 @@
 @RESPATH@/chrome/@AB_CD@.manifest
 @RESPATH@/dictionaries/*
 @RESPATH@/hyphenation/*
-@RESPATH@/defaults/pref/chatzilla-l10n.js
+@RESPATH@/defaults/pref/ambassador-l10n.js
 #ifdef XP_WIN32
 @BINPATH@/uninstall/helper.exe
 #endif
@@ -224,7 +224,7 @@
 ; [Default Preferences]
 ; All the pref files must be part of base to prevent migration bugs
 @RESPATH@/defaults/pref/ambassador.js
-@RESPATH@/defaults/pref/chatzilla-branding.js
+@RESPATH@/defaults/pref/ambassador-branding.js
 @RESPATH@/greprefs.js
 @RESPATH@/defaults/autoconfig/prefcalls.js
 
