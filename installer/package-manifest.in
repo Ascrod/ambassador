@@ -223,7 +223,7 @@
 
 ; [Default Preferences]
 ; All the pref files must be part of base to prevent migration bugs
-@RESPATH@/defaults/pref/chatzilla-prefs.xr.js
+@RESPATH@/defaults/pref/ambassador.js
 @RESPATH@/defaults/pref/chatzilla-branding.js
 @RESPATH@/greprefs.js
 @RESPATH@/defaults/autoconfig/prefcalls.js

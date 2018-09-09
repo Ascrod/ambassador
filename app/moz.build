@@ -10,8 +10,7 @@ DIRS += ['profile/extensions']
 GeckoProgram(CONFIG['MOZ_APP_NAME'])
 
 JS_PREFERENCE_PP_FILES += [
-    'profile/chatzilla-prefs.xr.js',
-    'profile/update-prefs.xr.js',
+    'profile/ambassador.js',
 ]
 
 if CONFIG['LIBXUL_SDK']:
