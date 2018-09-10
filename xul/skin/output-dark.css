@@ -9,16 +9,16 @@
 
 @import url(chrome://ambassador/content/output-base.css);
 
-.chatzilla-body {                   /* The topmost container in the ChatZilla */
-    background: black;              /* output window. */
+.ambassador-body {                 /* The topmost container in the Ambassador */
+    background: black;             /* output window. */
     color: lightgrey;    
 }
 
-a.chatzilla-link {
+a.ambassador-link {
     color: #fffdd6;
 }
 
-a.chatzilla-link:visited {
+a.ambassador-link:visited {
     color: lightgrey;
 }
 
@@ -87,30 +87,30 @@ treechildren::-moz-tree-cell-text(unselected) {
     color: lightgreen;
 }
 
-.msg[msg-type="JOIN"] .msg-data a.chatzilla-link,
-.msg[msg-type="PART"] .msg-data a.chatzilla-link {
+.msg[msg-type="JOIN"] .msg-data a.ambassador-link,
+.msg[msg-type="PART"] .msg-data a.ambassador-link {
     color: lightcyan;
 }
 
-.msg[msg-type="KICK"] .msg-data a.chatzilla-link {
+.msg[msg-type="KICK"] .msg-data a.ambassador-link {
     color: #ff5700;
 }
 
-.chatzilla-rheet {
+.ambassador-rheet {
     color: magenta !important;
 }
 
-.chatzilla-highlight[name="Slate"] {
+.ambassador-highlight[name="Slate"] {
     color: white;
     background: #15272d;
 }
 
-.chatzilla-highlight[name="Plum"] {
+.ambassador-highlight[name="Plum"] {
     color: white;
     background: #442144;
 }
 
-.chatzilla-highlight[name="Brown"] {
+.ambassador-highlight[name="Brown"] {
     color: white;
     background: #562a14;
 }
@@ -119,7 +119,7 @@ treechildren::-moz-tree-cell-text(unselected) {
     color: silver;                          /* indicator                      */
 }
 
-.msg-user a.chatzilla-link,
+.msg-user a.ambassador-link,
 .msg-user {                                 /* msg-user = nickname portion of */
     color: white !important;                /* a message (channel and query   */
 }                                           /* views)                         */
@@ -164,8 +164,8 @@ treechildren::-moz-tree-cell-text(unselected) {
     color: #60e066;
 }
 
-.msg[msg-type="NOTICE"] .msg-data a.chatzilla-link,
-.msg[msg-type="MODE"] .msg-data a.chatzilla-link {
+.msg[msg-type="NOTICE"] .msg-data a.ambassador-link,
+.msg[msg-type="MODE"] .msg-data a.ambassador-link {
     color: #6dff74;
 }
 

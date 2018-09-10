@@ -40,14 +40,14 @@ function initMunger()
     munger.addRule("quote", /(``|'')/, insertQuote,
                    NORMAL_PRIORITY, NORMAL_PRIORITY);
     munger.addRule("bold", /(?:[\s(\[]|^)(\*[^*()]*\*)(?:[\s\]).,;!\?]|$)/,
-                   "chatzilla-bold", NORMAL_PRIORITY, NORMAL_PRIORITY);
+                   "ambassador-bold", NORMAL_PRIORITY, NORMAL_PRIORITY);
     munger.addRule("underline", /(?:[\s(\[]|^)(\_[^_()]*\_)(?:[\s\]).,;!\?]|$)/,
-                   "chatzilla-underline", NORMAL_PRIORITY, NORMAL_PRIORITY);
+                   "ambassador-underline", NORMAL_PRIORITY, NORMAL_PRIORITY);
     munger.addRule("italic", /(?:\s|^)(\/[^\/()]*\/)(?:[\s.,]|$)/,
-                   "chatzilla-italic", NORMAL_PRIORITY, NORMAL_PRIORITY);
+                   "ambassador-italic", NORMAL_PRIORITY, NORMAL_PRIORITY);
     /* allow () chars inside |code()| blocks */
     munger.addRule("teletype", /(?:\s|^)(\|[^|]*\|)(?:[\s.,]|$)/,
-                   "chatzilla-teletype", NORMAL_PRIORITY, NORMAL_PRIORITY);
+                   "ambassador-teletype", NORMAL_PRIORITY, NORMAL_PRIORITY);
     munger.addRule(".mirc-colors", client.colorRE, mircChangeColor,
                    NORMAL_PRIORITY, NORMAL_PRIORITY);
     munger.addRule(".mirc-bold", /(\x02)/, mircToggleBold,
@@ -182,9 +182,9 @@ function insertLink(matchText, containerTag, data, mungerEntry)
     // Carry over formatting.
     var otherFormatting = calcClass(data);
     if (otherFormatting)
-        anchor.setAttribute("class", "chatzilla-link " + otherFormatting);
+        anchor.setAttribute("class", "ambassador-link " + otherFormatting);
     else
-        anchor.setAttribute("class", "chatzilla-link");
+        anchor.setAttribute("class", "ambassador-link");
 
     anchor.setAttribute("target", "_content");
     mungerEntry.enabled = false;
@@ -222,9 +222,9 @@ function insertMailToLink(matchText, containerTag, eventData, mungerEntry)
     // Carry over formatting.
     var otherFormatting = calcClass(eventData);
     if (otherFormatting)
-        anchor.setAttribute("class", "chatzilla-link " + otherFormatting);
+        anchor.setAttribute("class", "ambassador-link " + otherFormatting);
     else
-        anchor.setAttribute("class", "chatzilla-link");
+        anchor.setAttribute("class", "ambassador-link");
 
     //anchor.setAttribute ("target", "_content");
     mungerEntry.enabled = false;
@@ -264,9 +264,9 @@ function insertChannelLink(matchText, containerTag, eventData, mungerEntry)
     // Carry over formatting.
     var otherFormatting = calcClass(eventData);
     if (otherFormatting)
-        anchor.setAttribute("class", "chatzilla-link " + otherFormatting);
+        anchor.setAttribute("class", "ambassador-link " + otherFormatting);
     else
-        anchor.setAttribute("class", "chatzilla-link");
+        anchor.setAttribute("class", "ambassador-link");
 
     mungerEntry.enabled = false;
     eventData.inLink = true;
@@ -294,9 +294,9 @@ function insertTalkbackLink(matchText, containerTag, eventData, mungerEntry)
     // Carry over formatting.
     var otherFormatting = calcClass(eventData);
     if (otherFormatting)
-        anchor.setAttribute("class", "chatzilla-link " + otherFormatting);
+        anchor.setAttribute("class", "ambassador-link " + otherFormatting);
     else
-        anchor.setAttribute("class", "chatzilla-link");
+        anchor.setAttribute("class", "ambassador-link");
 
     mungerEntry.enabled = false;
     client.munger.munge(matchText, anchor, eventData);
@@ -353,9 +353,9 @@ function insertBugzillaLink (matchText, containerTag, eventData, mungerEntry)
         // Carry over formatting.
         var otherFormatting = calcClass(eventData);
         if (otherFormatting)
-            anchor.setAttribute("class", "chatzilla-link " + otherFormatting);
+            anchor.setAttribute("class", "ambassador-link " + otherFormatting);
         else
-            anchor.setAttribute("class", "chatzilla-link");
+            anchor.setAttribute("class", "ambassador-link");
 
         anchor.setAttribute("target", "_content");
         mungerEntry.enabled = false;
@@ -386,7 +386,7 @@ function insertRheet(matchText, containerTag, eventData, mungerEntry)
     var anchor = document.createElementNS(XHTML_NS, "html:a");
     anchor.setAttribute("href",
                         "http://ftp.mozilla.org/pub/mozilla.org/mozilla/libraries/bonus-tracks/rheet.wav");
-    anchor.setAttribute("class", "chatzilla-rheet chatzilla-link");
+    anchor.setAttribute("class", "ambassador-rheet ambassador-link");
     //anchor.setAttribute ("target", "_content");
     insertText(matchText, anchor, eventData);
     containerTag.appendChild(anchor);
@@ -461,19 +461,19 @@ function insertSmiley(emoticon, containerTag, eventData, mungerEntry)
     var span = document.createElementNS(XHTML_NS, "html:span");
 
     /* create a span to hold the emoticon text */
-    span.setAttribute ("class", "chatzilla-emote-txt");
+    span.setAttribute ("class", "ambassador-emote-txt");
     span.setAttribute ("type", type);
     span.appendChild (document.createTextNode (emoticon));
     containerTag.appendChild (span);
 
     /* create an empty span after the text.  this span will have an image added
-     * after it with a chatzilla-emote:after css rule. using
-     * chatzilla-emote-txt:after is not good enough because it does not allow us
+     * after it with a ambassador-emote:after css rule. using
+     * ambassador-emote-txt:after is not good enough because it does not allow us
      * to turn off the emoticon text, but keep the image.  ie.
-     * chatzilla-emote-txt { display: none; } turns off
-     * chatzilla-emote-txt:after as well.*/
+     * ambassador-emote-txt { display: none; } turns off
+     * ambassador-emote-txt:after as well.*/
     span = document.createElementNS(XHTML_NS, "html:span");
-    span.setAttribute("class", "chatzilla-emote");
+    span.setAttribute("class", "ambassador-emote");
     span.setAttribute("type", type);
     span.setAttribute("title", emoticon);
     span.setAttribute("role", "image");
@@ -752,7 +752,7 @@ function removeColorInfo(data)
 function showCtrlChar(c, containerTag)
 {
     var span = document.createElementNS(XHTML_NS, "html:span");
-    span.setAttribute("class", "chatzilla-control-char");
+    span.setAttribute("class", "ambassador-control-char");
     if (c == "\t")
     {
         containerTag.appendChild(document.createTextNode(c));
@@ -849,7 +849,7 @@ function insertInlineButton(text, containerTag, data)
     var link = document.createElementNS(XHTML_NS, "html:a");
     link.setAttribute("href", "x-cz-command:" + encodeURI(command));
     link.setAttribute("title", title);
-    link.setAttribute("class", "chatzilla-link");
+    link.setAttribute("class", "ambassador-link");
     link.appendChild(document.createTextNode(label));
 
     containerTag.appendChild(document.createTextNode("["));
@@ -863,19 +863,19 @@ function calcClass(data)
     if ("hasColorInfo" in data)
     {
         if ("currFgColor" in data)
-            className += " chatzilla-fg" + data.currFgColor;
+            className += " ambassador-fg" + data.currFgColor;
         if ("currBgColor" in data)
-            className += " chatzilla-bg" + data.currBgColor;
+            className += " ambassador-bg" + data.currBgColor;
         if ("isBold" in data)
-            className += " chatzilla-bold";
+            className += " ambassador-bold";
         if ("isItalic" in data)
-            className += " chatzilla-italic";
+            className += " ambassador-italic";
         if ("isOverline" in data)
-            className += " chatzilla-overline";
+            className += " ambassador-overline";
         if ("isStrikethrough" in data)
-            className += " chatzilla-strikethrough";
+            className += " ambassador-strikethough";
         if ("isUnderline" in data)
-            className += " chatzilla-underline";
+            className += " ambassador-underline";
     }
     return className;
 }

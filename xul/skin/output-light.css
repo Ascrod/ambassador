@@ -9,12 +9,12 @@
 
 @import url(chrome://ambassador/content/output-base.css);
 
-.chatzilla-body {                   /* The topmost container in the ChatZilla */
-    background: white;              /* output window.                         */
+.ambassador-body {                 /* The topmost container in the Ambassador */
+    background: white;             /* output window. */
     color: #222222;    
 }
 
-a.chatzilla-link {
+a.ambassador-link {
     font-weight: bold;
     color: #342ecc;
 }
@@ -64,49 +64,49 @@ a.chatzilla-link {
     background-color: #F0F0F0;
 }
 
-.msg[msg-type="HELLO"] .msg-data a.chatzilla-link {
+.msg[msg-type="HELLO"] .msg-data a.ambassador-link {
     color: #d7d9dd;
 }
 
-.msg[msg-type="JOIN"] .msg-data a.chatzilla-link,
-.msg[msg-type="PART"] .msg-data a.chatzilla-link {
+.msg[msg-type="JOIN"] .msg-data a.ambassador-link,
+.msg[msg-type="PART"] .msg-data a.ambassador-link {
     font-weight: bold;
     color: #11c411;
 }
 
-.msg[msg-type="ERROR"] .msg-data a.chatzilla-link,
-.msg[msg-type="DISCONNECT"] .msg-data a.chatzilla-link {
+.msg[msg-type="ERROR"] .msg-data a.ambassador-link,
+.msg[msg-type="DISCONNECT"] .msg-data a.ambassador-link {
     font-weight: bold;
     color: white;
 }
 
-.msg[msg-type="KICK"] .msg-data a.chatzilla-link {
+.msg[msg-type="KICK"] .msg-data a.ambassador-link {
     color: #aa0d08;
 }
 
-.msg[msg-type="NOTICE"] .msg-data a.chatzilla-link {
+.msg[msg-type="NOTICE"] .msg-data a.ambassador-link {
     color: #d64444;
 }
 
-.msg[msg-type="QUIT"] .msg-data a.chatzilla-link {
+.msg[msg-type="QUIT"] .msg-data a.ambassador-link {
     color: #c46907;
 }
 
-.chatzilla-rheet {
+.ambassador-rheet {
     color: #e25e00 !important;
 }
 
-.chatzilla-highlight[name="Slate"] {
+.ambassador-highlight[name="Slate"] {
     color: black;
     background: #b8c4e0;
 }
 
-.chatzilla-highlight[name="Plum"] {
+.ambassador-highlight[name="Plum"] {
     color: black;
     background: #ddb8d0;
 }
 
-.chatzilla-highlight[name="Brown"] {
+.ambassador-highlight[name="Brown"] {
     color: black;
     background: #ffbf77;
 }
@@ -116,7 +116,7 @@ a.chatzilla-link {
     font-weight: bold;
 }
 
-.msg-user a.chatzilla-link,
+.msg-user a.ambassador-link,
 .msg-user {                                 /* msg-user = nickname portion of */
     color: black !important;                /* a message (channel and query   */
     font-weight: bold;                      /* views)                         */

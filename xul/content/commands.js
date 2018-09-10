@@ -1353,7 +1353,7 @@ function cmdNetworks(e)
             "data": net.unicodeName,
             "href": (isSecure ? "ircs://" : "irc://") + net.canonicalName
         };
-        wrapper.appendChild(newInlineText(linkData, "chatzilla-link", "a"));
+        wrapper.appendChild(newInlineText(linkData, "ambassador-link", "a"));
 
         if (netnames[n] != lastname)
             wrapper.appendChild(document.createTextNode(MSG_COMMASP));

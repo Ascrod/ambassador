@@ -4559,7 +4559,7 @@ function this_getFontCSS(format)
     else
         fs = "font-size: medium;";
 
-    css = ".chatzilla-body { " + fs + fn + " }";
+    css = ".ambassador-body { " + fs + fn + " }";
 
     if (format == "data")
         return "data:text/css," + encodeURIComponent(css);
@@ -4819,11 +4819,11 @@ function __display(message, msgtype, sourceObj, destObj)
             blockLevel = true;
 
         if (decorSt)
-            msgRowSource.appendChild(newInlineText(decorSt, "chatzilla-decor"));
+            msgRowSource.appendChild(newInlineText(decorSt, "ambassador-decor"));
         if (nickURL)
         {
             var nick_anchor = document.createElementNS(XHTML_NS, "html:a");
-            nick_anchor.setAttribute("class", "chatzilla-link");
+            nick_anchor.setAttribute("class", "ambassador-link");
             nick_anchor.setAttribute("href", nickURL);
             nick_anchor.appendChild(newInlineText(nick));
             msgRowSource.appendChild(nick_anchor);
@@ -4834,15 +4834,15 @@ function __display(message, msgtype, sourceObj, destObj)
         }
         if (msgprefix)
         {
-            /* We don't style the "/" with chatzilla-decor because the one
+            /* We don't style the "/" with ambassador-decor because the one
              * thing we don't want is it disappearing!
              */
             msgRowSource.appendChild(newInlineText("/", ""));
             msgRowSource.appendChild(newInlineText(msgprefix,
-                                                   "chatzilla-prefix"));
+                                                   "ambassador-prefix"));
         }
         if (decorEn)
-            msgRowSource.appendChild(newInlineText(decorEn, "chatzilla-decor"));
+            msgRowSource.appendChild(newInlineText(decorEn, "ambassador-decor"));
         canMergeData = this.prefs["collapseMsgs"];
     }
     else if (msgprefix)
@@ -4855,10 +4855,10 @@ function __display(message, msgtype, sourceObj, destObj)
         msgRowSource = document.createElementNS(XHTML_NS, "html:td");
         msgRowSource.setAttribute("class", "msg-user");
 
-        msgRowSource.appendChild(newInlineText(decorSt, "chatzilla-decor"));
+        msgRowSource.appendChild(newInlineText(decorSt, "ambassador-decor"));
         msgRowSource.appendChild(newInlineText("/", ""));
-        msgRowSource.appendChild(newInlineText(msgprefix, "chatzilla-prefix"));
-        msgRowSource.appendChild(newInlineText(decorEn, "chatzilla-decor"));
+        msgRowSource.appendChild(newInlineText(msgprefix, "ambassador-prefix"));
+        msgRowSource.appendChild(newInlineText(decorEn, "ambassador-decor"));
         canMergeData = this.prefs["collapseMsgs"];
     }
     else
