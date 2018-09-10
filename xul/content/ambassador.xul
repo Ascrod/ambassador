@@ -4,10 +4,10 @@
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
-<!DOCTYPE window SYSTEM "chrome://ambassador/locale/chatzilla.dtd">
+<!DOCTYPE window SYSTEM "chrome://ambassador/locale/ambassador.dtd">
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://ambassador/skin/chatzilla.css" type="text/css"?>
+<?xml-stylesheet href="chrome://ambassador/skin/ambassador.css" type="text/css"?>
 
 <?xul-overlay href="chrome://ambassador/content/scripts.xul"?>
 <?xul-overlay href="chrome://ambassador/content/popups.xul"?>

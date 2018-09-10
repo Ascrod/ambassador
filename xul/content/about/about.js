@@ -23,7 +23,7 @@ function getMsg(msgName, params, deflt)
 
 function onLoad()
 {
-    const propsPath = "chrome://ambassador/locale/chatzilla.properties";
+    const propsPath = "chrome://ambassador/locale/ambassador.properties";
 
     // Find our owner, if we have one.
     ownerClient = window.arguments ? window.arguments[0].client : null;

@@ -4,5 +4,5 @@
 
 ambassador.jar:
 % content ambassador-pm %content/ambassador/pm/
-% overlay chrome://ambassador/content/chatzilla.xul chrome://ambassador/content/pm/overlay.xul application={8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}
+% overlay chrome://ambassador/content/ambassador.xul chrome://ambassador/content/pm/overlay.xul application={8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}
 	content/ambassador/pm/overlay.xul           (../xul/content/pm/overlay.xul)

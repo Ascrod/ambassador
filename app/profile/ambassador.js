@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 // This is needed to start Ambassador.
-pref("toolkit.defaultChromeURI", "chrome://ambassador/content/chatzilla.xul");
+pref("toolkit.defaultChromeURI", "chrome://ambassador/content/ambassador.xul");
 
 // Enable the extension manager.
 pref("xpinstall.dialog.confirm", "chrome://mozapps/content/xpinstall/xpinstallConfirm.xul");

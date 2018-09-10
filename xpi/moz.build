@@ -8,7 +8,7 @@ USE_EXTENSION_MANIFEST = True
 
 EXTRA_COMPONENTS += [
     '../components/AddonComponents.manifest',
-    '../components/chatzilla-service.js',
+    '../components/ambassador-service.js',
 ]
 
 XPI_NAME = CONFIG['MOZ_APP_NAME']

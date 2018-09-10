@@ -4,6 +4,6 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 EXTRA_COMPONENTS += [
+    'ambassador-service.js',
     'AppComponents.manifest',
-    'chatzilla-service.js',
 ]

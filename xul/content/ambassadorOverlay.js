@@ -4,8 +4,5 @@
 
 function toIRC() 
 {
-
-	toOpenWindowByType("irc:ambassador", "chrome://ambassador/content/chatzilla.xul");
-
+    toOpenWindowByType("irc:ambassador", "chrome://ambassador/content/ambassador.xul");
 }
-

@@ -13,7 +13,7 @@
 <overlay id="ChatzillaBrowserToolbar"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-<script type="application/x-javascript" src="chrome://ambassador/content/chatzillaOverlay.js"/>
+<script type="application/x-javascript" src="chrome://ambassador/content/ambassadorOverlay.js"/>
 
 <toolbarpalette id="BrowserToolbarPalette">
   <toolbarbutton id="tb-chatzilla-open" oncommand="toIRC()" 

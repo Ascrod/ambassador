@@ -16,17 +16,17 @@
  * description of the msg-type attribute below.
  *
  * You can modify these styles on your local system by placing your desired
- * styles in a file called chatzilla.css in your <profile>/chrome directory.
+ * styles in a file called ambassador.css in your <profile>/chrome directory.
  * (the file won't be there already, you have to create it.)  Add the line
  *
- *     @import url(chatzilla.css);
+ *     @import url(ambassador.css);
  *
  * to your userContent.css (also in your <profile>/chrome directory, and
  * also not there unless you created it already.)  End all CSS rules in your
- * new chatzilla.css with !important to override any styles declared here.
+ * new ambassador.css with !important to override any styles declared here.
  * For example, on a Linux system, you would create a file called
  * /home/<username>/.mozilla/<username>/chrome/userContent.css (if it
- * doesn't already exist), and add the line @import url(chatzilla.css) to it.
+ * doesn't already exist), and add the line @import url(ambassador.css) to it.
  * Next, create /home/<username>/.mozilla/<username>/chrome/ambassador.css, and
  * add the text:
  *

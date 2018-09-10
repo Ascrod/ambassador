@@ -7,11 +7,11 @@
 @AB_CD@.jar:
 # the "% locale" line gets put into the .manifest used by toolkit-based apps
 % locale ambassador @AB_CD@ %locale/@AB_CD@/ambassador/
-  locale/@AB_CD@/ambassador/chatzillaOverlay.dtd    (%chrome/chatzillaOverlay.dtd)
+  locale/@AB_CD@/ambassador/ambassadorOverlay.dtd   (%chrome/ambassadorOverlay.dtd)
   locale/@AB_CD@/ambassador/browserOverlay.dtd      (%chrome/browserOverlay.dtd)
   locale/@AB_CD@/ambassador/pref-irc.dtd            (%chrome/pref-irc.dtd)
-  locale/@AB_CD@/ambassador/chatzilla.dtd           (%chrome/chatzilla.dtd)
-  locale/@AB_CD@/ambassador/chatzilla.properties    (%chrome/chatzilla.properties)
+  locale/@AB_CD@/ambassador/ambassador.dtd          (%chrome/ambassador.dtd)
+  locale/@AB_CD@/ambassador/ambassador.properties   (%chrome/ambassador.properties)
   locale/@AB_CD@/ambassador/config.dtd              (%chrome/config.dtd)
   locale/@AB_CD@/ambassador/channels.dtd            (%chrome/channels.dtd)
   locale/@AB_CD@/ambassador/security-info.dtd       (%chrome/security-info.dtd)
