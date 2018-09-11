@@ -847,7 +847,7 @@ function insertInlineButton(text, containerTag, data)
     var command = ary[3];
 
     var link = document.createElementNS(XHTML_NS, "html:a");
-    link.setAttribute("href", "x-cz-command:" + encodeURI(command));
+    link.setAttribute("href", "x-ab-command:" + encodeURI(command));
     link.setAttribute("title", title);
     link.setAttribute("class", "ambassador-link");
     link.appendChild(document.createTextNode(label));

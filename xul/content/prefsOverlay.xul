@@ -6,11 +6,11 @@
    
 <!DOCTYPE overlay SYSTEM "chrome://ambassador/locale/pref-irc.dtd">
 
-<overlay id="ovCZPrefs" 
+<overlay id="ovABPrefs" 
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <!-- Tree entry (Mozilla/SeaMonkey 1.x) -->
   <treechildren id="panelChildren">
-    <treeitem container="false" id="chatzillaItem" insertbefore="advancedItem">
+    <treeitem container="false" id="ambassadorItem" insertbefore="advancedItem">
       <treerow>
         <treecell url="chrome://ambassador/content/pref-irc.xul" 
             label="&pref-irc.window.title;"/>
@@ -19,10 +19,10 @@
   </treechildren>
   <!-- Tree entry (SeaMonkey 2) -->
   <treechildren id="prefsPanelChildren">
-    <treeitem id="chatzillaItem"
+    <treeitem id="ambassadorItem"
               insertbefore="securityItem"
               label="&pref-irc.window.title;"
-              prefpane="chatzilla_pane"
+              prefpane="ambassador_pane"
               url="chrome://ambassador/content/pref-irc-toolkit.xul"/>
   </treechildren>
 

@@ -34,10 +34,10 @@ function initCommands()
          ["cmd-delete",        "cmd-docommand cmd_delete",                   0],
          ["cmd-selectall",     "cmd-docommand cmd_selectAll",                0],
          ["cmd-copy-link-url", "cmd-docommand cmd_copyLink",                 0],
-         ["cmd-mozilla-prefs",   "cmd-docommand cmd_mozillaPrefs",           0],
-         ["cmd-prefs",           "cmd-docommand cmd_chatzillaPrefs",         0],
-         ["cmd-chatzilla-prefs", "cmd-docommand cmd_chatzillaPrefs",         0],
-         ["cmd-chatzilla-opts",  "cmd-docommand cmd_chatzillaPrefs",         0],
+         ["cmd-mozilla-prefs",    "cmd-docommand cmd_mozillaPrefs",          0],
+         ["cmd-prefs",            "cmd-docommand cmd_ambassadorPrefs",       0],
+         ["cmd-ambassador-prefs", "cmd-docommand cmd_ambassadorPrefs",       0],
+         ["cmd-ambassador-opts",  "cmd-docommand cmd_ambassadorPrefs",       0],
          ["cmd-docommand",     cmdDoCommand,                                 0],
          ["create-tab-for-view", cmdCreateTabForView,                        0],
          ["custom-away",       cmdAway,                                      0],
@@ -1136,7 +1136,7 @@ function cmdSync(e)
                   {
                       if (view.prefs["displayHeader"])
                           view.setHeaderState(false);
-                      view.changeCSS(view.getFontCSS("data"), "cz-fonts");
+                      view.changeCSS(view.getFontCSS("data"), "ab-fonts");
                       if (view.prefs["displayHeader"])
                           view.setHeaderState(true);
                   };
@@ -2205,9 +2205,9 @@ function cmdGotoURL(e)
         return;
     }
 
-    if (/^x-cz-command:/.test(e.url))
+    if (/^x-ab-command:/.test(e.url))
     {
-        var ary = e.url.match(/^x-cz-command:(.*)$/i);
+        var ary = e.url.match(/^x-ab-command:(.*)$/i);
         e.sourceObject.dispatch(decodeURI(ary[1]),
                                 {isInteractive: true, source: e.source});
         return;
@@ -3809,7 +3809,7 @@ function cmdDoCommand(e)
         else // Mozilla, SeaMonkey 1.x, etc.
             goPreferences('navigator', PREF_URL, 'navigator');
     }
-    else if (e.cmdName == "cmd_chatzillaPrefs")
+    else if (e.cmdName == "cmd_ambassadorPrefs")
     {
         var prefWin = getWindowByType("irc:ambassador:config");
         if (!prefWin)

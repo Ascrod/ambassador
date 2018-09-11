@@ -13,7 +13,7 @@
 <?xul-overlay href="chrome://ambassador/content/popups.xul"?>
 <?xul-overlay href="chrome://ambassador/content/menus.xul"?>
 
-<window id="chatzilla-window"
+<window id="ambassador-window"
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
   xmlns:aaa="http://www.w3.org/2005/07/aaa"
@@ -27,7 +27,7 @@
   <overlaytarget id="scripts-overlay-target"/>
   <overlaytarget id="popup-overlay-target"/>
   <overlaytarget id="menu-overlay-target"/>
-  <stringbundleset id="chatzilla-stringbundle">
+  <stringbundleset id="ambassador-stringbundle">
     <stringbundle id="findBundle" src="chrome://global/locale/finddialog.properties"/>
   </stringbundleset>
 

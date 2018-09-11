@@ -8,7 +8,7 @@
 
 <!DOCTYPE overlay SYSTEM "chrome://ambassador/locale/ambassador.dtd" >
 
-<overlay id="chatzilla-menu-overlay"
+<overlay id="ambassador-menu-overlay"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <overlaytarget id="menu-overlay-target">
@@ -22,7 +22,7 @@
     <tooltip id="xul-tooltip-node" onpopupshowing="return onTooltip(event);"/>
 
     <!-- Commands -->
-    <commandset id="chatzilla-commands">
+    <commandset id="ambassador-commands">
 
       <!-- Edit commands -->
       <commandset id="selectEditMenuItems"/>
@@ -43,7 +43,7 @@
 
     <!-- Keys -->
 
-    <keyset id="chatzillaKeys">
+    <keyset id="ambassadorKeys">
       <key id="key:reloadui" modifiers="accel alt" key="R"
         oncommand="if (typeof cmdReloadUI =='function') cmdReloadUI(); else window.location.href = window.location.href;"/>
 
@@ -65,7 +65,7 @@
       <menubar id="mainmenu" persist="collapsed"
         grippytooltiptext="&Menubar.tooltip;">
 
-        <!-- ChatZilla menu placeholder, see menus.js -->
+        <!-- Ambassador menu placeholder, see menus.js -->
         <menu id="mainmenu:ambassador"><menupopup/></menu>
 
         <!-- IRC menu placeholder, see menus.js -->

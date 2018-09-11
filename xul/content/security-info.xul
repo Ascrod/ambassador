@@ -12,7 +12,7 @@
         xmlns:html="http://www.w3.org/1999/xhtml"
         windowtype="irc:ambassador:security-info"
         onload="onLoad()"
-        id="chatzilla-window"
+        id="ambassador-window"
         buttons="accept"
         title="&window.title;">
 

@@ -25,7 +25,7 @@
       <image id="logo"/>
       <vbox flex="1">
         <hbox>
-          <label class="header large-text" id="name" value="&chatzilla.label;"/>
+          <label class="header large-text" id="name" value="&ambassador.label;"/>
           <spacer flex="1"/>
           <label class="header" id="version" value="&version.unknown.label;" format="&version.known.label;"/>
         </hbox>

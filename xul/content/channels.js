@@ -99,7 +99,7 @@ function onLoad()
         xul[elements[i]] = document.getElementById(elements[i]);
 
     // Set the <dialog>'s class so we can do platform-specific CSS.
-    var dialog = document.getElementById("chatzilla-window");
+    var dialog = document.getElementById("ambassador-window");
     dialog.className = "platform-" + client.platform;
 
     // Set up the channel tree view.

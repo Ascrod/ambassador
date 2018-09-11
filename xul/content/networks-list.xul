@@ -11,7 +11,7 @@
 <dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     xmlns:html="http://www.w3.org/1999/xhtml"
     windowtype="irc:ambassador:networks"
-    id="chatzilla-window"
+    id="ambassador-window"
     buttons="accept,cancel,extra1"
     buttonlabelextra1="&dialog.restore;"
     ondialogaccept="gNetworkWindow.onOK();"
@@ -30,11 +30,11 @@
   <script src="chrome://ambassador/content/networks-list.js"/>
   <script src="chrome://ambassador/content/static.js"/>
 
-  <tooltip id="czNetworkTip" orient="vertical" 
+  <tooltip id="abNetworkTip" orient="vertical" 
       onpopupshowing="return gNetworkWindow.onTooltipPopupShowing(this);">
     <vbox>
-      <label id="czNetworkTipTitle" class="header">.</label>
-      <label id="czNetworkTipLabel">.</label>
+      <label id="abNetworkTipTitle" class="header">.</label>
+      <label id="abNetworkTipLabel">.</label>
     </vbox>
     <spacer flex="1"/>
   </tooltip>

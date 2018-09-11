@@ -10,27 +10,27 @@
 
 <?xml-stylesheet href="chrome://ambassador/skin/browserOverlay.css" type="text/css"?> 
 
-<overlay id="ChatzillaBrowserToolbar"
+<overlay id="AmbassadorBrowserToolbar"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
 <script type="application/x-javascript" src="chrome://ambassador/content/ambassadorOverlay.js"/>
 
 <toolbarpalette id="BrowserToolbarPalette">
-  <toolbarbutton id="tb-chatzilla-open" oncommand="toIRC()" 
+  <toolbarbutton id="tb-ambassador-open" oncommand="toIRC()" 
       class="toolbarbutton-1 chromeclass-toolbar-additional"
-      label="&czButton.label;" tooltiptext="&czButton.label;"/>
+      label="&abButton.label;" tooltiptext="&abButton.label;"/>
 </toolbarpalette>
 
 <menupopup id="menu_ToolsPopup">
-  <menuitem id="tb-chatzilla-menu" oncommand="toIRC()" 
+  <menuitem id="tb-ambassador-menu" oncommand="toIRC()" 
       insertafter="menu_pageInfo,javascriptConsole,devToolsSeparator"
-      label="&czMenu.label;" accesskey="&czMenu.accesskey;"/>
+      label="&abMenu.label;" accesskey="&abMenu.accesskey;"/>
 </menupopup>
 
 <vbox id="appmenuSecondaryPane">
-  <menuitem id="tb-chatzilla-appmenu" oncommand="toIRC()" 
+  <menuitem id="tb-ambassador-appmenu" oncommand="toIRC()" 
       insertafter="appmenu_addons"
-      label="&czMenu.label;" accesskey="&czMenu.accesskey;"/>
+      label="&abMenu.label;" accesskey="&abMenu.accesskey;"/>
 </vbox>
 
 </overlay>

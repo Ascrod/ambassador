@@ -11,7 +11,7 @@
 <dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     xmlns:html="http://www.w3.org/1999/xhtml"
     windowtype="irc:ambassador:config"
-    id="chatzilla-window"
+    id="ambassador-window"
     buttons="accept,cancel,extra1"
     extra1Label="&dialog.apply;"
     ondialogaccept="gPrefWindow.onOK();"
@@ -30,11 +30,11 @@
   <script src="config.js"/>
   <script src="chrome://ambassador/content/static.js"/>
 
-  <tooltip id="czPrefTip" orient="vertical" 
+  <tooltip id="abPrefTip" orient="vertical" 
       onpopupshowing="return gPrefWindow.onTooltipPopupShowing(this);">
     <vbox>
-      <label id="czPrefTipTitle" class="header">.</label>
-      <label id="czPrefTipLabel">.</label>
+      <label id="abPrefTipTitle" class="header">.</label>
+      <label id="abPrefTipLabel">.</label>
     </vbox>
     <spacer flex="1"/>
   </tooltip>

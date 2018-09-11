@@ -887,7 +887,7 @@ function pwin_setTooltipState(visible)
     if (this.tooltipShowing == visible)
         return;
     
-    var tt = document.getElementById("czPrefTip");
+    var tt = document.getElementById("abPrefTip");
     
     // If we're trying to show it, and we have a reference object
     // (this.tooltipObject), we are ok to go.
@@ -1288,9 +1288,9 @@ function pwin_onTooltipPopupShowing(popup)
     var diff = popup.boxObject.height - fChild.boxObject.height;
     
     // Setup the labels...
-    var ttt = document.getElementById("czPrefTipTitle");
+    var ttt = document.getElementById("abPrefTipTitle");
     ttt.firstChild.nodeValue = this.tooltipTitle;
-    var ttl = document.getElementById("czPrefTipLabel");
+    var ttl = document.getElementById("abPrefTipLabel");
     ttl.firstChild.nodeValue = this.tooltipText;
 
     /* In Gecko 1.9, the popup has done no layout at this point, unlike in

@@ -4,7 +4,7 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
 
-<overlay id="ChatzillaPMOverlay"
+<overlay id="AmbassadorPMOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
 	<script type="application/x-javascript" src="chrome://browser/content/utilityOverlay.js"/>

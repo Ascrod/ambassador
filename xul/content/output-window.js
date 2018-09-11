@@ -97,7 +97,7 @@ function stock_initOutputWindow(newClient, newView, newClickHandler)
         }
     }
 
-    changeCSS("chrome://ambassador/content/output-base.css", "cz-css-base");
+    changeCSS("chrome://ambassador/content/output-base.css", "ab-css-base");
     changeCSS(view.prefs["motif.current"]);
     updateMotifSettings();
 

@@ -10,7 +10,7 @@
 
 <?xml-stylesheet href="chrome://ambassador/content/output-base.css" type="text/css"?>
 
-<overlay id="chatzilla-popup-overlay"
+<overlay id="ambassador-popup-overlay"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <overlaytarget id="popup-overlay-target">

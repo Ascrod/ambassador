@@ -3100,7 +3100,7 @@ function client_statechange (webProgress, request, stateFlags, status)
                 {
                     cwin._called_initOutputWindow = true;
                     cwin.initOutputWindow(client, frame.source, onMessageViewClick);
-                    cwin.changeCSS(frame.source.getFontCSS("data"), "cz-fonts");
+                    cwin.changeCSS(frame.source.getFontCSS("data"), "ab-fonts");
                     scrollDown(frame, true);
                     //dd("initOutputWindow(" + frame.source.getURL() + ")");
                 }

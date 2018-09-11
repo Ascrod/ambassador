@@ -8,7 +8,7 @@
 <!DOCTYPE overlay SYSTEM "chrome://ambassador/locale/pref-irc.dtd">
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <prefpane id="chatzilla_pane"
+  <prefpane id="ambassador_pane"
             label="&pref-irc.window.title;">
 
     <label>&pref-irc.open.desc;</label>
