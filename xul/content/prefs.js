@@ -18,7 +18,7 @@ function initPrefs()
     client.prefs = client.prefManager.prefs;
 
     var profilePath = getSpecialDirectory("ProfD");
-    profilePath.append("chatzilla");
+    profilePath.append("ambassador");
 
     client.prefManager.addPref("profilePath", profilePath.path, null, null,
                                                                       "hidden");

@@ -21,7 +21,7 @@ function initMessages()
         {
             var chromeReg = getService("@mozilla.org/chrome/chrome-registry;1",
                                        "nsIXULChromeRegistry");
-            selectedLocale = chromeReg.getSelectedLocale("chatzilla");
+            selectedLocale = chromeReg.getSelectedLocale("ambassador");
         }
         catch (ex) {}
         var msg = getMsg("locale.error", [__cz_version, __cz_locale,
@@ -30,7 +30,7 @@ function initMessages()
         {
             // Yes, this is not localized - but that's only for when we don't
             // *have* the localized string!
-            msg = "ChatZilla " + __cz_version + " locale mismatch!\n\n" +
+            msg = "Ambassador " + __cz_version + " locale mismatch!\n\n" +
                   "Expected locale version " + __cz_locale +
                   ", but currently selected locale (" + selectedLocale +
                   ") is version " + localeVer + ".";
