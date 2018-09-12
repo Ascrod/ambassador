@@ -4735,7 +4735,7 @@ function cmdWebSearch(e)
     else
     {
         searchText = encodeURIComponent(searchText).replace(/%20/g, "+");
-        searchURL = "https://www.google.com/search?q=" + searchText;
+        searchURL = "https://duckduckgo.com/?t=ambassador&q=" + searchText;
     }
     dispatch(client.prefs["messages.click"], {url: searchURL});
 }
