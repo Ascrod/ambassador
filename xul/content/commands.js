@@ -1374,8 +1374,7 @@ function cmdNetworks(e)
 function cmdEditNetworks(e)
 {
     window.openDialog("chrome://ambassador/content/networks-list.xul", "",
-                      "chrome,resizable,dialog",
-                      { client: client, opener: window });
+                      "chrome,resizable,dialog", window, client);
 }
 
 function cmdServer(e)

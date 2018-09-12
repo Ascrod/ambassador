@@ -318,7 +318,7 @@ function pwin_setTooltipState(visible)
 NetworkWindow.prototype.onLoad =
 function nwin_onLoad()
 {
-    client = window.arguments[0].client;
+    client = window.arguments[1];
     client.networkWindow = window;
 
     initMessages();
