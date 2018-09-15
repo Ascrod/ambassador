@@ -7,16 +7,9 @@
 PALEMOON_VERSION := $(shell cat $(topsrcdir)/application/palemoon/config/version.txt)
 BASILISK_VERSION := $(shell cat $(topsrcdir)/application/basilisk/config/version.txt)
 
-# For extensions we require a max version that is compatible across security releases.
+# For extensions we require a max version that is compatible across major releases.
 # BASILISK_MAXVERSION and PALEMOON_MAXVERSION is our method for doing that.
-# Alpha versions 10.0a1 and 10.0a2 aren't affected
-PALEMOON_MAXVERSION := $(PALEMOON_VERSION)
-ifneq (a,$(findstring a,$(PALEMOON_VERSION)))
-PALEMOON_MAXVERSION := $(shell echo $(PALEMOON_VERSION) | sed 's|\(^[0-9]*.[0-9]*\).*|\1|' ).*
-endif
+PALEMOON_MAXVERSION := $(shell echo $(PALEMOON_VERSION) | sed 's|\(^[0-9]*\).*|\1|' ).*
 
-BASILISK_MAXVERSION := $(BASILISK_VERSION)
-ifneq (a,$(findstring a,$(BASILISK_VERSION)))
-BASILISK_MAXVERSION := $(shell echo $(BASILISK_VERSION) | sed 's|\(^[0-9]*\)\.\([0-9]*\).*|\1|' ).*
-endif
+BASILISK_MAXVERSION := $(shell echo $(BASILISK_VERSION) | sed 's|\(^[0-9]*\).*|\1|' ).*
 
