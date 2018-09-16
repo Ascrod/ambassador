@@ -1265,9 +1265,9 @@ function cmdTestDisplay(e)
     {
         var me = e.server.me;
         var sampleUser = {TYPE: "IRCUser",
-                          encodedName: "ircmonkey", canonicalName: "ircmonkey",
-                          unicodeName: "IRCMonkey", viewName: "IRCMonkey",
-                          host: "", name: "IRCMonkey"};
+                          encodedName: "diplobot", canonicalName: "diplobot",
+                          unicodeName: "Diplobot", viewName: "Diplobot",
+                          host: "", name: "Diplobot"};
         var sampleChannel = {TYPE: "IRCChannel",
                              encodedName: "#mojo", canonicalName: "#mojo",
                              unicodeName: "#Mojo", viewName: "#Mojo",
