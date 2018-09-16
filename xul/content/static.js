@@ -5816,7 +5816,7 @@ function showEventAlerts (type, event, message, nick, o, thisp, msgtype)
     {
         client.alert.service.showAlertNotification(
             "chrome://ambassador/skin/images/icon32.png",
-            "ChatZilla - " + source + " - " + event,
+            "Ambassador - " + source + " - " + event,
             message, clickable, tabId, listener);
     }
     catch(ex)
