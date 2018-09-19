@@ -9,10 +9,10 @@
 !define BrandFullNameInternal "Ambassador"
 !define CompanyName           "Ascrod"
 !define URLInfoAbout          "https://www.github.com/ascrod/ambassador/"
-!define URLUpdateInfo         "https://www.github.com/ascrod/ambassador/releases/"
+!define URLUpdateInfo         "https://www.github.com/ascrod/ambassador/releases/latest/"
 !define HelpLink              "https://www.github.com/ascrod/ambassador/"
 
-!define URLManualDownload "https://www.github.com/ascrod/ambassador/releases/"
+!define URLManualDownload "https://www.github.com/ascrod/ambassador/releases/latest/"
 !define Channel "release"
 
 # Dialog units are used so the UI displays correctly with the system's DPI
