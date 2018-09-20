@@ -1856,6 +1856,7 @@ function gotoIRCURL(url, e)
     // We should only prompt for a password if we're not connected.
     if (network.state == NET_OFFLINE)
     {
+        //Check for a network password
         var stored_password = client.tryToGetLogin(network.getURL(),
                                                    "serv", "*");
         var promptToSave = false;
@@ -1873,6 +1874,9 @@ function gotoIRCURL(url, e)
 
         if (promptToSave && client.prefs["login.promptToSave"])
             client.promptToSaveLogin(network.getURL(), "serv", "*", url.pass);
+
+        // Indicate whether we should connect using SASL.
+        network.USE_SASL = network.prefs["sasl.enabled"];
     }
 
     // Adjust secure setting for temporary networks (so user can override).
@@ -5350,6 +5354,7 @@ function cli_promptToSaveLogin(url, type, username, password)
     {
         case "nick":
         case "oper":
+        case "sasl":
             name = username;
             break;
         case "serv":

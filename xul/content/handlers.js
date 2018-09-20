@@ -2404,6 +2404,45 @@ function my_cap(e)
     return true;
 }
 
+/* SASL authentication start */
+CIRCServer.prototype.onSASLStart =
+function my_saslstart (e)
+{
+    //Determine how we want to authenticate.
+    e.server.sendData("AUTHENTICATE PLAIN\n");
+}
+
+/* SASL authentication response */
+CIRCServer.prototype.onAuthenticate =
+function my_auth (e)
+{
+    if (e.params[1] !== "+")
+        return;
+
+    var username = e.server.me.encodedName;
+    var password = null;
+
+    var stored_password = client.tryToGetLogin(e.server.getURL(), "sasl", e.server.me.unicodeName);
+    if (stored_password)
+        password = stored_password;
+    else
+    {
+        password = promptPassword(getMsg(MSG_SASL_PASSWORD, username));
+        if (!password)
+        {
+            // Abort authentication.
+            this.sendAuthAbort();
+            return;
+        }
+
+        if (client.prefs["login.promptToSave"])
+            client.promptToSaveLogin(e.server.getURL(), "sasl", e.server.me.unicodeName, password);
+    }
+
+    var auth = username + '\0' + username + '\0' + password;
+    this.sendAuthResponse(auth);
+}
+
 /* user away status */
 CIRCNetwork.prototype.onAway =
 function my_away(e)
