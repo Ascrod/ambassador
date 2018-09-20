@@ -1,0 +1,19 @@
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<!ENTITY Menubar.tooltip    "Hoofdmenu">
+<!ENTITY Toolbar.tooltip    "Hoofdwerkbalk">
+
+
+<!ENTITY multiline-expand.tooltip   "Wissel naar invoer met meerdere lijnen (Ctrl+Up)">
+<!ENTITY multiline-contract.tooltip "Wissel naar invoer met enkele lijn (Ctrl+Down)">
+<!ENTITY multiline-send.tooltip     "Verstuur deze tekst (Ctrl+Enter)">
+<!ENTITY server-nick.tooltip        "Verander van nickname of zet je status op afwezig. Duw op Escape om het invoerveld te focussen.">
+
+<!ENTITY Underline.label             "Onderlijnen">
+<!ENTITY Bold.label                  "Vet">
+<!ENTITY Reverse.label               "Video terugspoelen">
+<!ENTITY Normal.label                "Normaal">
+<!ENTITY Color.label                 "Kleur">
+<!ENTITY ForeBack.label              "xx=Fore yy=Back">

@@ -1,0 +1,18 @@
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<!ENTITY window.title  "Over Ambassador">
+
+<!ENTITY ambassador.label      "Ambassador">
+<!ENTITY version.unknown.label "Versie onbekend">
+<!ENTITY version.known.label   "Versie &#37;S">
+<!ENTITY description.label     "Een propere, eenvoudige en uiterst aanpasbare Internet Relay Chat (IRC)-client.">
+
+<!ENTITY homepage.label    "Bezoek de website">
+<!ENTITY copyversion.label "Kopieer versiegegevens">
+
+<!ENTITY section.uxp.label     "Omzetting naar UXP:">
+<!ENTITY section.orig.label    "Oorspronkelijk ontwikkelteam:">
+<!ENTITY section.locale.label  "Vertaling:">
+<!ENTITY section.contrib.label "Bijdragers:">

@@ -1,0 +1,40 @@
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<!ENTITY window.title  "Voorkeuren van Ambassador">
+
+<!ENTITY loading.label  "Even geduld, laden…">
+
+<!ENTITY homepage.url   "https://github.com/Ascrod/ambassador/">
+<!ENTITY homepage.label "Website van Ambassador">
+
+<!ENTITY object.add.label       "Toevoegen…">
+<!ENTITY object.add.hint        "Voeg een nieuw netwerk, kanaal of gebruiker toe om voorkeuren daarop in te stellen">
+<!ENTITY object.add.accesskey   "N">
+
+<!ENTITY object.del.label       "Verwijderen">
+<!ENTITY object.del.hint        "Verwijder het huidige object, inclusief de daarbijhorende voorkeuren">
+<!ENTITY object.del.accesskey   "V">
+
+<!ENTITY object.reset.label     "Herstellen">
+<!ENTITY object.reset.hint      "Herstel de voorkeuren van dit object naar de standaardwaarden">
+<!ENTITY object.reset.accesskey "H">
+
+<!ENTITY dialog.apply   "Toepassen">
+
+<!ENTITY network "Netwerk">
+<!ENTITY channel "Kanaal">
+<!ENTITY user    "Gebruiker">
+
+<!ENTITY config.add.title "Voeg voorkeurobject toe">
+
+<!ENTITY config.type.label        "Type:">
+<!ENTITY config.type.hint         "Het type object waarvoor je voorkeuren wilt toevoegen">
+<!ENTITY config.type.accesskey    "T">
+<!ENTITY config.network.label     "Netwerk:">
+<!ENTITY config.network.hint      "Gekende naam van het netwerk of de servernaam">
+<!ENTITY config.network.accesskey "N">
+<!ENTITY config.target.label      "Doel:">
+<!ENTITY config.target.hint       "Doelkanaal of gebruikersnaam">
+<!ENTITY config.target.accesskey  "D">

@@ -1,0 +1,15 @@
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<!ENTITY window.title                   "Beveiligingsinfo">
+
+<!ENTITY security.details               "Details van de SSL-verbinding">
+<!ENTITY security.hostname.label        "Host:">
+<!ENTITY security.status.label          "Status:">
+<!ENTITY security.cipher.label          "Versleutelingsalgoritme:">
+<!ENTITY security.keysize.label         "Sleutelgrootte:">
+<!ENTITY security.protocol.label        "Protocol:">
+
+<!ENTITY security.certView.label        "Bekijk certificaat">
+<!ENTITY security.certView.accesskey    "B">

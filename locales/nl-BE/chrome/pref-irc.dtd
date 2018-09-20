@@ -1,0 +1,12 @@
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<!ENTITY pref-irc.window.title "Ambassador">
+
+<!ENTITY pref-irc.open.title     "Ambassador's voorkeuren">
+<!ENTITY pref-irc.open.desc      "Ambassador's voorkeuren zijn te uitgebreid om in dit venster te tonen. Daarom kan je het voorkeurenvenster vanaf hier openen.">
+<!ENTITY pref-irc.open.label     "Open Ambassador's voorkeuren">
+<!ENTITY pref-irc.open.accesskey "O">
+<!ENTITY startup.chat.label "Ambassador">
+<!ENTITY startup.chat.accesskey "Z">

@@ -1,0 +1,33 @@
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<!ENTITY window.title  "Verbinden met kanaal">
+
+<!ENTITY network.label     "Netwerk:">
+<!ENTITY network.accesskey "N">
+
+<!ENTITY channel.label     "Kanaal:">
+<!ENTITY channel.accesskey "K">
+
+<!ENTITY topics.label     "Zoek op topics of kanaalnamen">
+<!ENTITY topics.accesskey "t">
+
+<!ENTITY join.label     "Join">
+<!ENTITY join.accesskey "J">
+
+<!ENTITY minusers.label     "Min gebruikers:">
+<!ENTITY minusers.accesskey "M">
+
+<!ENTITY maxusers.label     "Max gebruikers:">
+<!ENTITY maxusers.accesskey "x">
+
+<!ENTITY refresh.label     "Nu verversen">
+<!ENTITY refresh.accesskey "">
+
+<!ENTITY network.hint.label "Geef een netwerk of servernaam in (een poort is optioneel) en een kanaal om verbinding mee te maken.">
+
+<!ENTITY col.network "Netwerk">
+<!ENTITY col.name  "Naam">
+<!ENTITY col.users "Gebruikers">
+<!ENTITY col.topic "Topic">

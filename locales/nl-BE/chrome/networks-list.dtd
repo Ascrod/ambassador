@@ -1,0 +1,28 @@
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<!ENTITY window.title   "Netwerken">
+<!ENTITY dialog.restore "Standaardwaarden herstellen">
+
+<!ENTITY loading.label  "Even geduld, laden…">
+
+<!ENTITY object.network "Netwerk">
+<!ENTITY object.server  "Server">
+
+<!ENTITY object.name.label      "Naam">
+<!ENTITY object.name.help       "De name van het netwerk.">
+<!ENTITY object.hostname.label  "Hostnaam">
+<!ENTITY object.hostname.help   "Het adres van de server.">
+<!ENTITY object.port.label      "Poort">
+<!ENTITY object.port.help       "De poort om mee te verbinden.">
+<!ENTITY object.usessl.label    "Gebruik SSL">
+<!ENTITY object.usessl.help     "Of er SSL/TLS gebruikt moet worden tijdens het verbinden.">
+
+<!ENTITY object.add.label       "Toevoegen">
+<!ENTITY object.add.hint        "Voeg een netwerk of server toe">
+<!ENTITY object.add.accesskey   "T">
+
+<!ENTITY object.del.label       "Verwijderen">
+<!ENTITY object.del.hint        "Verwijder huidig netwerk of server">
+<!ENTITY object.del.accesskey   "V">
