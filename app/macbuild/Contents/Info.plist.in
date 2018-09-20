@@ -5,7 +5,8 @@
 <key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
            <key>CFBundleIdentifier</key><string>com.ascrod.ambassador</string>
           <key>CFBundlePackageType</key><string>APPL</string>
-           <key>CFBundleExecutable</key><string>xulrunner</string>
+           <key>CFBundleExecutable</key><string>ambassador</string>
+           <key>CFBundleIconFile</key><string>ambassador.icns</string>
          <key>NSAppleScriptEnabled</key><true/>
                  <key>CFBundleName</key><string>Ambassador</string>
           <key>CFBundleDisplayName</key><string>Ambassador</string>
