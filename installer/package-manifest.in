@@ -51,7 +51,7 @@
 #endif
 #ifdef MOZ_UPDATER
 @RESPATH@/update.locale
-@RESPATH@/updater.ini
+#@RESPATH@/updater.ini
 #endif
 
 [xpcom]
@@ -107,7 +107,7 @@
 @BINPATH@/VisualElements/VisualElements_150.png
 @BINPATH@/VisualElements/VisualElements_70.png
 #else
-@RESPATH@/@MOZ_APP_NAME@-bin
+@BINPATH@/@MOZ_APP_NAME@-bin
 @BINPATH@/@MOZ_APP_NAME@
 #endif
 @RESPATH@/application.ini
