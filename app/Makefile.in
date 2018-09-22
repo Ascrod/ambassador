@@ -86,9 +86,8 @@ tools repackage:: $(PROGRAM)
 	rsync -a --include-from='$(srcdir)/macbuild/Contents/MacOS-files.in' --exclude '*' $(DIST)/bin/ $(dist_dest)/Contents/MacOS
 	$(RM) $(dist_dest)/Contents/MacOS/$(PROGRAM)
 	rsync -aL $(PROGRAM) $(dist_dest)/Contents/MacOS
-#	Fails to build if these are enabled. Still looking in to why this happens.
-#	cp -RL $(DIST)/branding/firefox.icns $(dist_dest)/Contents/Resources/firefox.icns
-#	cp -RL $(DIST)/branding/document.icns $(dist_dest)/Contents/Resources/document.icns
+	cp -RL $(DIST)/branding/firefox.icns $(dist_dest)/Contents/Resources/firefox.icns
+	cp -RL $(DIST)/branding/document.icns $(dist_dest)/Contents/Resources/document.icns
 	printf APPLMOZB > $(dist_dest)/Contents/PkgInfo
 endif
 
