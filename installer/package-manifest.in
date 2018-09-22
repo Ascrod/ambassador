@@ -51,7 +51,7 @@
 #endif
 #ifdef MOZ_UPDATER
 @RESPATH@/update.locale
-@RESPATH@/update-settings.ini
+#@RESPATH@/updater.ini
 #endif
 
 [xpcom]
