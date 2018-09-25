@@ -13,9 +13,8 @@ The stand-alone version can be downloaded in the following formats:
 - Windows 64-bit ZIP archive
 - Windows 32-bit installer
 - Windows 32-bit ZIP archive
+- Mac OS X 64-bit DMG file
 - Linux 64-bit tarball
-
-MacOS is not supported at this time. If you would like to contribute to Ambassador development on MacOS, please contact me.
 
 ## Features
 
