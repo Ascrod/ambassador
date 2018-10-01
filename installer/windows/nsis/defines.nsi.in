@@ -77,13 +77,3 @@ VIAddVersionKey "FileVersion"     "${AppVersion}"
 VIAddVersionKey "ProductVersion"  "${AppVersion}"
 # Comments is not used but left below commented out for future reference
 # VIAddVersionKey "Comments"        "Comments"
-
-# Control positions in Dialog Units so they are placed correctly with
-# non-default DPI settings
-!define OPTIONS_ITEM_EDGE_DU 90u
-!define OPTIONS_ITEM_WIDTH_DU 356u
-!define OPTIONS_SUBITEM_EDGE_DU 119u
-!define OPTIONS_SUBITEM_WIDTH_DU 327u
-!define INSTALL_BLURB_TOP_DU 78u
-!define APPNAME_BMP_EDGE_DU 19u
-!define APPNAME_BMP_TOP_DU 12u
