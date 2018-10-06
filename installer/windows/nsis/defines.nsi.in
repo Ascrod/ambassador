@@ -3,23 +3,6 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-# Defining FunnelcakeVersion will append the value of StubURLVersionAppend to
-# StubURLVersion, append the value of URLManualDownloadAppend to
-# URLManualDownload, and append the value of URLStubDownloadAppend to
-# URLStubDownload. The value of FunnelcakeVersion should not be defined when it
-# is not used and when it is defined its value should never be empty.
-# !define FunnelcakeVersion        "999"
-
-!ifdef FunnelcakeVersion
-!define URLManualDownloadAppend  "&f=${FunnelcakeVersion}"
-!define URLStubDownloadAppend    "-f${FunnelcakeVersion}"
-!define StubURLVersionAppend     "-${FunnelcakeVersion}"
-!else
-!define URLManualDownloadAppend  ""
-!define URLStubDownloadAppend    ""
-!define StubURLVersionAppend     ""
-!endif
-
 # These defines should match application.ini settings
 !define AppName               "Ambassador"
 !define AppVersion            "@APP_VERSION@"
@@ -35,13 +18,6 @@
 !define BrandShortName        "@MOZ_APP_DISPLAYNAME@"
 !endif
 !define BrandFullName         "${BrandFullNameInternal}"
-
-!define CERTIFICATE_NAME            "Mozilla Corporation"
-!define CERTIFICATE_ISSUER          "DigiCert SHA2 Assured ID Code Signing CA"
-; Changing the name or issuer requires us to have both the old and the new
-;  in the registry at the same time, temporarily.
-!define CERTIFICATE_NAME_PREVIOUS   "Mozilla Corporation"
-!define CERTIFICATE_ISSUER_PREVIOUS "DigiCert Assured ID Code Signing CA-1"
 
 # LSP_CATEGORIES is the permitted LSP categories for the application. Each LSP
 # category value is ANDed together to set multiple permitted categories.

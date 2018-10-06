@@ -11,6 +11,4 @@
 !define URLInfoAbout          "https://www.github.com/ascrod/ambassador/"
 !define URLUpdateInfo         "https://www.github.com/ascrod/ambassador/releases/latest/"
 !define HelpLink              "https://www.github.com/ascrod/ambassador/"
-
-!define URLManualDownload "https://www.github.com/ascrod/ambassador/releases/latest/"
-!define Channel "release"
+!define URLSystemRequirements "https://www.github.com/ascrod/ambassador/"
