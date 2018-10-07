@@ -265,6 +265,7 @@ function initMenus()
          ["homepage"],
          ["faq"],
          ["-"],
+         ["about-buildconfig", {visibleif: XULRunner}],
          ["about", {id: "aboutName"}]
         ]
     };

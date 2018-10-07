@@ -14,6 +14,7 @@ function initCommands()
     var cmdary =
         [/* "real" commands */
          ["about",             cmdAbout,                           CMD_CONSOLE],
+         ["about-buildconfig", cmdAboutBuildConfig,                          0],
          ["about-config",      cmdAboutConfig,                               0],
          ["add-ons",           cmdAddons,                                    0],
          ["alias",             cmdAlias,                           CMD_CONSOLE],
@@ -4755,6 +4756,13 @@ function cmdAboutConfig(e)
 {
     client.toOpenWindowByType("Preferences:ConfigManager",
                        "chrome://global/content/config.xul");
+}
+
+function cmdAboutBuildConfig(e)
+{
+    client.toOpenWindowByType("about:buildconfig",
+                       "chrome://global/content/buildconfig.html",
+                       "chrome,resizable,width=800,height=800");
 }
 
 function cmdPasswordManager(e)
