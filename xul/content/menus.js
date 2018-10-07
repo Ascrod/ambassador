@@ -143,8 +143,6 @@ function initMenus()
          ["delete-view", {visibleif: "!" + ChannelActive + " and !" + DCCActive}],
          ["disconnect",  {visibleif: NetConnected}],
          ["reconnect",   {visibleif: NetDisconnected}],
-         ["-"],
-         ["toggle-text-dir"]
         ]
     };
 
@@ -223,6 +221,7 @@ function initMenus()
          ["-"],
          [">popup:motifs"],
          [">popup:fonts"],
+         ["toggle-text-dir"],
          ["-"],
          ["toggle-ccm",
                  {type: "checkbox",
@@ -403,8 +402,6 @@ function initMenus()
          ["delete-view", {visibleif: "!" + ChannelActive + " and !" + DCCActive}],
          ["disconnect",  {visibleif: NetConnected}],
          ["reconnect",   {visibleif: NetDisconnected}],
-         ["-"],
-         ["toggle-text-dir"]
         ]
     };
 
@@ -426,8 +423,6 @@ function initMenus()
          ["reconnect",   {visibleif: NetDisconnected}],
          ["-"],
          ["rename"],
-         ["-"],
-         ["toggle-text-dir"]
         ]
     };
 
