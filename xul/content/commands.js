@@ -4743,31 +4743,31 @@ function cmdWebSearch(e)
 
 function cmdAddons(e)
 {
-    client.toOpenWindowByType("Addons:Manager",
+    toOpenWindowByType("Addons:Manager",
                        "chrome://mozapps/content/extensions/extensions.xul");
 }
 
 function cmdJSConsole(e)
 {
-    client.toOpenWindowByType("global:console", "chrome://global/content/console.xul");
+    toOpenWindowByType("global:console", "chrome://global/content/console.xul");
 }
 
 function cmdAboutConfig(e)
 {
-    client.toOpenWindowByType("Preferences:ConfigManager",
+    toOpenWindowByType("Preferences:ConfigManager",
                        "chrome://global/content/config.xul");
 }
 
 function cmdAboutBuildConfig(e)
 {
-    client.toOpenWindowByType("about:buildconfig",
+    toOpenWindowByType("about:buildconfig",
                        "chrome://global/content/buildconfig.html",
                        "chrome,resizable,width=800,height=800");
 }
 
 function cmdPasswordManager(e)
 {
-    client.toOpenWindowByType("Toolkit:PasswordManager",
+    toOpenWindowByType("Toolkit:PasswordManager",
                        "chrome://passwordmgr/content/passwordManager.xul");
 }
 
@@ -4797,7 +4797,7 @@ function cmdUpdate(e)
 
 function cmdCertificateManager(e)
 {
-    client.toOpenWindowByType("mozilla:certmanager",
+    toOpenWindowByType("mozilla:certmanager",
                        "chrome://pippki/content/certManager.xul");
 }
 

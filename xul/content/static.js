@@ -5329,23 +5329,6 @@ function cli_wantToQuit(reason, deliberate)
     }
 }
 
-client.toOpenWindowByType = 
-function toOpenWindowByType(inType, url, features)
-{
-    var wm = getService("@mozilla.org/appshell/window-mediator;1",
-                        "nsIWindowMediator");
-    var topWindow = wm.getMostRecentWindow(inType);
-
-    if(typeof features == "undefined")
-        features = "chrome,extrachrome,menubar,resizable," +
-                   "scrollbars,status,toolbar";
-
-    if (topWindow)
-        topWindow.focus();
-    else
-        window.open(url, "_blank", features);
-}
-
 client.promptToSaveLogin =
 function cli_promptToSaveLogin(url, type, username, password)
 {
