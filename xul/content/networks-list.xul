@@ -80,7 +80,7 @@
                 <label value="&object.name.label;" width="100" flex="1"/>
                 <hbox flex="1000">
                     <textbox id="editor-network-name"
-                        oninput="gNetworkWindow.onObjectChange()"/>
+                        oninput="gNetworkWindow.onObjectChange(this)"/>
                 </hbox>
             </hbox>
         </vbox>
@@ -94,7 +94,7 @@
                 <label value="&object.hostname.label;" width="100" flex="1"/>
                 <hbox flex="1000">
                     <textbox id="editor-server-hostname"
-                        oninput="gNetworkWindow.onObjectChange()"/>
+                        oninput="gNetworkWindow.onObjectChange(this)"/>
                 </hbox>
             </hbox>
             <hbox align="center"
@@ -107,7 +107,7 @@
                 <hbox flex="1000">
                     <textbox id="editor-server-port" type="number"
                         size="5" min="0" max="65535"
-                        oninput="gNetworkWindow.onObjectChange()"/>
+                        oninput="gNetworkWindow.onObjectChange(this)"/>
                 </hbox>
             </hbox>
             <hbox align="center"
@@ -117,7 +117,7 @@
                 onmousemove="gNetworkWindow.onMouseMove(this);"
                 onmouseout="gNetworkWindow.onMouseOut(this);">
                 <checkbox id="editor-server-isSecure" label="&object.usessl.label;"
-                        onclick="gNetworkWindow.onObjectChange()"/>
+                    onclick="gNetworkWindow.onObjectChange(this)"/>
             </hbox>
         </vbox>
         <hbox align="center">

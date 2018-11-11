@@ -626,7 +626,7 @@ function nwin_onDeleteObject()
 
 /* Network or server object change */
 NetworkWindow.prototype.onObjectChange =
-function nwin_onObjectChange()
+function nwin_onObjectChange(obj)
 {
     var index = this.networkTree.selectedIndex();
     var item = this.networkTree.treeObj.view.getItemAtIndex(index);
@@ -646,7 +646,8 @@ function nwin_onObjectChange()
 
         item.data.hostname = editHostname.value;
         item.data.port = editPort.value;
-        item.data.isSecure = !editSecure.checked;
+        item.data.isSecure = (obj == editSecure ? !editSecure.checked : editSecure.checked);
+
         // If isSecure is false, just delete it.
         if (!item.data.isSecure)
             delete item.data.isSecure;
