@@ -2379,6 +2379,24 @@ function my_cap(e)
     return true;
 }
 
+// Notify the user of received CTCP requests
+CIRCServer.prototype.onReceiveCTCP =
+function my_ccrecv (e)
+{
+    // Do nothing if we receive these.
+    if ((e.type == "ctcp-action") ||
+        (e.type == "ctcp-dcc") ||
+        (e.type == "unk-ctcp"))
+        return true;
+
+    display(getMsg(MSG_FMT_CTCPRECV,
+                        [toUnicode(e.CTCPCode, this),
+                         toUnicode(e.CTCPData, this), e.user.unicodeName]),
+                 "CTCP_REQUEST", e.user, e.server.me, this);
+
+    return true;
+}
+
 /* SASL authentication start */
 CIRCServer.prototype.onSASLStart =
 function my_saslstart (e)

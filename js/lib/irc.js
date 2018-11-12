@@ -2769,6 +2769,14 @@ function serv_ctcp (e)
     else
         e.destObject = this;
 
+    var ev = new CEvent("server", "ctcp-receive", this, "onReceiveCTCP");
+    ev.server = this;
+    ev.CTCPCode = e.CTCPCode;
+    ev.CTCPData = e.CTCPData;
+    ev.type = e.type;
+    ev.user = e.user;
+    this.parent.eventPump.addEvent(ev);
+
     return true;
 }
 
