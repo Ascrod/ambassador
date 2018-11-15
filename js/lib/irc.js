@@ -2776,6 +2776,7 @@ function serv_ctcp (e)
     ev.CTCPData = e.CTCPData;
     ev.type = e.type;
     ev.user = e.user;
+    ev.destObject = this.parent;
     this.parent.eventPump.addEvent(ev);
 
     return true;

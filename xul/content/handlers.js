@@ -2380,7 +2380,7 @@ function my_cap(e)
 }
 
 // Notify the user of received CTCP requests
-CIRCServer.prototype.onReceiveCTCP =
+CIRCNetwork.prototype.onReceiveCTCP =
 function my_ccrecv (e)
 {
     // Do nothing if we receive these.
@@ -2389,7 +2389,7 @@ function my_ccrecv (e)
         (e.type == "unk-ctcp"))
         return true;
 
-    display(getMsg(MSG_FMT_CTCPRECV,
+    this.display(getMsg(MSG_FMT_CTCPRECV,
                         [toUnicode(e.CTCPCode, this),
                          toUnicode(e.CTCPData, this), e.user.unicodeName]),
                  "CTCP_REQUEST", e.user, e.server.me, this);
