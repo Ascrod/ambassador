@@ -2398,7 +2398,7 @@ function my_ccrecv (e)
 }
 
 /* SASL authentication start */
-CIRCServer.prototype.onSASLStart =
+CIRCNetwork.prototype.onSASLStart =
 function my_saslstart (e)
 {
     //Determine how we want to authenticate.
@@ -2406,7 +2406,7 @@ function my_saslstart (e)
 }
 
 /* SASL authentication response */
-CIRCServer.prototype.onAuthenticate =
+CIRCNetwork.prototype.onAuthenticate =
 function my_auth (e)
 {
     if (e.params[1] !== "+")
@@ -2424,7 +2424,7 @@ function my_auth (e)
         if (!password)
         {
             // Abort authentication.
-            this.sendAuthAbort();
+            e.server.sendAuthAbort();
             return;
         }
 
@@ -2433,7 +2433,7 @@ function my_auth (e)
     }
 
     var auth = username + '\0' + username + '\0' + password;
-    this.sendAuthResponse(auth);
+    e.server.sendAuthResponse(auth);
 }
 
 /* user away status */

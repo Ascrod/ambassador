@@ -1876,7 +1876,7 @@ function gotoIRCURL(url, e)
             client.promptToSaveLogin(network.getURL(), "serv", "*", url.pass);
 
         // Indicate whether we should connect using SASL.
-        network.USE_SASL = network.prefs["sasl.plain.enabled"];
+        network.USE_SASL = client.currentObject.prefs["sasl.plain.enabled"];
     }
 
     // Adjust secure setting for temporary networks (so user can override).

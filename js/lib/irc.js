@@ -2139,7 +2139,8 @@ function my_cap (e)
                 var ev = new CEvent("server", "sasl-start", this, "onSASLStart");
                 ev.server = this;
                 ev.mechs = null; // Not implemented yet.
-                this.parent.eventPump.addEvent(ev);
+                ev.destObject = this.parent;
+                this.parent.eventPump.routeEvent(ev);
             }
             else
             {
