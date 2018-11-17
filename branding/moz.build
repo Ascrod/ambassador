@@ -15,12 +15,15 @@ if CONFIG['MOZ_WIDGET_TOOLKIT'] == 'windows':
         'VisualElements_70.png',
     ]
     BRANDING_FILES += [
-        'ambassador.ico',
+        'ambassador-window.ico',
         'appname.bmp',
         'branding.nsi',
         'wizHeader.bmp',
         'wizHeaderRTL.bmp',
         'wizWatermark.bmp',
+    ]
+    FINAL_TARGET_FILES.chrome.icons.default += [
+	    'ambassador-window.ico',
     ]
 elif CONFIG['MOZ_WIDGET_TOOLKIT'] == 'cocoa':
     BRANDING_FILES += [

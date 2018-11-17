@@ -60,4 +60,4 @@ libs realchrome:: $(FINAL_TARGET)/chrome
 
 export::
 	$(NSINSTALL) -D $(FINAL_TARGET)/chrome/icons/default
-	$(INSTALL) $(srcdir)/../branding/default* $(FINAL_TARGET)/chrome/icons/default
+	$(INSTALL) $(srcdir)/../branding/ambassador-window* $(FINAL_TARGET)/chrome/icons/default
