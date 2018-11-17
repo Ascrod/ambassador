@@ -4,7 +4,7 @@
 
 ambassador.jar:
 % content branding %content/branding/ contentaccessible=yes
-  content/branding/icon16.png   (default16.png)
-  content/branding/icon32.png   (default32.png)
-  content/branding/icon48.png   (default48.png)
+  content/branding/icon16.png   (ambassador-window16.png)
+  content/branding/icon32.png   (ambassador-window32.png)
+  content/branding/icon48.png   (ambassador-window48.png)
   content/branding/icon64.png   (logo-64.png)

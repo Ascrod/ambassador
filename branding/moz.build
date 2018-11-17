@@ -35,16 +35,16 @@ elif CONFIG['MOZ_WIDGET_TOOLKIT'] == 'cocoa':
     ]
 elif 'gtk' in CONFIG['MOZ_WIDGET_TOOLKIT']:
     BRANDING_FILES += [
-        'default16.png',
-        'default32.png',
-        'default48.png',
+        'ambassador-window16.png',
+        'ambassador-window32.png',
+        'ambassador-window48.png',
         'mozicon128.png',
     ]
     FINAL_TARGET_FILES.icon += ['mozicon128.png']
     FINAL_TARGET_FILES.chrome.icons.default += [
-        'default16.png',
-        'default32.png',
-        'default48.png',
+        'ambassador-window16.png',
+        'ambassador-window32.png',
+        'ambassador-window48.png',
     ]
 
 JS_PREFERENCE_FILES += [

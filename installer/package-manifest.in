@@ -192,9 +192,9 @@
 @RESPATH@/chrome/recording.manifest
 @RESPATH@/chrome/recording/*
 #ifdef MOZ_GTK
-@RESPATH@/chrome/icons/default/default16.png
-@RESPATH@/chrome/icons/default/default32.png
-@RESPATH@/chrome/icons/default/default48.png
+@RESPATH@/chrome/icons/default/ambassador-window16.png
+@RESPATH@/chrome/icons/default/ambassador-window32.png
+@RESPATH@/chrome/icons/default/ambassador-window48.png
 #endif
 
 #ifdef MOZ_DEVTOOLS
