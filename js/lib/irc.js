@@ -18,7 +18,7 @@ const JSIRCV3_SUPPORTED_CAPS = [
     "chghost",
     //"echo-message",
     "extended-join",
-    //"invite-notify",
+    "invite-notify",
     //"labeled-response",
     //"message-tags",
     //"metadata",
