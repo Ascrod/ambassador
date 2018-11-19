@@ -747,7 +747,7 @@ CIRCServer.prototype.onConnect =
 function serv_onconnect (e)
 {
     this.parent.primServ = e.server;
-    this.sendData("CAP LS\n");
+    this.sendData("CAP LS 302\n");
     this.pendingCapNegotiation = true;
     this.login(this.parent.INITIAL_NICK, this.parent.INITIAL_NAME,
                this.parent.INITIAL_DESC);
@@ -1662,7 +1662,7 @@ function serv_251(e)
     if (("namesx" in this.supports) && this.supports.namesx)
     {
         // "multi-prefix" is the same as "namesx" but PROTOCTL doesn't reply.
-        this.caps["multi-prefix"] = true;
+        this.caps["multi-prefix"] = { enabled: true };
         this.sendData("PROTOCTL NAMESX\n");
     }
 
@@ -1876,7 +1876,7 @@ function serv_353 (e)
         var modes = new Array();
         var multiPrefix = (("namesx" in this.supports) && this.supports.namesx)
                           || (("multi-prefix" in this.caps)
-                              && this.caps["multi-prefix"]);
+                              && this.caps["multi-prefix"].enabled);
         do
         {
             var found = false;
@@ -1895,7 +1895,8 @@ function serv_353 (e)
         var user = null;
         var host = null;
 
-        if (this.caps["userhost-in-names"])
+        if (("userhost-in-names" in this.caps)
+            && this.caps["userhost-in-names"].enabled)
         {
             var ary = nick.match(/([^ ]+)!([^ ]+)@(.*)/);
             nick = ary[1];
@@ -2075,12 +2076,25 @@ function my_cap (e)
          * capabilities are only enabled on request).
          */
         var caps = e.params[3].split(/\s+/);
+        var multiline = (e.params[3] == "*");
+        if (multiline)
+            caps = e.params[4].split(/\s+/);
+
         for (var i = 0; i < caps.length; i++)
         {
-            var cap = caps[i].replace(/^-/, "").trim();
+            var [cap, value] = caps[i].split(/=(.+)/);
+            cap = cap.replace(/^-/, "").trim();
             if (!(cap in this.caps))
-                this.caps[cap] = null;
+            {
+                this.caps[cap] = { enabled: null };
+                if (value)
+                    this.caps[cap].value = value;
+            }
         }
+
+        // Don't show the raw message until the end of the response.
+        if (multiline)
+            return true;
 
         //Only request capabilities we support if we are connecting.
         if (this.pendingCapNegotiation)
@@ -2114,10 +2128,22 @@ function my_cap (e)
         /* Received list of enabled capabilities. Just use this as a sanity
          * check. */
         var caps = e.params[3].trim().split(/\s+/);
+        var multiline = (e.params[3] == "*");
+        if (multiline)
+            caps = e.params[4].trim().split(/\s+/);
+
         for (var i = 0; i < caps.length; i++)
         {
-            this.caps[caps[i]] = true;
+            var cap = this.caps[caps[i]];
+            if (!cap)
+                cap = new Object();
+            if (!cap.enabled)
+                cap.enabled = true;
         }
+
+        // Don't show the raw message until the end of the response.
+        if (multiline)
+            return true;
     }
     else if (e.params[2] == "ACK")
     {
@@ -2130,7 +2156,7 @@ function my_cap (e)
             var cap = caps[i];
             e.cap = cap.replace(/^-/, "").trim();
             e.capEnabled = cap[0] != "-";
-            this.caps[e.cap] = e.capEnabled;
+            this.caps[e.cap].enabled = e.capEnabled;
         }
 
         if (this.pendingCapNegotiation)
@@ -2526,7 +2552,8 @@ function serv_join(e)
             }
 
             //If away-notify is active, query the list of users for away status.
-            if (e.server.caps["away-notify"])
+            if (("away-notify" in this.caps)
+                && e.server.caps["away-notify"].enabled)
             {
                 e.server.sendData("WHO " + e.channel.encodedName + "\n");
             }
@@ -2645,7 +2672,7 @@ function serv_notice_privmsg (e)
     /* The capability identify-msg adds a + or - in front the message to
      * indicate their network registration status.
      */
-    if (this.caps["identify-msg"])
+    if (("identify-msg" in this.caps) && this.caps["identify-msg"].enabled)
     {
         e.identifyMsg = false;
         var flag = e.params[2].substring(0,1);
