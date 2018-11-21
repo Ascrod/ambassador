@@ -1112,6 +1112,11 @@ CIRCNetwork.prototype.on375 = /* start of MOTD */
 CIRCNetwork.prototype.on372 = /* MOTD line */
 CIRCNetwork.prototype.on376 = /* end of MOTD */
 CIRCNetwork.prototype.on422 = /* no MOTD */
+CIRCNetwork.prototype.on902 = /* SASL Nick locked */
+CIRCNetwork.prototype.on903 = /* SASL Auth success */
+CIRCNetwork.prototype.on904 = /* SASL Auth failed */
+CIRCNetwork.prototype.on905 = /* SASL Command too long */
+CIRCNetwork.prototype.on906 = /* SASL Aborted */
 function my_showtonet (e)
 {
     var p = (3 in e.params) ? e.params[2] + " " : "";

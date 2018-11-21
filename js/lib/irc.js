@@ -2197,12 +2197,19 @@ function my_cap (e)
 /* SASL authentication responses */
 CIRCServer.prototype.on902 = /* Nick locked */
 CIRCServer.prototype.on903 = /* Auth success */
-CIRCServer.prototype.on904 = /* Wrong credentials */
+CIRCServer.prototype.on904 = /* Auth failed */
 CIRCServer.prototype.on905 = /* Command too long */
+CIRCServer.prototype.on906 = /* Aborted */
 function cap_on900 (e)
 {
-    delete this.pendingCapNegotiation;
-    this.sendData("CAP END\n");
+    if (this.pendingCapNegotiation)
+    {
+        delete this.pendingCapNegotiation;
+        this.sendData("CAP END\n");
+    }
+
+    e.destObject = this.parent;
+    e.set = "network";
 }
 
 /* User away status changed */
