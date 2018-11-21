@@ -14,7 +14,7 @@ const JSIRCV3_SUPPORTED_CAPS = [
     "account-notify",
     "away-notify",
     //"batch",
-    //"cap-notify",
+    "cap-notify",
     "chghost",
     //"echo-message",
     "extended-join",
@@ -2184,6 +2184,47 @@ function my_cap (e)
     {
         // A capability change has failed.
         e.cap = e.params[3].replace(/^-/, "").trim();
+    }
+    else if (e.params[2] == "NEW")
+    {
+        // A capability is now available, so request it if we can.
+        var caps = e.params[3].split(/\s+/);
+        for (var i = 0; i < caps.length; i++)
+        {
+            var [cap, value] = caps[i].split(/=(.+)/);
+            cap = cap.trim();
+            if (!(cap in this.caps))
+            {
+                this.caps[cap] = { enabled: null };
+                if (value)
+                    this.caps[cap].value = value;
+            }
+        }
+
+        var caps_req = JSIRCV3_SUPPORTED_CAPS.filter(i => caps.indexOf(i) !== -1);
+
+        // Don't send requests for these caps.
+        caps_noreq = ["tls", "sts", "sasl"];
+        caps_req = caps_req.filter(i => caps_noreq.indexOf(i) === -1);
+
+        if (caps_req.length > 0)
+        {
+            caps_req = caps_req.join(" ");
+            e.server.sendData("CAP REQ :" + caps_req + "\n");
+        }
+    }
+    else if (e.params[2] == "DEL")
+    {
+        // A capability is no longer available.
+        var caps = e.params[3].split(/\s+/);
+        for (var i = 0; i < caps.length; i++)
+        {
+            var [cap, value] = caps[i].split(/=(.+)/);
+            cap = cap.trim();
+            this.caps[cap] = { enabled: null };
+            if (value)
+                this.caps[cap].value = value;
+        }
     }
     else
     {
