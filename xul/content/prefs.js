@@ -227,6 +227,7 @@ function initPrefs()
          ["timestamps",         false,    "appearance.timestamps"],
          ["timestamps.display", "[%H:%M]", "appearance.timestamps"],
          ["timestamps.log",     "[%Y-%m-%d %H:%M:%S]", "hidden"],
+         ["upgrade-insecure",   false,    ".connect"],
          ["urls.display",       10,       "hidden"],
          ["urls.store.max",     100,      "global"],
          ["userHeader",         true,     "global.header"],
@@ -250,6 +251,7 @@ function initPrefs()
     CIRCNetwork.prototype.MAX_MESSAGES  = client.prefs["networkMaxLines"];
     CIRCNetwork.prototype.PROXY_TYPE_OVERRIDE = client.prefs["proxy.typeOverride"];
     CIRCNetwork.prototype.USE_SASL      = client.prefs["sasl.plain.enabled"];
+    CIRCNetwork.prototype.UPGRADE_INSECURE = client.prefs["upgrade-insecure"];
     CIRCChannel.prototype.MAX_MESSAGES  = client.prefs["channelMaxLines"];
     CIRCUser.prototype.MAX_MESSAGES     = client.prefs["userMaxLines"];
     CIRCDCCChat.prototype.MAX_MESSAGES  = client.prefs["dccUserMaxLines"];
@@ -445,6 +447,7 @@ function getNetworkPrefManager(network)
          ["timestamps",         defer, "appearance.timestamps"],
          ["timestamps.display", defer, "appearance.timestamps"],
          ["timestamps.log",     defer, "hidden"],
+         ["upgrade-insecure",   defer, ".connect"],
          ["usermode",         defer, ".ident"],
          ["username",         defer, ".ident"]
         ];
@@ -479,6 +482,10 @@ function getNetworkPrefManager(network)
     value = prefManager.prefs["sasl.plain.enabled"];
     if (value != CIRCNetwork.prototype.USE_SASL)
         network.USE_SASL = value;
+
+    value = prefManager.prefs["upgrade-insecure"];
+    if (value != CIRCNetwork.prototype.UPGRADE_INSECURE)
+        network.UPGRADE_INSECURE = value;
 
     network.stayingPower  = prefManager.prefs["reconnect"];
     network.MAX_CONNECT_ATTEMPTS = prefManager.prefs["connectTries"];
@@ -743,6 +750,10 @@ function onPrefChanged(prefName, newValue, oldValue)
             CIRCNetwork.prototype.USE_SASL = newValue;
             break;
 
+        case "upgrade-insecure":
+            CIRCNetwork.prototype.UPGRADE_INSECURE = newValue;
+            break;
+
         case "nickname":
             CIRCNetwork.prototype.INITIAL_NICK = newValue;
             break;
@@ -944,6 +955,10 @@ function onNetworkPrefChanged(network, prefName, newValue, oldValue)
 
         case "sasl.plain.enabled":
             network.USE_SASL = newValue;
+            break;
+
+        case "upgrade-insecure":
+            network.UPGRADE_INSECURE = newValue;
             break;
     }
 }

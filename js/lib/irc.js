@@ -26,7 +26,7 @@ const JSIRCV3_SUPPORTED_CAPS = [
     "multi-prefix",
     "sasl",
     //"server-time",
-    //"tls",
+    "tls",
     "userhost-in-names",
 ];
 
@@ -108,6 +108,7 @@ CIRCNetwork.prototype.INITIAL_NICK = "js-irc";
 CIRCNetwork.prototype.INITIAL_NAME = "INITIAL_NAME";
 CIRCNetwork.prototype.INITIAL_DESC = "INITIAL_DESC";
 CIRCNetwork.prototype.USE_SASL = false;
+CIRCNetwork.prototype.UPGRADE_INSECURE = false;
 /* set INITIAL_CHANNEL to "" if you don't want a primary channel */
 CIRCNetwork.prototype.INITIAL_CHANNEL = "#jsbot";
 CIRCNetwork.prototype.INITIAL_UMODE = "+iw";
@@ -747,8 +748,14 @@ CIRCServer.prototype.onConnect =
 function serv_onconnect (e)
 {
     this.parent.primServ = e.server;
+
+    // Request STARTTLS if we are configured to do so.
+    if (!this.isSecure && this.parent.UPGRADE_INSECURE)
+        this.sendData("STARTTLS\n");
+
     this.sendData("CAP LS 302\n");
     this.pendingCapNegotiation = true;
+
     this.login(this.parent.INITIAL_NICK, this.parent.INITIAL_NAME,
                this.parent.INITIAL_DESC);
     return true;
@@ -1142,6 +1149,12 @@ function serv_disconnect(e)
     {
         this.channels[c].users = new Object();
         this.channels[c].active = false;
+    }
+
+    if (this.isStartTLS)
+    {
+        this.isSecure = false;
+        delete this.isStartTLS;
     }
 
     this.connection = null;
@@ -2249,6 +2262,28 @@ function cap_on900 (e)
         delete this.pendingCapNegotiation;
         this.sendData("CAP END\n");
     }
+
+    e.destObject = this.parent;
+    e.set = "network";
+}
+
+/* STARTTLS responses */
+CIRCServer.prototype.on670 = /* Success */
+function cap_on670 (e)
+{
+    this.caps["tls"] = { enabled: true };
+    e.server.connection.startTLS();
+    e.server.isSecure = true;
+    e.server.isStartTLS = true;
+
+    e.destObject = this.parent;
+    e.set = "network";
+}
+
+CIRCServer.prototype.on691 = /* Failure */
+function cap_on691 (e)
+{
+    this.caps["tls"] = { enabled: false };
 
     e.destObject = this.parent;
     e.set = "network";

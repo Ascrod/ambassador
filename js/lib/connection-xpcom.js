@@ -369,7 +369,7 @@ function bc_connect(host, port, config, observer)
         else
         {
             this._transport = this._sockService.
-                              createTransport(null, 0, host, port, proxyInfo);
+                              createTransport(["starttls"], 1, host, port, proxyInfo);
         }
         if (!this._transport)
             throw ("Error creating transport.");
@@ -405,6 +405,18 @@ function bc_connect(host, port, config, observer)
 
     return true;
 
+}
+
+CBSConnection.prototype.startTLS =
+function bc_starttls()
+{
+    if (!this.isConnected || !this._transport.securityInfo)
+        return;
+
+    var secInfo = this._transport.securityInfo;
+    var sockControl = secInfo.QueryInterface
+        (Components.interfaces.nsISSLSocketControl);
+    sockControl.StartTLS();
 }
 
 CBSConnection.prototype.listen =
@@ -643,7 +655,7 @@ function bc_getsecurityinfo()
         state: [STATE_IS_INSECURE]
     }
 
-    if (!this.isConnected || !this._transport.securityInfo)
+    if (!this.isConnected || !this._transport.securityInfo.SSLStatus)
         return rv;
 
     const nsISSLStatusProvider = Components.interfaces.nsISSLStatusProvider;
@@ -714,7 +726,7 @@ function bc_getsecurityinfo()
 CBSConnection.prototype.getCertificate =
 function bc_getcertificate()
 {
-    if (!this.isConnected || !this._transport.securityInfo)
+    if (!this.isConnected || !this._transport.securityInfo.SSLStatus)
         return null;
 
     var sslSp = Components.interfaces.nsISSLStatusProvider;
