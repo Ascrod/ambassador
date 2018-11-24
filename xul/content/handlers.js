@@ -2389,14 +2389,14 @@ function my_cap(e)
     }
     else if (e.params[2] == "ACK")
     {
-        if (e.capEnabled)
-            display(getMsg(MSG_CAPS_ON, e.cap));
-        else
-            display(getMsg(MSG_CAPS_OFF, e.cap));
+        if (e.capsOn.length)
+            display(getMsg(MSG_CAPS_ON, e.capsOn.join(", ")));
+        if (e.capsOff.length)
+            display(getMsg(MSG_CAPS_OFF, e.capsOff.join(", ")));
     }
     else if (e.params[2] == "NAK")
     {
-        display(getMsg(MSG_CAPS_ERROR, e.cap));
+        display(getMsg(MSG_CAPS_ERROR, e.caps.join(", ")));
     }
     return true;
 }

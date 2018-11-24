@@ -2165,12 +2165,17 @@ function my_cap (e)
          * capability is just "cap" whilst a disabled capability is "-cap".
          */
         var caps = e.params[3].trim().split(/\s+/);
+        e.capsOn = new Array();
+        e.capsOff = new Array();
         for (var i = 0; i < caps.length; i++)
         {
-            var cap = caps[i];
-            e.cap = cap.replace(/^-/, "").trim();
-            e.capEnabled = cap[0] != "-";
-            this.caps[e.cap].enabled = e.capEnabled;
+            var cap = caps[i].replace(/^-/,"").trim();
+            var enabled = caps[i][0] != "-";
+            if (enabled)
+                e.capsOn.push(cap);
+            else
+                e.capsOff.push(cap);
+            this.caps[cap].enabled = enabled;
         }
 
         // Try SASL authentication if we are configured to do so.
@@ -2198,7 +2203,13 @@ function my_cap (e)
     else if (e.params[2] == "NAK")
     {
         // A capability change has failed.
-        e.cap = e.params[3].replace(/^-/, "").trim();
+        var caps = e.params[3].trim().split(/\s+/);
+        e.caps = new Array();
+        for (var i = 0; i < caps.length; i++)
+        {
+            var cap = caps[i].replace(/^-/, "").trim();
+            e.caps.push(cap);
+        }
     }
     else if (e.params[2] == "NEW")
     {
