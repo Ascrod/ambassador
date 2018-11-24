@@ -3787,7 +3787,7 @@ function cmdSupports(e)
     for (var cap in server.caps)
     {
         listCaps.push(cap);
-        if (server.caps[cap])
+        if (server.caps[cap] && server.caps[cap].enabled)
             listCapsEnabled.push(cap);
     }
     if (listCaps.length > 0)
