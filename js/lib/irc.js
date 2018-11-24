@@ -2173,22 +2173,23 @@ function my_cap (e)
             this.caps[e.cap].enabled = e.capEnabled;
         }
 
+        // Try SASL authentication if we are configured to do so.
+        if (caps.indexOf("sasl") != -1)
+        {
+            var ev = new CEvent("server", "sasl-start", this, "onSASLStart");
+            ev.server = this;
+            ev.mechs = null; // Not implemented yet.
+            ev.destObject = this.parent;
+            this.parent.eventPump.routeEvent(ev);
+
+            if (this.pendingCapNegotiation)
+                return true;
+        }
+
         if (this.pendingCapNegotiation)
         {
-            // Try SASL authentication if we are configured to do so.
-            if (caps.indexOf("sasl") != -1)
-            {
-                var ev = new CEvent("server", "sasl-start", this, "onSASLStart");
-                ev.server = this;
-                ev.mechs = null; // Not implemented yet.
-                ev.destObject = this.parent;
-                this.parent.eventPump.routeEvent(ev);
-            }
-            else
-            {
-                e.server.sendData("CAP END\n");
-                delete this.pendingCapNegotiation;
-            }
+            e.server.sendData("CAP END\n");
+            delete this.pendingCapNegotiation;
 
             //Don't show the raw message while connecting.
             return true;
