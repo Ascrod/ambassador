@@ -2423,8 +2423,8 @@ function my_ccrecv (e)
 CIRCNetwork.prototype.onSASLStart =
 function my_saslstart (e)
 {
-    //Determine how we want to authenticate.
-    e.server.sendData("AUTHENTICATE PLAIN\n");
+    if (!e.mechs || e.mechs.indexOf("plain") !== -1)
+        e.server.sendData("AUTHENTICATE PLAIN\n");
 }
 
 /* SASL authentication response */
