@@ -2098,11 +2098,9 @@ function my_cap (e)
             var [cap, value] = caps[i].split(/=(.+)/);
             cap = cap.replace(/^-/, "").trim();
             if (!(cap in this.caps))
-            {
                 this.caps[cap] = { enabled: null };
-                if (value)
-                    this.caps[cap].value = value;
-            }
+            if (value)
+                this.caps[cap].value = value;
         }
 
         // Don't show the raw message until the end of the response.
