@@ -2110,7 +2110,7 @@ function my_cap (e)
         //Only request capabilities we support if we are connecting.
         if (this.pendingCapNegotiation)
         {
-            var caps_req = JSIRCV3_SUPPORTED_CAPS.filter(i => caps.indexOf(i) !== -1);
+            var caps_req = JSIRCV3_SUPPORTED_CAPS.filter(i => (i in this.caps));
 
             // Don't send requests for these caps.
             caps_noreq = ["tls", "sts"];
