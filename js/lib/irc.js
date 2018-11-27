@@ -2209,6 +2209,15 @@ function my_cap (e)
             var cap = caps[i].replace(/^-/, "").trim();
             e.caps.push(cap);
         }
+
+        if (this.pendingCapNegotiation)
+        {
+            e.server.sendData("CAP END\n");
+            delete this.pendingCapNegotiation;
+
+            //Don't show the raw message while connecting.
+            return true;
+        }
     }
     else if (e.params[2] == "NEW")
     {
