@@ -2368,7 +2368,7 @@ function my_cap(e)
         if (listCaps.length > 0)
         {
             listCaps.sort();
-            display(getMsg(MSG_SUPPORTS_CAPS, listCaps.join(MSG_COMMASP)));
+            this.display(getMsg(MSG_SUPPORTS_CAPS, listCaps.join(MSG_COMMASP)));
         }
     }
     else if (e.params[2] == "LIST")
@@ -2384,19 +2384,19 @@ function my_cap(e)
         if (listCapsEnabled.length > 0)
         {
             listCapsEnabled.sort();
-            display(getMsg(MSG_SUPPORTS_CAPSON, listCapsEnabled.join(MSG_COMMASP)));
+            this.display(getMsg(MSG_SUPPORTS_CAPSON, listCapsEnabled.join(MSG_COMMASP)));
         }
     }
     else if (e.params[2] == "ACK")
     {
         if (e.capsOn.length)
-            display(getMsg(MSG_CAPS_ON, e.capsOn.join(", ")));
+            this.display(getMsg(MSG_CAPS_ON, e.capsOn.join(", ")));
         if (e.capsOff.length)
-            display(getMsg(MSG_CAPS_OFF, e.capsOff.join(", ")));
+            this.display(getMsg(MSG_CAPS_OFF, e.capsOff.join(", ")));
     }
     else if (e.params[2] == "NAK")
     {
-        display(getMsg(MSG_CAPS_ERROR, e.caps.join(", ")));
+        this.display(getMsg(MSG_CAPS_ERROR, e.caps.join(", ")));
     }
     return true;
 }
