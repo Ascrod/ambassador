@@ -2681,7 +2681,7 @@ function serv_join(e)
             }
 
             //If away-notify is active, query the list of users for away status.
-            if (("away-notify" in this.caps)
+            if (("away-notify" in e.server.caps)
                 && e.server.caps["away-notify"].enabled)
             {
                 e.server.sendData("WHO " + e.channel.encodedName + "\n");
