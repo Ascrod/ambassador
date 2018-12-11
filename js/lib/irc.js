@@ -10,20 +10,14 @@ const JSIRC_ERR_OFFLINE   = "JSIRCE:OFFLINE";
 const JSIRC_ERR_PAC_LOADING = "JSIRCE:PAC_LOADING";
 
 const JSIRCV3_SUPPORTED_CAPS = [
-    //"account-tag",
     "account-notify",
     "away-notify",
-    //"batch",
     "cap-notify",
     "chghost",
     "extended-join",
     "invite-notify",
-    //"labeled-response",
-    //"message-tags",
-    //"metadata",
     "multi-prefix",
     "sasl",
-    //"server-time",
     "tls",
     "userhost-in-names",
 ];
