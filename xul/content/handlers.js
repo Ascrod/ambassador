@@ -1445,6 +1445,8 @@ function my_733(e)
     }
     else
     {
+        this.prefs["notifyList"] = [];
+        this.prefs["notifyList"].update();
         display(MSG_NO_NOTIFY_LIST);
     }
 }
