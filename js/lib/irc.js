@@ -16,7 +16,6 @@ const JSIRCV3_SUPPORTED_CAPS = [
     //"batch",
     "cap-notify",
     "chghost",
-    //"echo-message",
     "extended-join",
     "invite-notify",
     //"labeled-response",
