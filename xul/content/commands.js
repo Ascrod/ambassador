@@ -2073,7 +2073,8 @@ function _sendMsgTo(message, msgType, target, displayObj)
     for (var i = 0; i < lines.length; i++)
     {
         msg = lines[i];
-        if (!o.server.caps["echo-message"])
+        if (!o.server.caps["echo-message"] ||
+            !o.server.caps["echo-message"].enabled)
         {
             client.munger.getRule(".mailto").enabled = client.prefs["munger.mailto"];
             displayObj.display(msg, msgType, "ME!", target);
