@@ -44,6 +44,9 @@
 @RESPATH@/chrome/@AB_CD@@JAREXT@
 @RESPATH@/chrome/@AB_CD@.manifest
 @RESPATH@/dictionaries/*
+#if defined(XP_WIN) || defined(XP_LINUX)
+@RESPATH@/fonts/*
+#endif
 @RESPATH@/hyphenation/*
 @RESPATH@/defaults/pref/ambassador-l10n.js
 #ifdef XP_WIN32

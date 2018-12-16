@@ -35,6 +35,12 @@ if test "$OS_TARGET" = "WINNT" -o "$OS_TARGET" = "Darwin"; then
   MOZ_FOLD_LIBS=1
 fi
 
+# Include bundled fonts
+if test "$OS_ARCH" = "WINNT" -o \
+        "$OS_ARCH" = "Linux"; then
+  MOZ_BUNDLED_FONTS=1
+fi
+
 MOZ_UPDATER=1
 
 # Enable any conditional code in the platform for Ambassador
