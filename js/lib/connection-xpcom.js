@@ -655,7 +655,7 @@ function bc_getsecurityinfo()
         state: [STATE_IS_INSECURE]
     }
 
-    if (!this.isConnected || !this._transport.securityInfo.SSLStatus)
+    if (!this.isConnected || !this._transport.securityInfo)
         return rv;
 
     const nsISSLStatusProvider = Components.interfaces.nsISSLStatusProvider;
@@ -663,6 +663,8 @@ function bc_getsecurityinfo()
 
     // Get the actual SSL Status
     var sslSp = this._transport.securityInfo.QueryInterface(nsISSLStatusProvider);
+    if (!sslSp.SSLStatus)
+        return rv;
     var sslStatus = sslSp.SSLStatus.QueryInterface(nsISSLStatus);
 
     rv.cipherSuite = sslStatus.cipherSuite;
