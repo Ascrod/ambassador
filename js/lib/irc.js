@@ -742,10 +742,6 @@ function serv_onconnect (e)
 {
     this.parent.primServ = e.server;
 
-    // Request STARTTLS if we are configured to do so.
-    if (!this.isSecure && this.parent.UPGRADE_INSECURE)
-        this.sendData("STARTTLS\n");
-
     this.sendData("CAP LS 302\n");
     this.pendingCapNegotiation = true;
 
@@ -2129,6 +2125,10 @@ function my_cap (e)
         //Only request capabilities we support if we are connecting.
         if (this.pendingCapNegotiation)
         {
+            // Request STARTTLS if we are configured to do so.
+            if (!this.isSecure && this.caps["tls"] && this.parent.UPGRADE_INSECURE)
+                this.sendData("STARTTLS\n");
+
             var caps_req = JSIRCV3_SUPPORTED_CAPS.filter(i => (i in this.caps));
 
             // Don't send requests for these caps.
