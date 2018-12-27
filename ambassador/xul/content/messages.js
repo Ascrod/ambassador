@@ -128,4 +128,5 @@ const MT_USAGE     = "USAGE";
 const MT_STATUS    = "STATUS";
 const MT_EVALIN    = "EVAL-IN";
 const MT_EVALOUT   = "EVAL-OUT";
+const MT_MARKER    = "MARKER";
 
