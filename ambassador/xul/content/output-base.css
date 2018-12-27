@@ -164,6 +164,11 @@ a.ambassador-link:hover {
     text-decoration: underline;
 }
 
+/* line marker */
+hr.ambassador-line-marker {
+    border: 2px solid red;
+}
+
 /* basic styles */
 .ambassador-highlight[name="Large"] {
     font-size: larger;

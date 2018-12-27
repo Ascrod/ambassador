@@ -110,6 +110,7 @@ function initCommands()
          ["kick-ban",          cmdKick,            CMD_NEED_CHAN | CMD_CONSOLE],
          ["knock",             cmdKnock,            CMD_NEED_SRV | CMD_CONSOLE],
          ["leave",             cmdLeave,            CMD_NEED_NET | CMD_CONSOLE],
+         ["line-marker",       cmdLineMarker,                      CMD_CONSOLE],
          ["links",             cmdSimpleCommand,    CMD_NEED_SRV | CMD_CONSOLE],
          ["list",              cmdList,             CMD_NEED_SRV | CMD_CONSOLE],
          ["list-plugins",      cmdListPlugins,                     CMD_CONSOLE],
@@ -2099,7 +2100,16 @@ function cmdMsg(e)
 function _sendMsgTo(message, msgType, target, displayObj)
 {
     if (!displayObj)
+    {
         displayObj = target;
+
+        // user just sent a message, so user is present, so hide marker
+        if (("setActivityMarker" in target) && checkScroll(target.frame))
+        {
+            target.setActivityMarker(false);
+        }
+    }
+
 
     var msg = filterOutput(message, msgType, target);
 
@@ -2609,6 +2619,53 @@ function cmdLeave(e)
             if (!leaveChannel(channels[i]))
                 break;
         }
+    }
+}
+
+function cmdLineMarker(e)
+{
+    var view = e.sourceObject;
+
+    if (e.action == null)
+    {
+        // Scroll to marker, then hide it. If not up, show it
+        if ("getActivityMarker" in e.sourceObject)
+        {
+            if (e.sourceObject.getActivityMarker().state)
+            {
+                e.sourceObject.scrollToElement("marker", "center");
+                if (("setActivityMarker" in e.sourceObject))
+                    e.sourceObject.setActivityMarker(false, true);
+            }
+            else
+            {
+                if (("setActivityMarker" in e.sourceObject))
+                    e.sourceObject.setActivityMarker(true, true);
+            }
+        }
+    }
+    else if (e.action == "hide")
+    {
+        // Hide without scrolling.
+        if (("setActivityMarker" in e.sourceObject))
+            e.sourceObject.setActivityMarker(false, true);
+    }
+    else if (e.action == "reset")
+    {
+        // Hide and scroll to bottom.
+        if (("setActivityMarker" in e.sourceObject))
+            e.sourceObject.setActivityMarker(false, true);
+        scrollDown(e.sourceObject.frame, true);
+    }
+    else if (e.action == "show")
+    {
+        // Show.
+        if (("setActivityMarker" in e.sourceObject))
+            e.sourceObject.setActivityMarker(true, true);
+    }
+    else
+    {
+        view.display(MSG_ERR_INVALID_CMD);
     }
 }
 

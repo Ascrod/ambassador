@@ -2726,7 +2726,11 @@ function setCurrentObject (obj)
     updateSecurityIcon();
     updateLoggingIcon();
 
-    scrollDown(obj.frame, false);
+    // Scroll to marker, if visisble, otherwise scroll down normally.
+    if (("getActivityMarker" in obj) && obj.getActivityMarker().state)
+        obj.scrollToElement("marker", "center");
+    else
+        scrollDown(obj.frame, false);
 
     // Input area should have the same direction as the output area
     if (("frame" in client.currentObject) &&
@@ -4934,9 +4938,13 @@ function __display(message, msgtype, sourceObj, destObj, time)
             msgRowData.appendChild(message);
             tmpMsgs = tmpMsgs.innerHTML.replace(/<[^<]*>/g, "");
         }
-        tmpMsgs = tmpMsgs.split(/\r?\n/);
-        for (var l = 0; l < tmpMsgs.length; l++)
-            logStrings[l] = logStringPfx + tmpMsgs[l];
+        // Don't log display of the line marker
+        if (msgtype != MT_MARKER)
+        {
+            tmpMsgs = tmpMsgs.split(/\r?\n/);
+            for (var l = 0; l < tmpMsgs.length; l++)
+                logStrings[l] = logStringPfx + tmpMsgs[l];
+        }
     }
 
     if ("mark" in this)
@@ -5095,6 +5103,7 @@ function addHistory (source, obj, mergeData)
     var tbody = source.messages.firstChild;
     var appendTo = tbody;
 
+    var frame = ("frame" in source) ? source.frame : null;
     var needScroll = false;
 
     if (mergeData)
@@ -5178,8 +5187,37 @@ function addHistory (source, obj, mergeData)
         }
     }
 
-    if ("frame" in source)
-        needScroll = checkScroll(source.frame);
+    if (frame != null)
+        needScroll = checkScroll(frame);
+    // Don't allow scrolling down if the activity marker is on.
+    var windowHasFocus = (client.mainWindow && client.mainWindow.isFocused);
+    var current = (("currentObject" in client) &&
+                   client.currentObject == source);
+
+    if (("getActivityMarker" in source) &&
+        source.getActivityMarker().state)
+    {
+        /* Turn the marker off if the user is *right* at the bottom, and
+         * looking at it.
+         */
+        if (windowHasFocus && current)
+        {
+            if (("setActivityMarker" in source) && checkScroll(frame, true))
+                source.setActivityMarker(false);
+        }
+        else
+        {
+            source.scrollToElement("marker", "center");
+            needScroll = false;
+        }
+    }
+    else if (!windowHasFocus || !current)
+    {
+        if ("setActivityMarker" in source)
+            source.setActivityMarker(true);
+        dd("" + windowHasFocus + " " + current);
+    }
+
     if (obj)
         appendTo.appendChild(client.adoptNode(obj, appendTo.ownerDocument));
 
@@ -5195,12 +5233,12 @@ function addHistory (source, obj, mergeData)
     }
 
     if (needScroll)
-        scrollDown(source.frame, true);
+        scrollDown(frame, true);
 }
 
 function removeExcessMessages(source)
 {
-    var window = getContentWindow(source.frame);
+    var window = getContentWindow(frame);
     var rows = source.messages.rows;
     var lastItemOffset = rows[rows.length - 1].offsetTop;
     var tbody = source.messages.firstChild;
@@ -5244,7 +5282,7 @@ function removeExcessMessages(source)
     // Scroll by as much as the lowest item has moved up:
     lastItemOffset -= rows[rows.length - 1].offsetTop;
     var y = window.pageYOffset;
-    if (!checkScroll(source.frame) && (y > lastItemOffset))
+    if (!checkScroll(frame) && (y > lastItemOffset))
         window.scrollBy(0, -lastItemOffset);
 }
 

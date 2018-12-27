@@ -604,6 +604,13 @@ function onWindowKeyPress(e)
             if (!e.ctrlKey && !e.altKey && !e.metaKey && !e.shiftKey &&
                 (elemFocused != userList))
             {
+                if (code == 34) // Hide Line marker on non-scrolling Page Down
+                {
+                var view = client.currentObject;
+                if (("setActivityMarker" in view) && checkScroll(view.frame, true))
+                    view.setActivityMarker(false);
+                }
+
                 w = client.currentFrame;
                 newOfs = w.pageYOffset + (w.innerHeight * 0.75) *
                                          (2 * code - 67);
@@ -2876,12 +2883,66 @@ function chan_part(reason)
     this._part(reason);
 }
 
+CIRCChannel.prototype.setActivityMarker =
+function chan_setactivitymarker(state, manual)
+{
+    if (typeof manual == "undefined")
+        manual = false;
+
+    // If the pref set to false, then dont turn on automatically
+    if (state && !manual && !this.prefs["autoLineMarker"])
+        return;
+
+    if (state == this.activityMarker.state)
+    {
+        // We're visible, and being told to show, store manual if it was passed.
+        if (state && manual)
+            this.activityMarker.manual = manual;
+        return;
+    }
+    // If we were manually turned on, don't turn off automatically.
+    if (this.activityMarker.manual && !state && !manual)
+        return;
+
+    this.activityMarker.state = state;
+    /* Only store manual as true if we set it ON manually. The flag is
+     * meaningless when the marker is off.
+     */
+    this.activityMarker.manual = (manual && state);
+
+    if (this.activityMarker.state == true)
+    {
+        var marker = document.createElementNS(XHTML_NS, "html:hr");
+        marker.setAttribute("class","ambassador-line-marker");
+        this.display(marker, MT_MARKER);
+        this.activityMarker.marker = marker;
+    }
+    else
+    {
+        var row = this.activityMarker.marker;
+        while (row.parentNode && !/(?:^|\s)msg(?:\s|$)/.test(row.className))
+            row = row.parentNode;
+        row.parentNode.removeChild(row);
+        this.activityMarker.marker = null;
+    }
+}
+
+CIRCChannel.prototype.getActivityMarker =
+function chan_getactivitymarker()
+{
+    return this.activityMarker;
+}
+
 CIRCChannel.prototype.onInit =
 function chan_oninit ()
 {
     this.logFile = null;
     this.pendingNamesReply = false;
     this.importantMessages = 0;
+    this.activityMarker = new Object();
+    this.activityMarker.marker = null;
+    this.activityMarker.state = false;
+    this.activityMarker.manual = false;
 }
 
 CIRCChannel.prototype.onPrivmsg =
