@@ -4800,12 +4800,12 @@ function cmdUpdate(e)
 
     if (client.host != "XULRunner")
     {
-        display(getMsg(MSG_ERR_UPDATE_USEHOST), MT_ERROR);
+        display(MSG_ERR_UPDATE_USEHOST, MT_ERROR);
         return;
     }
     else if (!um)
     {
-        display(getMsg(MSG_ERR_UPDATE_DISABLED), MT_ERROR);
+        display(MSG_ERR_UPDATE_DISABLED, MT_ERROR);
         return;
     }
 
@@ -4825,11 +4825,11 @@ function cmdFlushSSL(e)
 {
     if (client.host != "XULRunner")
     {
-        display(getMsg(MSG_ERR_FLUSHSSL_USEHOST), MT_ERROR);
+        display(MSG_ERR_FLUSHSSL_USEHOST, MT_ERROR);
         return;
     }
 
     var sdr = getService("@mozilla.org/security/sdr;1", "nsISecretDecoderRing");
     sdr.logout();
-    display(getMsg(MSG_FLUSHSSL_SUCCESS));
+    display(MSG_FLUSHSSL_SUCCESS);
 }
