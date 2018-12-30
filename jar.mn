@@ -68,6 +68,7 @@ ambassador.jar:
 	content/ambassador/install-plugin/install-plugin.xul            (xul/content/install-plugin/install-plugin.xul)
 	content/ambassador/about/about.xul                              (xul/content/about/about.xul)
 	content/ambassador/about/about.js                               (xul/content/about/about.js)
+	content/ambassador/devtools.js                                  (xul/content/devtools.js)
 	skin/classic/ambassador/ambassador.css                          (xul/skin/ambassador.css)
 	skin/classic/ambassador/ambassadorOverlay.css                   (xul/skin/ambassadorOverlay.css)
 	skin/classic/ambassador/browserOverlay.css                      (xul/skin/browserOverlay.css)

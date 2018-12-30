@@ -49,6 +49,7 @@
     <script src="chrome://ambassador/content/mungers.js"/>
     <script src="chrome://ambassador/content/handlers.js"/>
     <script src="chrome://ambassador/content/networks.js"/>
+    <script src="chrome://ambassador/content/devtools.js"/>
 
   </overlaytarget>
 

@@ -242,7 +242,11 @@ function initMenus()
         items:
         [
          ["add-ons",     {visibleif: XULRunner}],
+         ["-"],
          ["jsconsole",   {visibleif: XULRunner}],
+         ["scratchpad",  {visibleif: XULRunner + " and client.devtoolsEnabled"}],
+         ["devtools",    {visibleif: XULRunner + " and client.devtoolsEnabled"}],
+         ["-"],
          ["about-config",{visibleif: XULRunner}],
          ["passmgr"],
          ["certmgr"],
