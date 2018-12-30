@@ -42,6 +42,7 @@ const NS_ERROR_MODULE_NETWORK_BASE = 0x804b0000;
 const NS_ERROR_NO_CONTENT = NS_ERROR_MODULE_NETWORK_BASE + 17;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://gre/modules/Services.jsm");
 
 function spawnChatZilla(uri, count)
 {
@@ -153,6 +154,21 @@ AppCommandLineService.prototype =
     /* nsICommandLineHandler */
     handle(cmdLine)
     {
+        var chromeURI = cmdLine.handleFlagWithParam("chrome", false);
+        if (chromeURI)
+        {
+            try
+            {
+                Services.ww.openWindow(null, chromeURI, "_blank",
+                                       "chrome,dialog=no,all", null);
+                cmdLine.preventDefault = true;
+            }
+            catch (e)
+            {
+            }
+            return;
+        }
+
         var uri;
         if (cmdLine.length)
         {
