@@ -5238,6 +5238,7 @@ function addHistory (source, obj, mergeData)
 
 function removeExcessMessages(source)
 {
+    var frame = ("frame" in source) ? source.frame : null;
     var window = getContentWindow(frame);
     var rows = source.messages.rows;
     var lastItemOffset = rows[rows.length - 1].offsetTop;
