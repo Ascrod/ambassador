@@ -4,6 +4,7 @@
 
 var client;
 var server;
+var certificate;
 
 const STATE_IS_BROKEN = 1;
 const STATE_IS_SECURE = 2;
@@ -31,6 +32,7 @@ function onLoad()
     }
 
     server = window.arguments[0].server;
+    certificate = server.connection.getCertificate();
     var info = server.connection.getSecurityInfo();
 
     setText("security-hostname-value",  server.hostname);

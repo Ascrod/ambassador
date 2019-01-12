@@ -80,7 +80,7 @@
         <hbox id="security-view-cert-box" pack="end">
             <button id="security-view-cert" label="&security.certView.label;"
                 accesskey="&security.certView.accesskey;"
-                oncommand="client.mainWindow.viewCert(server.connection.getCertificate());"/>
+                oncommand="client.mainWindow.viewCert(certificate);"/>
         </hbox>
 
         <!-- Cert Transparency -->
