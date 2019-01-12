@@ -499,8 +499,11 @@ function initApplicationCompatibility()
             case "{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}": // SeaMonkey
                 client.host = "Mozilla";
                 break;
-            case "{8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}": //Pale Moon
+            case "{8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}": // Pale Moon
                 client.host = "PaleMoon";
+                break;
+            case "{3550f703-e582-4d05-9a08-453d09bdfdc6}": // Interlink
+                client.host = "Interlink";
                 break;
             default:
                 client.unknownUID = app.ID;

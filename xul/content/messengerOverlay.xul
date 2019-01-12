@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+
+<!DOCTYPE overlay SYSTEM "chrome://ambassador/locale/messengerOverlay.dtd" >
+
+<!-- This is the overlay that adds a "Chatzilla" button to the toolbar palette. -->
+
+<?xml-stylesheet href="chrome://ambassador/skin/messengerOverlay.css" type="text/css"?> 
+
+<overlay id="AmbassadorMessengerToolbar"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<script type="application/x-javascript" src="chrome://ambassador/content/ambassadorOverlay.js"/>
+
+<toolbarpalette id="MailToolbarPalette">
+  <toolbarbutton id="tb-ambassador-open" oncommand="toIRC()" 
+      class="toolbarbutton-1 chromeclass-toolbar-additional"
+      label="&abButton.label;" tooltiptext="&abButton.label;"/>
+</toolbarpalette>
+
+<menupopup id="taskPopup">
+  <menuitem id="tb-ambassador-menu" oncommand="toIRC()" 
+      insertafter="activityManager"
+      label="&abMenu.label;" accesskey="&abMenu.accesskey;"/>
+</menupopup>
+
+<vbox id="appmenuSecondaryPane">
+  <menuitem id="tb-ambassador-appmenu" oncommand="toIRC()" 
+      insertafter="appmenu_addons"
+      label="&abMenu.label;" accesskey="&abMenu.accesskey;"/>
+</vbox>
+
+</overlay>
