@@ -1,9 +1,0 @@
-# This Source Code Form is subject to the terms of the Mozilla Public
-# License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
-ambassador.jar:
-% content ambassador-xr %content/ambassador/xr/
-% overlay chrome://ambassador/content/ambassador.xul chrome://ambassador/content/xr/overlay.xul application={4523665a-317f-4a66-9376-3763d1ad1978}
-% locale branding en-US chrome/branding/ application={4523665a-317f-4a66-9376-3763d1ad1978}
-	content/ambassador/xr/overlay.xul           (../xul/content/xr/overlay.xul)
