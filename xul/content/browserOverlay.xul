@@ -23,6 +23,7 @@
 
 <menupopup id="menu_ToolsPopup">
   <menuitem id="tb-ambassador-menu" oncommand="toIRC()" 
+      class="menuitem-iconic"
       insertafter="menu_pageInfo,javascriptConsole,devToolsSeparator"
       label="&abMenu.label;" accesskey="&abMenu.accesskey;"/>
 </menupopup>

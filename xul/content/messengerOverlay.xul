@@ -23,6 +23,7 @@
 
 <menupopup id="taskPopup">
   <menuitem id="tb-ambassador-menu" oncommand="toIRC()" 
+      class="menuitem-iconic"
       insertafter="activityManager"
       label="&abMenu.label;" accesskey="&abMenu.accesskey;"/>
 </menupopup>
