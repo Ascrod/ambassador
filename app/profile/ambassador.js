@@ -18,14 +18,11 @@ pref("extensions.dss.switchPending", false);
 pref("extensions.ignoreMTimeChanges", false);
 pref("extensions.logging.enabled", false);
 pref("general.skins.selectedSkin", "classic/1.0");
-pref("extensions.checkUpdateSecurity", false);
 pref("extensions.getAddons.cache.enabled", true);
 
-// This means nothing because AMO doesn't host Ambassador extensions,
+// This means nothing because APO doesn't host Ambassador extensions,
 // but I have to put something or the extension manager pukes.
-pref("extensions.update.url", "chrome://mozapps/locale/extensions/extensions.properties");
-pref("extensions.getMoreExtensionsURL", "chrome://mozapps/locale/extensions/extensions.properties");
-pref("extensions.getMoreThemesURL", "chrome://mozapps/locale/extensions/extensions.properties");
+pref("extensions.update.url", "https://addons.palemoon.org/");
 
 pref("extensions.getAddons.showPane", false);
 
@@ -34,8 +31,6 @@ pref("network.protocol-handler.expose-all", false);
 pref("network.protocol-handler.expose.irc", true);
 pref("network.protocol-handler.expose.ircs", true);
 pref("security.dialog_enable_delay", 0);
-
-pref("general.useragent.extra.ambassador", "Ambassador/@REVISION@");
 
 // Update prefs
 
