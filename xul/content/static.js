@@ -77,6 +77,7 @@ client.lastTabUp = new Date();
 client.awayMsgs = new Array();
 client.awayMsgCount = 5;
 client.statusMessages = new Array();
+#expand client.devtoolsEnabled = "__MOZ_DEVTOOLS__";
 
 CIRCNetwork.prototype.INITIAL_CHANNEL = "";
 CIRCNetwork.prototype.MAX_MESSAGES = 100;
@@ -127,6 +128,8 @@ function init()
     initMenus();
     initStatic();
     initHandlers();
+    if (client.devtoolsEnabled)
+        initDevtools();
 
     // Create DCC handler.
     client.dcc = new CIRCDCC(client);

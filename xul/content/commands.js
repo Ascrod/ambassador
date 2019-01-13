@@ -69,6 +69,7 @@ function initCommands()
          ["default-charset",   cmdCharset,                         CMD_CONSOLE],
          ["delete-view",       cmdDeleteView,                      CMD_CONSOLE],
          ["desc",              cmdDesc,                            CMD_CONSOLE],
+         ["devtools",          cmdDevtools,                                  0],
          ["disable-plugin",    cmdAblePlugin,                      CMD_CONSOLE],
          ["disconnect",        cmdDisconnect,       CMD_NEED_SRV | CMD_CONSOLE],
          ["disconnect-all",    cmdDisconnectAll,                   CMD_CONSOLE],
@@ -149,6 +150,7 @@ function initCommands()
          ["reload-ui",         cmdReloadUI,                                  0],
          ["save",              cmdSave,                            CMD_CONSOLE],
          ["say",               cmdSay,                             CMD_CONSOLE],
+         ["scratchpad",        cmdScratchpad,                                0],
          ["server",            cmdServer,                          CMD_CONSOLE],
          ["set-current-view",  cmdSetCurrentView,                            0],
          ["stats",             cmdSimpleCommand,    CMD_NEED_SRV | CMD_CONSOLE],
@@ -4772,6 +4774,28 @@ function cmdJSConsole(e)
     toOpenWindowByType("global:console", "chrome://global/content/console.xul");
 }
 
+function cmdDevtools(e)
+{
+    if (!client.devtoolsEnabled)
+    {
+        display(MSG_ERR_DEVTOOLS_DISABLED, MT_ERROR);
+        return;
+    }
+
+    BrowserToolboxProcess.init();
+}
+
+function cmdScratchpad(e)
+{
+    if (!client.devtoolsEnabled)
+    {
+        display(MSG_ERR_DEVTOOLS_DISABLED, MT_ERROR);
+        return;
+    }
+
+    ScratchpadManager.openScratchpad({ executionContext: 2 });
+}
+
 function cmdAboutConfig(e)
 {
     toOpenWindowByType("Preferences:ConfigManager",
@@ -4800,12 +4824,12 @@ function cmdUpdate(e)
 
     if (client.host != "XULRunner")
     {
-        display(getMsg(MSG_ERR_UPDATE_USEHOST), MT_ERROR);
+        display(MSG_ERR_UPDATE_USEHOST, MT_ERROR);
         return;
     }
     else if (!um)
     {
-        display(getMsg(MSG_ERR_UPDATE_DISABLED), MT_ERROR);
+        display(MSG_ERR_UPDATE_DISABLED, MT_ERROR);
         return;
     }
 
@@ -4825,11 +4849,11 @@ function cmdFlushSSL(e)
 {
     if (client.host != "XULRunner")
     {
-        display(getMsg(MSG_ERR_FLUSHSSL_USEHOST), MT_ERROR);
+        display(MSG_ERR_FLUSHSSL_USEHOST, MT_ERROR);
         return;
     }
 
     var sdr = getService("@mozilla.org/security/sdr;1", "nsISecretDecoderRing");
     sdr.logout();
-    display(getMsg(MSG_FLUSHSSL_SUCCESS));
+    display(MSG_FLUSHSSL_SUCCESS);
 }
