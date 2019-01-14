@@ -19,8 +19,10 @@ ambassador.jar:
 %       overlay chrome://communicator/content/pref/preferences.xul     chrome://ambassador/content/prefsOverlay.xul      application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
 %       overlay chrome://communicator/content/pref/pref-appearance.xul chrome://ambassador/content/prefsOverlay.xul      application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
 %       style   chrome://browser/content/browser.xul                   chrome://ambassador/skin/browserOverlay.css
+%       overlay chrome://mozapps/content/extensions/extensions.xul     chrome://ambassador/content/extensionsOverlay.xul application={4523665a-317f-4a66-9376-3763d1ad1978}
 %       style   chrome://messenger/content/messenger.xul               chrome://ambassador/skin/messengerOverlay.css
 %       style   chrome://global/content/customizeToolbar.xul           chrome://ambassador/skin/browserOverlay.css
+%       style   chrome://mozapps/content/extensions/extensions.xul     chrome://ambassador/skin/extensionsOverlay.css    application={4523665a-317f-4a66-9376-3763d1ad1978}
 	content/ambassador/lib/js/utils.js                              (js/lib/utils.js)
 	content/ambassador/lib/js/events.js                             (js/lib/events.js)
 	content/ambassador/lib/js/connection-xpcom.js                   (js/lib/connection-xpcom.js)
@@ -56,6 +58,8 @@ ambassador.jar:
 	content/ambassador/networks-list.xul                            (xul/content/networks-list.xul)
 	content/ambassador/networks-list.js                             (xul/content/networks-list.js)
 	content/ambassador/networks-list.css                            (xul/content/networks-list.css)
+	content/ambassador/extensionsOverlay.xul                        (xul/content/extensions/extensionsOverlay.xul)
+	content/ambassador/extensionsOverlay.js                         (xul/content/extensions/extensionsOverlay.js)
 	content/ambassador/dynamic.css                                  (xul/content/dynamic.css)
 	content/ambassador/output-base.css                              (xul/content/output-base.css)
 	content/ambassador/ambassadorOverlay.xul                        (xul/content/ambassadorOverlay.xul)
@@ -84,6 +88,7 @@ ambassador.jar:
 	skin/classic/ambassador/ambassadorOverlay.css                   (xul/skin/ambassadorOverlay.css)
 	skin/classic/ambassador/browserOverlay.css                      (xul/skin/browserOverlay.css)
 	skin/classic/ambassador/messengerOverlay.css                    (xul/skin/messengerOverlay.css)
+	skin/classic/ambassador/extensionsOverlay.css                   (xul/skin/extensionsOverlay.css)
 	skin/classic/ambassador/channels.css                            (xul/skin/channels.css)
 	skin/classic/ambassador/security-info.css                       (xul/skin/security-info.css)
 	skin/classic/ambassador/install-plugin.css                      (xul/skin/install-plugin.css)
