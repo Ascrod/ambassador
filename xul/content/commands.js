@@ -201,6 +201,7 @@ function initCommands()
          // Shortcuts to useful URLs:
          ["faq",              "goto-url-newtab faq",                         0],
          ["homepage",         "goto-url-newtab homepage",                    0],
+         ["support-channel",  "goto-url channel",                            0],
          // Used to display a nickname in the menu only.
          ["label-user",       "echo",                                        0],
          ["label-user-multi", "echo",                                        0],

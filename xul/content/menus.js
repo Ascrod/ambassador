@@ -267,6 +267,7 @@ function initMenus()
          ["-", {visibleif: Mozilla}],
          ["homepage"],
          ["faq"],
+         ["support-channel"],
          ["-"],
          ["about-buildconfig", {visibleif: XULRunner}],
          ["about", {id: "aboutName"}]
