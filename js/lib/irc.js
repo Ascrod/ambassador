@@ -2245,8 +2245,7 @@ function my_cap (e)
         {
             var [cap, value] = caps[i].split(/=(.+)/);
             cap = cap.trim();
-            if (!(cap in this.caps))
-                this.caps[cap] = null;
+            this.caps[cap] = null;
             if (value)
                 this.capvals[cap] = value;
         }
