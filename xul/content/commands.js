@@ -2076,8 +2076,7 @@ function _sendMsgTo(message, msgType, target, displayObj)
     for (var i = 0; i < lines.length; i++)
     {
         msg = lines[i];
-        if (!o.server.caps["echo-message"] ||
-            !o.server.caps["echo-message"].enabled)
+        if (!o.server.caps["echo-message"])
         {
             client.munger.getRule(".mailto").enabled = client.prefs["munger.mailto"];
             displayObj.display(msg, msgType, "ME!", target);
@@ -3810,7 +3809,7 @@ function cmdSupports(e)
     for (var cap in server.caps)
     {
         listCaps.push(cap);
-        if (server.caps[cap] && server.caps[cap].enabled)
+        if (server.caps[cap])
             listCapsEnabled.push(cap);
     }
     if (listCaps.length > 0)

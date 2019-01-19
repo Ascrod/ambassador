@@ -818,8 +818,7 @@ function onWhoTimeout()
         // stop us from not checking because the timer fired a tad early:
         var waited = Number(new Date()) - net.lastWhoCheckTime + 5000;
         if (net.isConnected() && (period != 0) && (period * 60000 < waited) &&
-            ("away-notify" in net.primServ.caps) &&
-            !net.primServ.caps["away-notify"].enabled)
+            !net.primServ.caps["away-notify"])
             checkWho();
     }
 }
@@ -2457,7 +2456,7 @@ function my_cap(e)
         var listCaps = new Array();
         for (var cap in e.server.caps)
         {
-            var value = e.server.caps[cap].value;
+            var value = e.server.capvals[cap];
             if (value)
                 cap += "=" + value;
             listCaps.push(cap);
@@ -2473,7 +2472,7 @@ function my_cap(e)
         var listCapsEnabled = new Array();
         for (var cap in e.server.caps)
         {
-            if (e.server.caps[cap].enabled)
+            if (e.server.caps[cap])
             {
                 listCapsEnabled.push(cap);
             }

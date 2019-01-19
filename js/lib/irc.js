@@ -510,6 +510,7 @@ function CIRCServer (parent, hostname, port, isSecure, password)
     s.userModes = null;
     s.maxLineLength = 400;
     s.caps = new Object();
+    s.capvals = new Object();
 
     parent.servers[s.canonicalName] = s;
     if ("onInit" in s)
@@ -1690,7 +1691,7 @@ function serv_251(e)
     if (("namesx" in this.supports) && this.supports.namesx)
     {
         // "multi-prefix" is the same as "namesx" but PROTOCTL doesn't reply.
-        this.caps["multi-prefix"] = { enabled: true };
+        this.caps["multi-prefix"] = true;
         this.sendData("PROTOCTL NAMESX\n");
     }
 
@@ -1904,7 +1905,7 @@ function serv_353 (e)
         var modes = new Array();
         var multiPrefix = (("namesx" in this.supports) && this.supports.namesx)
                           || (("multi-prefix" in this.caps)
-                              && this.caps["multi-prefix"].enabled);
+                              && this.caps["multi-prefix"]);
         do
         {
             var found = false;
@@ -1923,8 +1924,7 @@ function serv_353 (e)
         var user = null;
         var host = null;
 
-        if (("userhost-in-names" in this.caps)
-            && this.caps["userhost-in-names"].enabled)
+        if (this.caps["userhost-in-names"])
         {
             var ary = nick.match(/([^ ]+)!([^ ]+)@(.*)/);
             nick = ary[1];
@@ -2113,9 +2113,9 @@ function my_cap (e)
             var [cap, value] = caps[i].split(/=(.+)/);
             cap = cap.replace(/^-/, "").trim();
             if (!(cap in this.caps))
-                this.caps[cap] = { enabled: null };
+                this.caps[cap] = null;
             if (value)
-                this.caps[cap].value = value;
+                this.capvals[cap] = value;
         }
 
         // Don't show the raw message until the end of the response.
@@ -2126,7 +2126,7 @@ function my_cap (e)
         if (this.pendingCapNegotiation)
         {
             // Request STARTTLS if we are configured to do so.
-            if (!this.isSecure && this.caps["tls"] && this.parent.UPGRADE_INSECURE)
+            if (!this.isSecure && ("tls" in this.caps) && this.parent.UPGRADE_INSECURE)
                 this.sendData("STARTTLS\n");
 
             var caps_req = JSIRCV3_SUPPORTED_CAPS.filter(i => (i in this.caps));
@@ -2165,11 +2165,7 @@ function my_cap (e)
 
         for (var i = 0; i < caps.length; i++)
         {
-            var cap = this.caps[caps[i]];
-            if (!cap)
-                cap = new Object();
-            if (!cap.enabled)
-                cap.enabled = true;
+            this.caps[caps[i]] = true;
         }
 
         // Don't show the raw message until the end of the response.
@@ -2192,7 +2188,7 @@ function my_cap (e)
                 e.capsOn.push(cap);
             else
                 e.capsOff.push(cap);
-            this.caps[cap].enabled = enabled;
+            this.caps[cap] = enabled;
         }
 
         // Try SASL authentication if we are configured to do so.
@@ -2200,8 +2196,8 @@ function my_cap (e)
         {
             var ev = new CEvent("server", "sasl-start", this, "onSASLStart");
             ev.server = this;
-            if (this.caps["sasl"].value)
-                ev.mechs = this.caps["sasl"].value.toLowerCase().split(/,/);
+            if (this.capvals["sasl"])
+                ev.mechs = this.capvals["sasl"].toLowerCase().split(/,/);
             ev.destObject = this.parent;
             this.parent.eventPump.routeEvent(ev);
 
@@ -2247,14 +2243,12 @@ function my_cap (e)
             var [cap, value] = caps[i].split(/=(.+)/);
             cap = cap.trim();
             if (!(cap in this.caps))
-            {
-                this.caps[cap] = { enabled: null };
-                if (value)
-                    this.caps[cap].value = value;
-            }
+                this.caps[cap] = null;
+            if (value)
+                this.capvals[cap] = value;
         }
 
-        var caps_req = JSIRCV3_SUPPORTED_CAPS.filter(i => caps.indexOf(i) !== -1);
+        var caps_req = JSIRCV3_SUPPORTED_CAPS.filter(i => (i in this.caps));
 
         // Don't send requests for these caps.
         caps_noreq = ["tls", "sts", "sasl", "echo-message"];
@@ -2272,11 +2266,9 @@ function my_cap (e)
         var caps = e.params[3].split(/\s+/);
         for (var i = 0; i < caps.length; i++)
         {
-            var [cap, value] = caps[i].split(/=(.+)/);
+            var cap = caps[i].split(/=(.+)/)[0];
             cap = cap.trim();
-            this.caps[cap] = { enabled: null };
-            if (value)
-                this.caps[cap].value = value;
+            this.caps[cap] = null;
         }
     }
     else
@@ -2310,7 +2302,7 @@ function cap_on900 (e)
 CIRCServer.prototype.on670 = /* Success */
 function cap_on670 (e)
 {
-    this.caps["tls"] = { enabled: true };
+    this.caps["tls"] = true;
     e.server.connection.startTLS();
     e.server.isSecure = true;
     e.server.isStartTLS = true;
@@ -2322,7 +2314,7 @@ function cap_on670 (e)
 CIRCServer.prototype.on691 = /* Failure */
 function cap_on691 (e)
 {
-    this.caps["tls"] = { enabled: false };
+    this.caps["tls"] = false;
 
     e.destObject = this.parent;
     e.set = "network";
@@ -2675,8 +2667,7 @@ function serv_join(e)
             }
 
             //If away-notify is active, query the list of users for away status.
-            if (("away-notify" in e.server.caps)
-                && e.server.caps["away-notify"].enabled)
+            if (e.server.caps["away-notify"])
             {
                 e.server.sendData("WHO " + e.channel.encodedName + "\n");
             }
@@ -2795,7 +2786,7 @@ function serv_notice_privmsg (e)
     /* The capability identify-msg adds a + or - in front the message to
      * indicate their network registration status.
      */
-    if (("identify-msg" in this.caps) && this.caps["identify-msg"].enabled)
+    if (("identify-msg" in this.caps) && this.caps["identify-msg"])
     {
         e.identifyMsg = false;
         var flag = e.params[2].substring(0,1);
