@@ -1167,6 +1167,9 @@ function serv_disconnect(e)
         this.channels[c].active = false;
     }
 
+    this.caps = new Object();
+    this.capvals = new Object();
+
     if (this.isStartTLS)
     {
         this.isSecure = false;
