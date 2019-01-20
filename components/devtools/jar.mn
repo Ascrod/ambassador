@@ -1,0 +1,8 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+ambassador.jar:
+% overlay chrome://devtools/content/webconsole/webconsole.xul chrome://ambassador/content/devtools/webconsole-overlay.xul
+  content/ambassador/devtools/webconsole-overlay.xul        (webconsole-overlay.xul)
+  content/ambassador/devtools/webconsole-overlay.js         (webconsole-overlay.js)
