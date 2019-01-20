@@ -204,12 +204,12 @@
 ; [Webide Files]
 @RESPATH@/chrome/webide@JAREXT@
 @RESPATH@/chrome/webide.manifest
-; FIXME @RESPATH@/browser/@PREF_DIR@/webide-prefs.js
+@RESPATH@/@PREF_DIR@/webide-prefs.js
 
 ; DevTools
 @RESPATH@/chrome/devtools@JAREXT@
 @RESPATH@/chrome/devtools.manifest
-; FIXME @RESPATH@/browser/@PREF_DIR@/devtools.js
+@RESPATH@/@PREF_DIR@/devtools.js
 #endif
 
 ; shell icons
