@@ -94,14 +94,7 @@ function dcc_addhost(host, auth)
     };
 
     try {
-        var th;
-        if (jsenv.HAS_THREAD_MANAGER) {
-          th = getService("@mozilla.org/thread-manager;1").currentThread;
-        } else {
-          const EQS = getService("@mozilla.org/event-queue-service;1",
-                                 "nsIEventQueueService");
-          th = EQS.getSpecialEventQueue(EQS.CURRENT_THREAD_EVENT_QUEUE);
-        }
+        var th = getService("@mozilla.org/thread-manager;1").currentThread;
         var dnsRecord = this._dnsSvc.asyncResolve(host, false, listener, th);
     } catch (ex) {
         dd("Error resolving host to IP: " + ex);
@@ -613,12 +606,7 @@ function dchat_onsocketconnection(host, port, config, exception)
     if (!exception)
     {
         this.state.socketConnected();
-
-        if (jsenv.HAS_NSPR_EVENTQ)
-            this.connection.startAsyncRead(this);
-        else
-            this.eventPump.addEvent(new CEvent("dcc-chat", "poll",
-                                               this, "onPoll"));
+        this.connection.startAsyncRead(this);
     }
     else
     {
@@ -688,11 +676,7 @@ function dchat_onSocketAccepted(socket, transport)
     this.remoteIP = transport.host;
 
     // Start the reading!
-    if (jsenv.HAS_NSPR_EVENTQ)
-        this.connection.startAsyncRead(this);
-    else
-        this.eventPump.addEvent(new CEvent("dcc-chat", "poll",
-                                           this, "onPoll"));
+    this.connection.startAsyncRead(this);
 }
 
 CIRCDCCChat.prototype.onPoll =
@@ -1050,12 +1034,7 @@ function dfile_onsocketconnection(host, port, config, exception)
     if (!exception)
     {
         this.state.socketConnected();
-
-        if (jsenv.HAS_NSPR_EVENTQ)
-            this.connection.startAsyncRead(this);
-        else
-            this.eventPump.addEvent(new CEvent("dcc-file", "poll",
-                                               this, "onPoll"));
+        this.connection.startAsyncRead(this);
     }
     else
     {
@@ -1148,10 +1127,7 @@ function dfile_onSocketAccepted(socket, transport)
     }
 
     // Start the reading!
-    if (jsenv.HAS_NSPR_EVENTQ)
-        this.connection.startAsyncRead(this);
-    else
-        this.eventPump.addEvent(new CEvent("dcc-file", "poll", this, "onPoll"));
+    this.connection.startAsyncRead(this);
 }
 
 CIRCDCCFileTransfer.prototype.onPoll =

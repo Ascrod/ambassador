@@ -77,27 +77,6 @@ if (DEBUG) {
     dd = warn = TEST = ASSERT = function (){};
 }
 
-var jsenv = new Object();
-// Netscape/Mozilla security manager, for gaining priviledges with consent.
-jsenv.HAS_SECURITYMANAGER = ((typeof netscape == "object") &&
-                             (typeof netscape.security == "object"));
-// XPCOM, one of two socket implementation providers.
-jsenv.HAS_XPCOM = ((typeof Components == "object") &&
-                   (typeof Components.classes == "object") &&
-                   (typeof Components.interfaces == "object"));
-// Rhino (JS-in-Java), the other socket implementation provider.
-// XXX Bug 435772 - we avoid any Java tests if we have XPCOM so as to avoid
-// the Java plugin instanciating itself to answer our query.
-jsenv.HAS_RHINO = !jsenv.HAS_XPCOM && (typeof defineClass == "function");
-// NSPR Event Queue, i.e. we're living in a browser/GUI-like place.
-jsenv.HAS_NSPR_EVENTQ = (typeof document == "object");
-// Specific XPCOM interfaces that we really care about.
-var ci = jsenv.HAS_XPCOM ? Components.interfaces : {};
-jsenv.HAS_STREAM_PROVIDER = ("nsIStreamProvider" in ci);
-jsenv.HAS_SERVER_SOCKETS = ("nsIServerSocket" in ci);
-jsenv.HAS_THREAD_MANAGER = ("nsIThreadManager" in ci);
-delete ci;
-
 function dumpObject (o, pfx, sep)
 {
     var p;
@@ -549,9 +528,6 @@ function renameProperty (obj, oldname, newname)
 
 function newObject(contractID, iface)
 {
-    if (!jsenv.HAS_XPCOM)
-        return null;
-
     var rv;
     var cls = Components.classes[contractID];
 
@@ -583,9 +559,6 @@ function newObject(contractID, iface)
 
 function getService(contractID, iface)
 {
-    if (!jsenv.HAS_XPCOM)
-        return null;
-
     var rv;
     var cls = Components.classes[contractID];
 
@@ -655,9 +628,6 @@ function getContentDocument(frame)
 
 function getPriv (priv)
 {
-    if (!jsenv.HAS_SECURITYMANAGER)
-        return true;
-
     var rv = true;
 
     try
@@ -892,9 +862,6 @@ function randomString(len) {
 function getStackTrace ()
 {
 
-    if (!jsenv.HAS_XPCOM)
-        return "No stack trace available.";
-
     var frame = Components.stack.caller;
     var str = "<top>";
 
@@ -911,9 +878,6 @@ function getStackTrace ()
 
 function getInterfaces (cls)
 {
-    if (!jsenv.HAS_XPCOM)
-        return null;
-
     var rv = new Object();
     var e;
 

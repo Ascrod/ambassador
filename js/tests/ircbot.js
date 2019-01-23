@@ -62,9 +62,6 @@ function fromUnicode(msg, charsetOrView)
 
 function initStatic()
 {
-    if (jsenv.HAS_RHINO)
-        gc = java.lang.System.gc;
-
     CIRCNetwork.prototype.INITIAL_NICK = "jsbot";
     CIRCNetwork.prototype.INITIAL_NAME = "XPJSBot";
     CIRCNetwork.prototype.INITIAL_DESC = "XPCOM Javascript bot";
@@ -148,15 +145,6 @@ function rego()
     while (bot.eventPump.queue.length > 0)
     {
         bot.eventPump.stepEvents();
-        if (typeof gc == "function")
-        {
-            if ((typeof bot.lastGc == "undefined") ||
-                (Number(new Date()) - bot.lastGc > 60000))
-            {
-                gc();
-                bot.lastGc = Number(new Date());
-            }
-        }
     }
     dd("No events to process.");
 
