@@ -25,6 +25,9 @@ pref("extensions.getAddons.cache.enabled", true);
 pref("extensions.update.url", "https://addons.palemoon.org/");
 
 pref("extensions.getAddons.showPane", false);
+pref("extensions.logging.enabled", false);
+pref("extensions.strictCompatibility", true);
+pref("extensions.minCompatibleAppVersion", "1.0");
 
 // Make the external protocol service happy
 pref("network.protocol-handler.expose-all", false);
