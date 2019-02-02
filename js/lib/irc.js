@@ -2253,10 +2253,15 @@ function my_cap (e)
     {
         // A capability is no longer available.
         var caps = e.params[3].split(/\s+/);
+        var caps_nodel = ["sts"];
         for (var i = 0; i < caps.length; i++)
         {
             var cap = caps[i].split(/=(.+)/)[0];
             cap = cap.trim();
+
+            if (arrayContains(caps_nodel, cap))
+                continue;
+
             this.caps[cap] = null;
         }
     }
