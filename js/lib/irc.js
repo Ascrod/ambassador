@@ -2116,6 +2116,24 @@ function my_cap (e)
         //Only request capabilities we support if we are connecting.
         if (this.pendingCapNegotiation)
         {
+            // If we have an STS upgrade policy, immediately disconnect
+            // and reconnect on the secure port.
+            if (this.parent.USE_STS && ("sts" in this.caps) && !this.isSecure)
+            {
+                var keys = this.capvals["sts"].toLowerCase().split(",");
+                for (var i = 0; i < keys.length; i++)
+                {
+                    var [key, value] = keys[i].split('=');
+                    if (key == "port" && value)
+                    {
+                        e.stsUpgradePort = value;
+                        e.destObject = this.parent;
+                        e.set = "network";
+                        return false;
+                    }
+                }
+            }
+
             // Request STARTTLS if we are configured to do so.
             if (!this.isSecure && ("tls" in this.caps) && this.parent.UPGRADE_INSECURE)
                 this.sendData("STARTTLS\n");

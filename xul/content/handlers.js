@@ -2446,6 +2446,18 @@ function my_cap(e)
 {
     if (e.params[2] == "LS")
     {
+        // Handle the STS upgrade policy if we have one.
+        if (e.server.pendingCapNegotiation && e.stsUpgradePort)
+        {
+            this.display(getMsg(MSG_STS_UPGRADE, e.stsUpgradePort));
+            this.quit();
+            this.dispatch("delete-view");
+
+            gotoIRCURL({scheme: "ircs", host: e.server.hostname, port: e.stsUpgradePort,
+                        pass: e.server.password, isserver: true});
+            return true;
+        }
+
         var listCaps = new Array();
         for (var cap in e.server.caps)
         {
