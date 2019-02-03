@@ -742,6 +742,9 @@ function serv_onconnect (e)
     this.sendData("CAP LS 302\n");
     this.pendingCapNegotiation = true;
 
+    this.caps = new Object();
+    this.capvals = new Object();
+
     this.login(this.parent.INITIAL_NICK, this.parent.INITIAL_NAME,
                this.parent.INITIAL_DESC);
     return true;
@@ -1162,9 +1165,6 @@ function serv_disconnect(e)
         this.channels[c].users = new Object();
         this.channels[c].active = false;
     }
-
-    this.caps = new Object();
-    this.capvals = new Object();
 
     if (this.isStartTLS)
     {
