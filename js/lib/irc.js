@@ -2244,18 +2244,18 @@ function my_cap (e)
     {
         // A capability is now available, so request it if we can.
         var caps = e.params[3].split(/\s+/);
-        var newcaps = [];
+        e.newcaps = [];
         for (var i = 0; i < caps.length; i++)
         {
             var [cap, value] = caps[i].split(/=(.+)/);
             cap = cap.trim();
             this.caps[cap] = null;
-            newcaps.push(cap);
+            e.newcaps.push(cap);
             if (value)
                 this.capvals[cap] = value;
         }
 
-        var caps_req = JSIRCV3_SUPPORTED_CAPS.filter(i => (i in newcaps));
+        var caps_req = JSIRCV3_SUPPORTED_CAPS.filter(i => (i in e.newcaps));
 
         // Don't send requests for these caps.
         caps_noreq = ["tls", "sts", "sasl", "echo-message"];

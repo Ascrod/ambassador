@@ -2522,6 +2522,28 @@ function my_cap(e)
     {
         this.display(getMsg(MSG_CAPS_ERROR, e.caps.join(", ")));
     }
+    else if (e.params[2] == "NEW")
+    {
+        // Handle a new STS policy
+        if (client.prefs["sts.enabled"] && (arrayContains(e.newcaps, "sts")))
+        {
+            var policy = client.sts.parseParameters(e.server.capvals["sts"]);
+
+            if (!e.server.isSecure && policy.port)
+            {
+                // Inform the user of the new upgrade policy and
+                // offer an option to reconnect.
+                client.munger.getRule(".inline-buttons").enabled = true;
+                this.display(getMsg(MSG_STS_UPGRADE_NEW, [this.unicodeName, "reconnect"]));
+                client.munger.getRule(".inline-buttons").enabled = false;
+            }
+            else if (e.server.isSecure && policy.duration)
+            {
+                // Renew the policy's duration.
+                client.sts.setPolicy(e.server.hostname, e.server.port, policy.duration);
+            }
+        }
+    }
     return true;
 }
 
