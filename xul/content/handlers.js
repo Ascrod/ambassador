@@ -2353,13 +2353,7 @@ function my_netdisconnect (e)
     // On disconnect, renew the STS policy.
     if (e.server.isSecure && ("sts" in e.server.caps) && client.prefs["sts.enabled"])
     {
-        var keys = e.server.capvals["sts"].toLowerCase().split(",");
-        for (var i = 0; i < keys.length; i++)
-        {
-            var [key, value] = keys[i].split('=');
-            if (key == "duration" && value)
-                break;
-        }
+        var value = client.sts.parseParameters(e.server.capvals["sts"]).duration;
         client.sts.setPolicy(e.server.hostname, e.server.port, value);
     }
 }
@@ -2492,13 +2486,7 @@ function my_cap(e)
         // Update the STS duration policy.
         if (e.server.isSecure && ("sts" in e.server.caps) && client.prefs["sts.enabled"])
         {
-            var keys = e.server.capvals["sts"].toLowerCase().split(",");
-            for (var i = 0; i < keys.length; i++)
-            {
-                var [key, value] = keys[i].split('=');
-                if (key == "duration" && value)
-                    break;
-            }
+            var value = client.sts.parseParameters(e.server.capvals["sts"]).duration;
             client.sts.setPolicy(e.server.hostname, e.server.port, value);
         }
     }

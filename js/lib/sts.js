@@ -68,6 +68,28 @@ CIRCSTS.prototype.isPolicyExpired = function(expireTime)
 }
 
 /**
+ * Utility method for parsing the raw CAP value for an STS policy, typically
+ * received via CAP LS or CAP NEW.
+ *
+ * @param params     the comma-separated list of parameters in
+ *                   key[=value] format.
+ * @return           the received parameters in JSON.
+ *
+ */
+CIRCSTS.prototype.parseParameters = function(params)
+{
+    var rv = new Object();
+    var keys = params.toLowerCase().split(",");
+    for (var i = 0; i < keys.length; i++)
+    {
+        var [key, value] = keys[i].split("=");
+        rv[key] = value;
+    }
+
+    return rv;
+}
+
+/**
  * Remove a policy from the cache.
  *
  * @param host       the host to remove a policy for.
