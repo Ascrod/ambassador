@@ -2458,18 +2458,22 @@ function my_cap(e)
             return true;
         }
 
-        var listCaps = new Array();
-        for (var cap in e.server.caps)
+        // Don't show the raw message until we've registered.
+        if (this.state == NET_ONLINE)
         {
-            var value = e.server.capvals[cap];
-            if (value)
-                cap += "=" + value;
-            listCaps.push(cap);
-        }
-        if (listCaps.length > 0)
-        {
-            listCaps.sort();
-            this.display(getMsg(MSG_SUPPORTS_CAPS, listCaps.join(MSG_COMMASP)));
+            var listCaps = new Array();
+            for (var cap in e.server.caps)
+            {
+                var value = e.server.capvals[cap];
+                if (value)
+                    cap += "=" + value;
+                listCaps.push(cap);
+            }
+            if (listCaps.length > 0)
+            {
+                listCaps.sort();
+                this.display(getMsg(MSG_SUPPORTS_CAPS, listCaps.join(MSG_COMMASP)));
+            }
         }
     }
     else if (e.params[2] == "LIST")

@@ -2109,7 +2109,7 @@ function my_cap (e)
                 this.capvals[cap] = value;
         }
 
-        // Don't show the raw message until the end of the response.
+        // Don't do anything until the end of the response.
         if (multiline)
             return true;
 
@@ -2158,9 +2158,6 @@ function my_cap (e)
                 e.server.sendData("CAP END\n");
                 delete this.pendingCapNegotiation;
             }
-
-            //Don't show the raw message while connecting.
-            return true;
         }
     }
     else if (e.params[2] == "LIST")
@@ -2177,7 +2174,7 @@ function my_cap (e)
             this.caps[caps[i]] = true;
         }
 
-        // Don't show the raw message until the end of the response.
+        // Don't do anything until the end of the response.
         if (multiline)
             return true;
     }
