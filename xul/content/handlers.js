@@ -1213,7 +1213,7 @@ function my_showtonet (e)
 
             // Do this after the JOINs, so they are quicker.
             // This is not time-critical code.
-            if (jsenv.HAS_SERVER_SOCKETS && client.prefs["dcc.enabled"] &&
+            if (client.prefs["dcc.enabled"] &&
                 this.prefs["dcc.useServerIP"])
             {
                 var delayFn = function(t) {
@@ -1295,7 +1295,7 @@ function my_privmsg(e)
 CIRCNetwork.prototype.on302 =
 function my_302(e)
 {
-    if (jsenv.HAS_SERVER_SOCKETS && client.prefs["dcc.enabled"] &&
+    if (client.prefs["dcc.enabled"] &&
         this.prefs["dcc.useServerIP"] && ("pendingUserhostReply" in this))
     {
         var me = new RegExp("^" + this.primServ.me.encodedName + "\\*?=", "i");
@@ -2070,20 +2070,13 @@ function my_sconnect (e)
 
     if (this.prefs["identd.enabled"])
     {
-        if (jsenv.HAS_SERVER_SOCKETS)
+        try
         {
-            try
-            {
-                client.ident.addNetwork(this, e.server);
-            }
-            catch (ex)
-            {
-                display(getMsg(MSG_IDENT_ERROR, formatException(ex)), MT_ERROR);
-            }
+            client.ident.addNetwork(this, e.server);
         }
-        else
+        catch (ex)
         {
-            display(MSG_IDENT_SERVER_NOT_POSSIBLE, MT_WARN);
+            display(getMsg(MSG_IDENT_ERROR, formatException(ex)), MT_ERROR);
         }
     }
 
@@ -2356,6 +2349,18 @@ function my_netdisconnect (e)
         this.connect(this.requireSecurity);
         delete this.reconnect;
     }
+
+    // On disconnect, renew the STS policy.
+    if (e.server.isSecure && ("sts" in e.server.caps) && client.prefs["sts.enabled"])
+    {
+        var value = client.sts.parseParameters(e.server.capvals["sts"]).duration;
+        client.sts.setPolicy(e.server.hostname, e.server.port, value);
+    }
+
+    if (this.deleteWhenDone)
+        this.dispatch("delete-view");
+
+    delete this.deleteWhenDone;
 }
 
 CIRCNetwork.prototype.onCTCPReplyPing =
@@ -2453,18 +2458,41 @@ function my_cap(e)
 {
     if (e.params[2] == "LS")
     {
-        var listCaps = new Array();
-        for (var cap in e.server.caps)
+        // Handle the STS upgrade policy if we have one.
+        if (e.server.pendingCapNegotiation && e.stsUpgradePort)
         {
-            var value = e.server.capvals[cap];
-            if (value)
-                cap += "=" + value;
-            listCaps.push(cap);
+            this.display(getMsg(MSG_STS_UPGRADE, e.stsUpgradePort));
+            this.deleteWhenDone = true;
+            this.quit();
+
+            gotoIRCURL({scheme: "ircs", host: e.server.hostname, port: e.stsUpgradePort,
+                        pass: e.server.password, isserver: true});
+            return true;
         }
-        if (listCaps.length > 0)
+
+        // Don't show the raw message until we've registered.
+        if (this.state == NET_ONLINE)
         {
-            listCaps.sort();
-            this.display(getMsg(MSG_SUPPORTS_CAPS, listCaps.join(MSG_COMMASP)));
+            var listCaps = new Array();
+            for (var cap in e.server.caps)
+            {
+                var value = e.server.capvals[cap];
+                if (value)
+                    cap += "=" + value;
+                listCaps.push(cap);
+            }
+            if (listCaps.length > 0)
+            {
+                listCaps.sort();
+                this.display(getMsg(MSG_SUPPORTS_CAPS, listCaps.join(MSG_COMMASP)));
+            }
+        }
+
+        // Update the STS duration policy.
+        if (e.server.isSecure && ("sts" in e.server.caps) && client.prefs["sts.enabled"])
+        {
+            var value = client.sts.parseParameters(e.server.capvals["sts"]).duration;
+            client.sts.setPolicy(e.server.hostname, e.server.port, value);
         }
     }
     else if (e.params[2] == "LIST")
@@ -2493,6 +2521,28 @@ function my_cap(e)
     else if (e.params[2] == "NAK")
     {
         this.display(getMsg(MSG_CAPS_ERROR, e.caps.join(", ")));
+    }
+    else if (e.params[2] == "NEW")
+    {
+        // Handle a new STS policy
+        if (client.prefs["sts.enabled"] && (arrayContains(e.newcaps, "sts")))
+        {
+            var policy = client.sts.parseParameters(e.server.capvals["sts"]);
+
+            if (!e.server.isSecure && policy.port)
+            {
+                // Inform the user of the new upgrade policy and
+                // offer an option to reconnect.
+                client.munger.getRule(".inline-buttons").enabled = true;
+                this.display(getMsg(MSG_STS_UPGRADE_NEW, [this.unicodeName, "reconnect"]));
+                client.munger.getRule(".inline-buttons").enabled = false;
+            }
+            else if (e.server.isSecure && policy.duration)
+            {
+                // Renew the policy's duration.
+                client.sts.setPolicy(e.server.hostname, e.server.port, policy.duration);
+            }
+        }
     }
     return true;
 }
@@ -3276,7 +3326,7 @@ function onDCCAutoAcceptTimeout(o, folder)
 CIRCUser.prototype.onDCCChat =
 function my_dccchat(e)
 {
-    if (!jsenv.HAS_SERVER_SOCKETS || !client.prefs["dcc.enabled"])
+    if (!client.prefs["dcc.enabled"])
         return;
 
     var u = client.dcc.addUser(e.user, e.host);
@@ -3320,7 +3370,7 @@ function my_dccchat(e)
 CIRCUser.prototype.onDCCSend =
 function my_dccsend(e)
 {
-    if (!jsenv.HAS_SERVER_SOCKETS || !client.prefs["dcc.enabled"])
+    if (!client.prefs["dcc.enabled"])
         return;
 
     var u = client.dcc.addUser(e.user, e.host);

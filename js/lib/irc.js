@@ -102,6 +102,7 @@ CIRCNetwork.prototype.INITIAL_NAME = "INITIAL_NAME";
 CIRCNetwork.prototype.INITIAL_DESC = "INITIAL_DESC";
 CIRCNetwork.prototype.USE_SASL = false;
 CIRCNetwork.prototype.UPGRADE_INSECURE = false;
+CIRCNetwork.prototype.USE_STS = false;
 /* set INITIAL_CHANNEL to "" if you don't want a primary channel */
 CIRCNetwork.prototype.INITIAL_CHANNEL = "#jsbot";
 CIRCNetwork.prototype.INITIAL_UMODE = "+iw";
@@ -717,12 +718,7 @@ function serv_onsocketconnection(host, port, config, exception)
         ev.server = this;
         this.parent.eventPump.addEvent(ev);
         this.isConnected = true;
-
-        if (jsenv.HAS_NSPR_EVENTQ)
-            this.connection.startAsyncRead(this);
-        else
-            this.parent.eventPump.addEvent(new CEvent("server", "poll", this,
-                                                      "onPoll"));
+        this.connection.startAsyncRead(this);
     }
     else
     {
@@ -745,6 +741,9 @@ function serv_onconnect (e)
 
     this.sendData("CAP LS 302\n");
     this.pendingCapNegotiation = true;
+
+    this.caps = new Object();
+    this.capvals = new Object();
 
     this.login(this.parent.INITIAL_NICK, this.parent.INITIAL_NAME,
                this.parent.INITIAL_DESC);
@@ -1167,9 +1166,6 @@ function serv_disconnect(e)
         this.channels[c].active = false;
     }
 
-    this.caps = new Object();
-    this.capvals = new Object();
-
     if (this.isStartTLS)
     {
         this.isSecure = false;
@@ -1259,21 +1255,13 @@ function serv_poll(e)
     {
         dd ("*** Caught exception " + ex + " reading from server " +
             this.hostname);
-        if (jsenv.HAS_RHINO && (ex instanceof java.lang.ThreadDeath))
-        {
-            dd("### catching a ThreadDeath");
-            throw(ex);
-        }
-        else
-        {
-            ev = new CEvent ("server", "disconnect", this, "onDisconnect");
-            ev.server = this;
-            ev.reason = "error";
-            ev.exception = ex;
-            ev.disconnectStatus = NS_ERROR_ABORT;
-            this.parent.eventPump.addEvent (ev);
-            return false;
-        }
+        ev = new CEvent ("server", "disconnect", this, "onDisconnect");
+        ev.server = this;
+        ev.reason = "error";
+        ev.exception = ex;
+        ev.disconnectStatus = NS_ERROR_ABORT;
+        this.parent.eventPump.addEvent (ev);
+        return false;
     }
 
     this.parent.eventPump.addEvent (new CEvent ("server", "poll", this,
@@ -2121,13 +2109,31 @@ function my_cap (e)
                 this.capvals[cap] = value;
         }
 
-        // Don't show the raw message until the end of the response.
+        // Don't do anything until the end of the response.
         if (multiline)
             return true;
 
         //Only request capabilities we support if we are connecting.
         if (this.pendingCapNegotiation)
         {
+            // If we have an STS upgrade policy, immediately disconnect
+            // and reconnect on the secure port.
+            if (this.parent.USE_STS && ("sts" in this.caps) && !this.isSecure)
+            {
+                var keys = this.capvals["sts"].toLowerCase().split(",");
+                for (var i = 0; i < keys.length; i++)
+                {
+                    var [key, value] = keys[i].split('=');
+                    if (key == "port" && value)
+                    {
+                        e.stsUpgradePort = value;
+                        e.destObject = this.parent;
+                        e.set = "network";
+                        return false;
+                    }
+                }
+            }
+
             // Request STARTTLS if we are configured to do so.
             if (!this.isSecure && ("tls" in this.caps) && this.parent.UPGRADE_INSECURE)
                 this.sendData("STARTTLS\n");
@@ -2152,9 +2158,6 @@ function my_cap (e)
                 e.server.sendData("CAP END\n");
                 delete this.pendingCapNegotiation;
             }
-
-            //Don't show the raw message while connecting.
-            return true;
         }
     }
     else if (e.params[2] == "LIST")
@@ -2171,7 +2174,7 @@ function my_cap (e)
             this.caps[caps[i]] = true;
         }
 
-        // Don't show the raw message until the end of the response.
+        // Don't do anything until the end of the response.
         if (multiline)
             return true;
     }
@@ -2241,16 +2244,18 @@ function my_cap (e)
     {
         // A capability is now available, so request it if we can.
         var caps = e.params[3].split(/\s+/);
+        e.newcaps = [];
         for (var i = 0; i < caps.length; i++)
         {
             var [cap, value] = caps[i].split(/=(.+)/);
             cap = cap.trim();
             this.caps[cap] = null;
+            e.newcaps.push(cap);
             if (value)
                 this.capvals[cap] = value;
         }
 
-        var caps_req = JSIRCV3_SUPPORTED_CAPS.filter(i => (i in this.caps));
+        var caps_req = JSIRCV3_SUPPORTED_CAPS.filter(i => (i in e.newcaps));
 
         // Don't send requests for these caps.
         caps_noreq = ["tls", "sts", "sasl", "echo-message"];
@@ -2266,10 +2271,15 @@ function my_cap (e)
     {
         // A capability is no longer available.
         var caps = e.params[3].split(/\s+/);
+        var caps_nodel = ["sts"];
         for (var i = 0; i < caps.length; i++)
         {
             var cap = caps[i].split(/=(.+)/)[0];
             cap = cap.trim();
+
+            if (arrayContains(caps_nodel, cap))
+                continue;
+
             this.caps[cap] = null;
         }
     }

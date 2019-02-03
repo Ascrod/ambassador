@@ -222,6 +222,7 @@ function initPrefs()
          ["sound.user.start",    "beep beep", ".soundEvts"],
          ["stalkWholeWords",    true,     "lists.stalkWords"],
          ["stalkWords",         [],       "lists.stalkWords"],
+         ["sts.enabled",        true,     ".connect"],
          ["tabLabel",           "",       "hidden"],
          ["tabGotoKeyModifiers", 0,       "hidden"],
          ["timestamps",         false,    "appearance.timestamps"],
@@ -252,6 +253,7 @@ function initPrefs()
     CIRCNetwork.prototype.PROXY_TYPE_OVERRIDE = client.prefs["proxy.typeOverride"];
     CIRCNetwork.prototype.USE_SASL      = client.prefs["sasl.plain.enabled"];
     CIRCNetwork.prototype.UPGRADE_INSECURE = client.prefs["upgrade-insecure"];
+    CIRCNetwork.prototype.USE_STS       = client.prefs["sts.enabled"];
     CIRCChannel.prototype.MAX_MESSAGES  = client.prefs["channelMaxLines"];
     CIRCUser.prototype.MAX_MESSAGES     = client.prefs["userMaxLines"];
     CIRCDCCChat.prototype.MAX_MESSAGES  = client.prefs["dccUserMaxLines"];
@@ -752,6 +754,10 @@ function onPrefChanged(prefName, newValue, oldValue)
 
         case "upgrade-insecure":
             CIRCNetwork.prototype.UPGRADE_INSECURE = newValue;
+            break;
+
+        case "sts.enabled":
+            CIRCNetwork.prototype.USE_STS = newValue;
             break;
 
         case "nickname":
