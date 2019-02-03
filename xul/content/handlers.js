@@ -2356,6 +2356,11 @@ function my_netdisconnect (e)
         var value = client.sts.parseParameters(e.server.capvals["sts"]).duration;
         client.sts.setPolicy(e.server.hostname, e.server.port, value);
     }
+
+    if (this.deleteWhenDone)
+        this.dispatch("delete-view");
+
+    delete this.deleteWhenDone;
 }
 
 CIRCNetwork.prototype.onCTCPReplyPing =
@@ -2457,8 +2462,8 @@ function my_cap(e)
         if (e.server.pendingCapNegotiation && e.stsUpgradePort)
         {
             this.display(getMsg(MSG_STS_UPGRADE, e.stsUpgradePort));
+            this.deleteWhenDone = true;
             this.quit();
-            this.dispatch("delete-view");
 
             gotoIRCURL({scheme: "ircs", host: e.server.hostname, port: e.stsUpgradePort,
                         pass: e.server.password, isserver: true});
