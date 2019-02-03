@@ -2475,6 +2475,19 @@ function my_cap(e)
                 this.display(getMsg(MSG_SUPPORTS_CAPS, listCaps.join(MSG_COMMASP)));
             }
         }
+
+        // Update the STS duration policy.
+        if (e.server.isSecure && ("sts" in e.server.caps) && client.prefs["sts.enabled"])
+        {
+            var keys = e.server.capvals["sts"].toLowerCase().split(",");
+            for (var i = 0; i < keys.length; i++)
+            {
+                var [key, value] = keys[i].split('=');
+                if (key == "duration" && value)
+                    break;
+            }
+            client.sts.setPolicy(e.server.hostname, e.server.port, value);
+        }
     }
     else if (e.params[2] == "LIST")
     {

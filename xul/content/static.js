@@ -136,6 +136,8 @@ function init()
 
     client.ident = new IdentServer(client);
 
+    client.sts = new CIRCSTS(client);
+
     // Start log rotation checking first.  This will schedule the next check.
     checkLogFiles();
     // Start logging.  Nothing should call display() before this point.
@@ -1800,6 +1802,17 @@ function gotoIRCURL(url, e)
         dispatch("client");
         delete client.pendingViewContext;
         return;
+    }
+
+    // If STS is enabled, check the cache for a secure port to connect to.
+    if (client.prefs["sts.enabled"])
+    {
+        var port = client.sts.getUpgradePolicy(url.host);
+        if (port)
+        {
+            url.scheme = "ircs";
+            url.port = port;
+        }
     }
 
     // Convert a request for a server to a network if we know it.

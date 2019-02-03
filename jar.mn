@@ -35,6 +35,7 @@ ambassador.jar:
 	content/ambassador/lib/js/irc-debug.js                          (js/lib/irc-debug.js)
 	content/ambassador/lib/js/file-utils.js                         (js/lib/file-utils.js)
 	content/ambassador/lib/js/dcc.js                                (js/lib/dcc.js)
+	content/ambassador/lib/js/sts.js                                (js/lib/sts.js)
 	content/ambassador/lib/js/text-serializer.js                    (js/lib/text-serializer.js)
 	content/ambassador/lib/js/text-logger.js                        (js/lib/text-logger.js)
 	content/ambassador/lib/js/json-serializer.js                    (js/lib/json-serializer.js)
