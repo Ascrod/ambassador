@@ -1912,12 +1912,12 @@ function serv_353 (e)
             }
         } while (found && multiPrefix);
 
+        var ary = nick.match(/([^ ]+)!([^ ]+)@(.*)/);
         var user = null;
         var host = null;
 
-        if (this.caps["userhost-in-names"])
+        if (this.caps["userhost-in-names"] && ary)
         {
-            var ary = nick.match(/([^ ]+)!([^ ]+)@(.*)/);
             nick = ary[1];
             user = ary[2];
             host = ary[3];
