@@ -83,6 +83,18 @@
                         oninput="gNetworkWindow.onObjectChange(this)"/>
                 </hbox>
             </hbox>
+            <hbox align="center"
+                tooltiptitle="&object.displayname.label;"
+                tooltipcontent="&object.displayname.help;"
+                onmouseover="gNetworkWindow.onMouseOver(this);"
+                onmousemove="gNetworkWindow.onMouseMove(this);"
+                onmouseout="gNetworkWindow.onMouseOut(this);">
+                <label value="&object.displayname.label;" width="100" flex="1"/>
+                <hbox flex="1000">
+                    <textbox id="editor-network-displayname"
+                        oninput="gNetworkWindow.onObjectChange(this)"/>
+                </hbox>
+            </hbox>
         </vbox>
         <vbox id="server-editor-box" flex="1">
             <hbox align="center"
