@@ -1118,6 +1118,8 @@ CIRCNetwork.prototype.on903 = /* SASL Auth success */
 CIRCNetwork.prototype.on904 = /* SASL Auth failed */
 CIRCNetwork.prototype.on905 = /* SASL Command too long */
 CIRCNetwork.prototype.on906 = /* SASL Aborted */
+CIRCNetwork.prototype.on907 = /* SASL Already authenticated */
+CIRCNetwork.prototype.on908 = /* SASL Mechanisms */
 function my_showtonet (e)
 {
     var p = (3 in e.params) ? e.params[2] + " " : "";

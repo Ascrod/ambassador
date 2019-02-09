@@ -2298,12 +2298,20 @@ CIRCServer.prototype.on903 = /* Auth success */
 CIRCServer.prototype.on904 = /* Auth failed */
 CIRCServer.prototype.on905 = /* Command too long */
 CIRCServer.prototype.on906 = /* Aborted */
+CIRCServer.prototype.on907 = /* Already authenticated */
+CIRCServer.prototype.on908 = /* Mechanisms */
 function cap_on900 (e)
 {
     if (this.pendingCapNegotiation)
     {
         delete this.pendingCapNegotiation;
         this.sendData("CAP END\n");
+    }
+
+    if (e.code == "908")
+    {
+        // Update our list of SASL mechanics.
+        this.capvals["sasl"] = e.params[2];
     }
 
     e.destObject = this.parent;
