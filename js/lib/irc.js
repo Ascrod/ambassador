@@ -17,6 +17,7 @@ const JSIRCV3_SUPPORTED_CAPS = [
     "echo-message",
     "extended-join",
     "invite-notify",
+    "message-tags",
     "multi-prefix",
     "sasl",
     "tls",
@@ -628,6 +629,106 @@ function serv_tolowercase(str)
              str = str.replace(/[A-Z]/g, replaceFunction);
      }
      return str;
+}
+
+// Encodes tag data to send.
+CIRCServer.prototype.encodeTagData =
+function serv_encodetagdata(obj)
+{
+    var dict = new Object();
+    dict[";"] = ":";
+    dict[" "] = "s";
+    dict["\\"] = "\\";
+    dict["\r"] = "r";
+    dict["\n"] = "n";
+
+    // Function for escaping key values.
+    function escapeTagValue(data)
+    {
+        var rv = "";
+        for (var i = 0; i  < data.length; i++)
+        {
+            var ci = data[i];
+            var co = dict[data[i]];
+            if (co)
+                rv += "\\" + co;
+            else
+                rv += ci;
+        }
+
+        return rv;
+    }
+
+    var str = "";
+
+    for(var key in obj)
+    {
+        var val = obj[key];
+        str += key;
+        if (val)
+        {
+            str += "=";
+            str += escapeTagValue(val);
+        }
+        str += ";";
+    }
+
+    // Remove any trailing semicolons.
+    if (str[str.length - 1] == ";")
+        str = str.substring(0, str.length - 1);
+
+    return str;
+}
+
+// Decodes received tag data.
+CIRCServer.prototype.decodeTagData =
+function serv_decodetagdata(str)
+{
+    // Remove the leading '@' if we have one.
+    if (str[0] == "@")
+        str = str.substring(1);
+
+    var dict = new Object();
+    dict[":"] = ";";
+    dict["s"] = " ";
+    dict["\\"] = "\\";
+    dict["r"] = "\r";
+    dict["n"] = "\n";
+
+    // Function for unescaping key values.
+    function unescapeTagValue(data)
+    {
+        var rv = "";
+        for (var i = 0; i  < data.length; i++)
+        {
+            var ci = data[i];
+            var co = dict[data[i+1]];
+            if (ci == "\\" && i < str.length - 1)
+            {
+                if (co)
+                    rv += co;
+                else
+                    rv += ci;
+                i++
+            }
+            else if (ci != "\\")
+                rv += ci;
+        }
+
+        return rv;
+    }
+
+    var obj = Object();
+
+    var tags = str.split(";");
+    for (var i = 0; i < tags.length; i++)
+    {
+        var [key, val] = tags[i].split("=");
+        val = unescapeTagValue(val);
+        obj[key] = val;
+    }
+
+    return obj;
 }
 
 // Returns the IRC URL representation of this server.
@@ -1343,6 +1444,18 @@ function serv_onRawData(e)
     {
         dd ("empty line on onRawData?");
         return false;
+    }
+
+    if (l[0] == "@")
+    {
+        e.tagdata = l.substring(0, l.indexOf(" "));
+        e.tags = this.decodeTagData(e.tagdata);
+        l = l.substring(l.indexOf(" ") + 1);
+    }
+    else
+    {
+        e.tagdata = new Object();
+        e.tags = new Object();
     }
 
     if (l[0] == ":")
