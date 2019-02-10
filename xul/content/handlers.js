@@ -2346,17 +2346,17 @@ function my_netdisconnect (e)
         client.getConnectionCount() == 0)
         window.close();
 
-    if (("reconnect" in this) && this.reconnect)
-    {
-        this.connect(this.requireSecurity);
-        delete this.reconnect;
-    }
-
-    // On disconnect, renew the STS policy.
+    // Renew the STS policy.
     if (e.server.isSecure && ("sts" in e.server.caps) && client.prefs["sts.enabled"])
     {
         var value = client.sts.parseParameters(e.server.capvals["sts"]).duration;
         client.sts.setPolicy(e.server.hostname, e.server.port, value);
+    }
+
+    if (("reconnect" in this) && this.reconnect)
+    {
+        this.connect(this.requireSecurity);
+        delete this.reconnect;
     }
 
     if (this.deleteWhenDone)
