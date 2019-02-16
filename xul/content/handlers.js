@@ -1415,12 +1415,12 @@ function my_monnotice(e)
     }
 
     if (e.code == "730") // RPL_MONONLINE
-        msg = arraySpeak (nickList, "is", "are") + " online.", "NOTIFY-ON";
+        msg = arraySpeak (nickList, "is", "are") + " online.";
     else // RPL_MONOFFLINE
-        msg = arraySpeak (nickList, "is", "are") + " offline.", "NOTIFY-OFF";
-    this.displayHere(msg);
+        msg = arraySpeak (nickList, "is", "are") + " offline.";
+    this.displayHere(msg, e.code);
     if (displayTab)
-        displayTab.displayHere(msg);
+        displayTab.displayHere(msg, e.code);
 }
 
 CIRCNetwork.prototype.on732 = /* RPL_MONLIST */
