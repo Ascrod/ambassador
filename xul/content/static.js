@@ -80,6 +80,7 @@ client.statusMessages = new Array();
 #expand client.devtoolsEnabled = "__MOZ_DEVTOOLS__";
 
 CIRCNetwork.prototype.INITIAL_CHANNEL = "";
+CIRCNetwork.prototype.STS_MODULE = new CIRCSTS();
 CIRCNetwork.prototype.MAX_MESSAGES = 100;
 CIRCNetwork.prototype.IGNORE_MOTD = false;
 CIRCNetwork.prototype.RECLAIM_WAIT = 15000;
@@ -136,7 +137,13 @@ function init()
 
     client.ident = new IdentServer(client);
 
-    client.sts = new CIRCSTS(client);
+    // Initialize the STS module.
+    var stsFile = new nsLocalFile(client.prefs["profilePath"]);
+    stsFile.append("sts.json");
+
+    client.sts = CIRCNetwork.prototype.STS_MODULE;
+    client.sts.init(stsFile);
+    client.sts.ENABLED = client.prefs["sts.enabled"];
 
     // Start log rotation checking first.  This will schedule the next check.
     checkLogFiles();

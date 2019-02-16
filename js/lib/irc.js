@@ -102,7 +102,7 @@ CIRCNetwork.prototype.INITIAL_NAME = "INITIAL_NAME";
 CIRCNetwork.prototype.INITIAL_DESC = "INITIAL_DESC";
 CIRCNetwork.prototype.USE_SASL = false;
 CIRCNetwork.prototype.UPGRADE_INSECURE = false;
-CIRCNetwork.prototype.USE_STS = false;
+CIRCNetwork.prototype.STS_MODULE = null;
 /* set INITIAL_CHANNEL to "" if you don't want a primary channel */
 CIRCNetwork.prototype.INITIAL_CHANNEL = "#jsbot";
 CIRCNetwork.prototype.INITIAL_UMODE = "+iw";
@@ -2118,19 +2118,15 @@ function my_cap (e)
         {
             // If we have an STS upgrade policy, immediately disconnect
             // and reconnect on the secure port.
-            if (this.parent.USE_STS && ("sts" in this.caps) && !this.isSecure)
+            if (this.parent.STS_MODULE.ENABLED && ("sts" in this.caps) && !this.isSecure)
             {
-                var keys = this.capvals["sts"].toLowerCase().split(",");
-                for (var i = 0; i < keys.length; i++)
+                var policy = this.parent.STS_MODULE.parseParameters(this.capvals["sts"]);
+                if (policy && policy.port)
                 {
-                    var [key, value] = keys[i].split('=');
-                    if (key == "port" && value)
-                    {
-                        e.stsUpgradePort = value;
-                        e.destObject = this.parent;
-                        e.set = "network";
-                        return false;
-                    }
+                    e.stsUpgradePort = policy.port;
+                    e.destObject = this.parent;
+                    e.set = "network";
+                    return false;
                 }
             }
 

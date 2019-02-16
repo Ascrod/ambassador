@@ -2347,7 +2347,7 @@ function my_netdisconnect (e)
         window.close();
 
     // Renew the STS policy.
-    if (e.server.isSecure && ("sts" in e.server.caps) && client.prefs["sts.enabled"])
+    if (e.server.isSecure && ("sts" in e.server.caps) && client.sts.ENABLED)
     {
         var value = client.sts.parseParameters(e.server.capvals["sts"]).duration;
         client.sts.setPolicy(e.server.hostname, e.server.port, value);
@@ -2491,7 +2491,7 @@ function my_cap(e)
         }
 
         // Update the STS duration policy.
-        if (e.server.isSecure && ("sts" in e.server.caps) && client.prefs["sts.enabled"])
+        if (e.server.isSecure && ("sts" in e.server.caps) && client.sts.ENABLED)
         {
             var value = client.sts.parseParameters(e.server.capvals["sts"]).duration;
             client.sts.setPolicy(e.server.hostname, e.server.port, value);
@@ -2527,10 +2527,9 @@ function my_cap(e)
     else if (e.params[2] == "NEW")
     {
         // Handle a new STS policy
-        if (client.prefs["sts.enabled"] && (arrayContains(e.newcaps, "sts")))
+        if (client.sts.ENABLED && (arrayContains(e.newcaps, "sts")))
         {
             var policy = client.sts.parseParameters(e.server.capvals["sts"]);
-
             if (!e.server.isSecure && policy.port)
             {
                 // Inform the user of the new upgrade policy and

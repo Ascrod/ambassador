@@ -19,6 +19,7 @@ function CIRCDCCUser() {}
 function CIRCDCCChat() {}
 function CIRCDCCFile() {}
 function CIRCDCCFileTransfer() {}
+function CIRCSTS() {}
 
 // Stores network item data.
 function NetworkObject(name, displayName)
