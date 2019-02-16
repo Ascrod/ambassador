@@ -380,6 +380,39 @@ function net_doconnect(e)
         host = 0;
     }
 
+    // If STS is enabled, check the cache for a secure port to connect to.
+    if (this.STS_MODULE.ENABLED && !this.serverList[host].isSecure)
+    {
+        var newPort = this.STS_MODULE.getUpgradePolicy(this.serverList[host].hostname);
+        if (newPort)
+        {
+            // If we're a temporary network, just change the server prior to connecting.
+            if (this.temporary)
+            {
+                this.serverList[host].port = newPort;
+                this.serverList[host].isSecure = true;
+            }
+            // Otherwise, find or create a server with the specified host and port.
+            else
+            {
+                var hostname = this.serverList[host].hostname;
+                var matches = this.serverList.filter(function(s) {
+                    return  s.hostname == hostname && s.port == newPort;
+                });
+                if (matches.length > 0)
+                {
+                    host = arrayIndexOf(this.serverList, matches[0]);
+                }
+                else
+                {
+                    this.addServer(hostname, newPort, true,
+                                    this.serverList[host].password);
+                    host = this.serverList.length - 1;
+                }
+            }
+        }
+    }
+
     if (this.serverList[host].isSecure || !this.requireSecurity)
     {
         ev = new CEvent ("network", "startconnect", this, "onStartConnect");

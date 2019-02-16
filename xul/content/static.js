@@ -1811,17 +1811,6 @@ function gotoIRCURL(url, e)
         return;
     }
 
-    // If STS is enabled, check the cache for a secure port to connect to.
-    if (client.prefs["sts.enabled"])
-    {
-        var port = client.sts.getUpgradePolicy(url.host);
-        if (port)
-        {
-            url.scheme = "ircs";
-            url.port = port;
-        }
-    }
-
     // Convert a request for a server to a network if we know it.
     if (url.isserver)
     {

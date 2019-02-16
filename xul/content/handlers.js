@@ -2349,20 +2349,21 @@ function my_netdisconnect (e)
     // Renew the STS policy.
     if (e.server.isSecure && ("sts" in e.server.caps) && client.sts.ENABLED)
     {
-        var value = client.sts.parseParameters(e.server.capvals["sts"]).duration;
-        client.sts.setPolicy(e.server.hostname, e.server.port, value);
+        var policy = client.sts.parseParameters(e.server.capvals["sts"]);
+        client.sts.setPolicy(e.server.hostname, e.server.port, policy.duration);
     }
 
     if (("reconnect" in this) && this.reconnect)
     {
+        if ("stsUpgradePort" in this)
+        {
+            e.server.port = this.stsUpgradePort;
+            e.server.isSecure = true;
+            delete this.stsUpgradePort;
+        }
         this.connect(this.requireSecurity);
         delete this.reconnect;
     }
-
-    if (this.deleteWhenDone)
-        this.dispatch("delete-view");
-
-    delete this.deleteWhenDone;
 }
 
 CIRCNetwork.prototype.onCTCPReplyPing =
@@ -2464,11 +2465,9 @@ function my_cap(e)
         if (e.server.pendingCapNegotiation && e.stsUpgradePort)
         {
             this.display(getMsg(MSG_STS_UPGRADE, e.stsUpgradePort));
-            this.deleteWhenDone = true;
-            this.quit();
-
-            gotoIRCURL({scheme: "ircs", host: e.server.hostname, port: e.stsUpgradePort,
-                        pass: e.server.password, isserver: true});
+            this.reconnect = true;
+            this.stsUpgradePort = e.stsUpgradePort;
+            this.quit(MSG_RECONNECTING);
             return true;
         }
 
@@ -2493,8 +2492,8 @@ function my_cap(e)
         // Update the STS duration policy.
         if (e.server.isSecure && ("sts" in e.server.caps) && client.sts.ENABLED)
         {
-            var value = client.sts.parseParameters(e.server.capvals["sts"]).duration;
-            client.sts.setPolicy(e.server.hostname, e.server.port, value);
+            var policy = client.sts.parseParameters(e.server.capvals["sts"]);
+            client.sts.setPolicy(e.server.hostname, e.server.port, policy.duration);
         }
     }
     else if (e.params[2] == "LIST")
