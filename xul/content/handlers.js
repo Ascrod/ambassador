@@ -794,7 +794,7 @@ function onWhoTimeout()
                 chan.getUsersLength() < client.prefs["autoAwayCap"])
             {
                 net.primServ.LIGHTWEIGHT_WHO = true;
-                net.primServ.sendData("WHO " + chan.encodedName + "\n");
+                net.primServ.who(chan.unicodeName);
                 net.lastWhoCheckChannel = chan;
                 net.lastWhoCheckTime = Number(new Date());
                 return;
@@ -1815,8 +1815,8 @@ function my_315 (e)
 CIRCNetwork.prototype.on352 =
 function my_352 (e)
 {
-    //0-352 1-rginda_ 2-#chatzilla 3-chatzilla 4-h-64-236-139-254.aoltw.net
-    //5-irc.mozilla.org 6-rginda 7-H
+    //0-352 1-sender 2-channel 3-ident 4-host
+    //5-server 6-nick 7-H/G 8-hops and realname
     if ("pendingWhoReply" in this)
     {
         var status;
