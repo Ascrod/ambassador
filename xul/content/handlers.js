@@ -1855,6 +1855,49 @@ function my_352 (e)
     }
 }
 
+CIRCNetwork.prototype.on354 =
+function my_354 (e)
+{
+    //0-352 1-sender 2-type 3-channel 4-ident 5-host
+    //6-server 7-nick 8-H/G 9-hops 10-account 11-realname
+    if ("pendingWhoReply" in this)
+    {
+        var status;
+        if (e.user.isAway)
+            status = MSG_GONE;
+        else
+            status = MSG_HERE;
+
+        this.display(getMsg(MSG_WHO_MATCH,
+                            [e.params[7], e.params[4], e.params[5],
+                             e.user.desc, status, e.decodeParam(3),
+                             e.params[6], e.user.hops]), e.code, e.user);
+    }
+
+    updateTitle(e.user);
+    if ("whoMatches" in this)
+        ++this.whoMatches;
+    else
+        this.whoMatches = 1;
+
+    if (!("whoUpdates" in this))
+        this.whoUpdates = new Object();
+
+    if (e.userHasChanges)
+    {
+        for (var c in e.server.channels)
+        {
+            var chan = e.server.channels[c];
+            if (chan.active && (e.user.canonicalName in chan.users))
+            {
+                if (!(c in this.whoUpdates))
+                    this.whoUpdates[c] = new Array();
+                this.whoUpdates[c].push(chan.users[e.user.canonicalName]);
+            }
+        }
+    }
+}
+
 CIRCNetwork.prototype.on301 = /* user away message */
 function my_301(e)
 {
