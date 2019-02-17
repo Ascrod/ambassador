@@ -21,6 +21,7 @@ const JSIRCV3_SUPPORTED_CAPS = [
     "message-tags",
     "multi-prefix",
     "sasl",
+    "server-time",
     "tls",
     "userhost-in-names",
 ];
@@ -2099,6 +2100,7 @@ function serv_367(e)
     {
         e.channel.bans[e.ban] = {host: e.ban, user: e.user, time: e.banTime };
         var ban_evt = new CEvent("channel", "ban", e.channel, "onBan");
+        ban_evt.tags = e.tags;
         ban_evt.channel = e.channel;
         ban_evt.ban = e.ban;
         ban_evt.source = e.user;
@@ -2658,6 +2660,7 @@ function serv_nick (e)
             cuser.updateSortName();
 
             ev = new CEvent ("channel", "nick", this.channels[c], "onNick");
+            ev.tags = e.tags;
             ev.channel = this.channels[c];
             ev.user = cuser;
             ev.server = this;
@@ -2670,6 +2673,7 @@ function serv_nick (e)
     {
         /* if it was me, tell the network about the nick change as well */
         ev = new CEvent ("network", "nick", this.parent, "onNick");
+        ev.tags = e.tags;
         ev.user = e.user;
         ev.server = this;
         ev.oldNick = e.oldNick;
@@ -2694,6 +2698,7 @@ function serv_quit (e)
         {
             var ev = new CEvent ("channel", "quit", e.server.channels[c],
                                  "onQuit");
+            ev.tags = e.tags;
             ev.user = e.server.channels[c].users[e.user.canonicalName];
             ev.channel = e.server.channels[c];
             ev.server = ev.channel.parent;
@@ -3062,6 +3067,7 @@ function serv_ctcp (e)
         e.destObject = this;
 
     var ev = new CEvent("server", "ctcp-receive", this, "onReceiveCTCP");
+    ev.tags = e.tags;
     ev.server = this;
     ev.CTCPCode = e.CTCPCode;
     ev.CTCPData = e.CTCPData;
