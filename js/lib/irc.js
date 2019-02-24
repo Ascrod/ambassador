@@ -1538,7 +1538,8 @@ function serv_onRawData(e)
     e.code = e.params[0].toUpperCase();
 
     // Ignore all private (inc. channel) messages, notices and invites here.
-    if (e.ignored && ((e.code == "PRIVMSG") || (e.code == "NOTICE") || (e.code == "INVITE") ))
+    if (e.ignored && ((e.code == "PRIVMSG") || (e.code == "NOTICE") ||
+                      (e.code == "INVITE") || (e.code == "TAGMSG")))
         return true;
 
     e.type = "parseddata";
@@ -2879,6 +2880,7 @@ function serv_invite(e)
 
 CIRCServer.prototype.onNotice =
 CIRCServer.prototype.onPrivmsg =
+CIRCServer.prototype.onTagmsg =
 function serv_notice_privmsg (e)
 {
     var targetName = e.params[1];
@@ -2940,6 +2942,13 @@ function serv_notice_privmsg (e)
             // Just print to console on failure - or we'd spam the user
             dd("Warning: IDENTIFY-MSG is on, but there's no message flags");
         }
+    }
+
+    // TAGMSG doesn't have a message parameter, so just pass it on.
+    if (e.code == "TAGMSG")
+    {
+        e.destObject = e.replyTo;
+        return true;
     }
 
     if (e.params[2].search (/^\x01[^ ]+.*\x01$/) != -1)
