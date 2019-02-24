@@ -1886,7 +1886,8 @@ function my_354 (e)
         this.display(getMsg(MSG_WHO_MATCH,
                             [e.params[7], e.params[4], e.params[5],
                              e.user.desc, status, e.decodeParam(3),
-                             e.params[6], e.user.hops]), e.code, e.user);
+                             e.params[6], e.user.hops]), e.code, e.user,
+                     undefined, e.tags.time);
     }
 
     updateTitle(e.user);
