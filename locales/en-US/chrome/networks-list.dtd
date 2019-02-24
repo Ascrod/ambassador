@@ -12,6 +12,8 @@
 
 <!ENTITY object.name.label      "Name">
 <!ENTITY object.name.help       "The name of the network.">
+<!ENTITY object.displayname.label      "Display Name">
+<!ENTITY object.displayname.help       "The display name of the network.">
 <!ENTITY object.hostname.label  "Hostname">
 <!ENTITY object.hostname.help   "The address of the server.">
 <!ENTITY object.port.label      "Port">

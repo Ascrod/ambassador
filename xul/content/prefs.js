@@ -253,7 +253,7 @@ function initPrefs()
     CIRCNetwork.prototype.PROXY_TYPE_OVERRIDE = client.prefs["proxy.typeOverride"];
     CIRCNetwork.prototype.USE_SASL      = client.prefs["sasl.plain.enabled"];
     CIRCNetwork.prototype.UPGRADE_INSECURE = client.prefs["upgrade-insecure"];
-    CIRCNetwork.prototype.USE_STS       = client.prefs["sts.enabled"];
+    CIRCNetwork.prototype.STS_MODULE.ENABLED = client.prefs["sts.enabled"];
     CIRCChannel.prototype.MAX_MESSAGES  = client.prefs["channelMaxLines"];
     CIRCUser.prototype.MAX_MESSAGES     = client.prefs["userMaxLines"];
     CIRCDCCChat.prototype.MAX_MESSAGES  = client.prefs["dccUserMaxLines"];
@@ -757,7 +757,7 @@ function onPrefChanged(prefName, newValue, oldValue)
             break;
 
         case "sts.enabled":
-            CIRCNetwork.prototype.USE_STS = newValue;
+            CIRCNetwork.prototype.STS_MODULE.ENABLED = newValue;
             break;
 
         case "nickname":

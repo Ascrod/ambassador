@@ -105,7 +105,7 @@ CIRCNetwork.prototype.INITIAL_NAME = "INITIAL_NAME";
 CIRCNetwork.prototype.INITIAL_DESC = "INITIAL_DESC";
 CIRCNetwork.prototype.USE_SASL = false;
 CIRCNetwork.prototype.UPGRADE_INSECURE = false;
-CIRCNetwork.prototype.USE_STS = false;
+CIRCNetwork.prototype.STS_MODULE = null;
 /* set INITIAL_CHANNEL to "" if you don't want a primary channel */
 CIRCNetwork.prototype.INITIAL_CHANNEL = "#jsbot";
 CIRCNetwork.prototype.INITIAL_UMODE = "+iw";
@@ -383,6 +383,39 @@ function net_doconnect(e)
         host = 0;
     }
 
+    // If STS is enabled, check the cache for a secure port to connect to.
+    if (this.STS_MODULE.ENABLED && !this.serverList[host].isSecure)
+    {
+        var newPort = this.STS_MODULE.getUpgradePolicy(this.serverList[host].hostname);
+        if (newPort)
+        {
+            // If we're a temporary network, just change the server prior to connecting.
+            if (this.temporary)
+            {
+                this.serverList[host].port = newPort;
+                this.serverList[host].isSecure = true;
+            }
+            // Otherwise, find or create a server with the specified host and port.
+            else
+            {
+                var hostname = this.serverList[host].hostname;
+                var matches = this.serverList.filter(function(s) {
+                    return  s.hostname == hostname && s.port == newPort;
+                });
+                if (matches.length > 0)
+                {
+                    host = arrayIndexOf(this.serverList, matches[0]);
+                }
+                else
+                {
+                    this.addServer(hostname, newPort, true,
+                                    this.serverList[host].password);
+                    host = this.serverList.length - 1;
+                }
+            }
+        }
+    }
+
     if (this.serverList[host].isSecure || !this.requireSecurity)
     {
         ev = new CEvent ("network", "startconnect", this, "onStartConnect");
@@ -531,8 +564,10 @@ CIRCServer.prototype.VERSION_RPLY = "JS-IRC Library v0.01, " +
 CIRCServer.prototype.OS_RPLY = "Unknown";
 CIRCServer.prototype.HOST_RPLY = "Unknown";
 CIRCServer.prototype.DEFAULT_REASON = "no reason";
-/* true means on352 code doesn't collect hostmask, username, etc. */
+/* true means WHO command doesn't collect hostmask, username, etc. */
 CIRCServer.prototype.LIGHTWEIGHT_WHO = false;
+/* Unique identifier for WHOX commands. */
+CIRCServer.prototype.WHOX_TYPE = "314";
 /* -1 == never, 0 == prune onQuit, >0 == prune when >X ms old */
 CIRCServer.prototype.PRUNE_OLD_USERS = -1;
 
@@ -1406,7 +1441,7 @@ function serv_ppline(e)
         ev.data = lines[i].replace(/\r/g, "");
         if (ev.data)
         {
-            if (ev.data.match(/^(?::[^ ]+ )?(?:32[123]|352|315) /i))
+            if (ev.data.match(/^(?::[^ ]+ )?(?:32[123]|352|354|315) /i))
                 this.parent.eventPump.addBulkEvent(ev);
             else
                 this.parent.eventPump.addEvent(ev);
@@ -1980,6 +2015,50 @@ function serv_352 (e)
     return true;
 }
 
+/* extended who reply */
+CIRCServer.prototype.on354 =
+function serv_354 (e)
+{
+    // Discard if the type is not ours.
+    if (e.params[2] != this.WHOX_TYPE)
+        return;
+
+    e.userHasChanges = false;
+    if (this.LIGHTWEIGHT_WHO)
+    {
+        e.user = new CIRCUser(this, null, e.params[7]);
+    }
+    else
+    {
+        e.user = new CIRCUser(this, null, e.params[7], e.params[4], e.params[5]);
+        e.user.connectionHost = e.params[6];
+        // Hops is a separate parameter in WHOX.
+        e.user.hops = e.params[9];
+        var account = (e.params[10] == "0" ? null : e.params[10]);
+        e.user.account = account;
+        if (11 in e.params)
+        {
+            var desc = e.decodeParam(11, e.user);
+            if (e.user.desc != desc)
+            {
+                e.userHasChanges = true;
+                e.user.desc = desc;
+            }
+        }
+    }
+    var away = (e.params[8][0] == "G");
+    if (e.user.isAway != away)
+    {
+        e.userHasChanges = true;
+        e.user.isAway = away;
+    }
+
+    e.destObject = this.parent;
+    e.set = "network";
+
+    return true;
+}
+
 /* end of who */
 CIRCServer.prototype.on315 =
 function serv_315 (e)
@@ -2240,19 +2319,15 @@ function my_cap (e)
         {
             // If we have an STS upgrade policy, immediately disconnect
             // and reconnect on the secure port.
-            if (this.parent.USE_STS && ("sts" in this.caps) && !this.isSecure)
+            if (this.parent.STS_MODULE.ENABLED && ("sts" in this.caps) && !this.isSecure)
             {
-                var keys = this.capvals["sts"].toLowerCase().split(",");
-                for (var i = 0; i < keys.length; i++)
+                var policy = this.parent.STS_MODULE.parseParameters(this.capvals["sts"]);
+                if (policy && policy.port)
                 {
-                    var [key, value] = keys[i].split('=');
-                    if (key == "port" && value)
-                    {
-                        e.stsUpgradePort = value;
-                        e.destObject = this.parent;
-                        e.set = "network";
-                        return false;
-                    }
+                    e.stsUpgradePort = policy.port;
+                    e.destObject = this.parent;
+                    e.set = "network";
+                    return false;
                 }
             }
 
@@ -2420,12 +2495,20 @@ CIRCServer.prototype.on903 = /* Auth success */
 CIRCServer.prototype.on904 = /* Auth failed */
 CIRCServer.prototype.on905 = /* Command too long */
 CIRCServer.prototype.on906 = /* Aborted */
+CIRCServer.prototype.on907 = /* Already authenticated */
+CIRCServer.prototype.on908 = /* Mechanisms */
 function cap_on900 (e)
 {
     if (this.pendingCapNegotiation)
     {
         delete this.pendingCapNegotiation;
         this.sendData("CAP END\n");
+    }
+
+    if (e.code == "908")
+    {
+        // Update our list of SASL mechanics.
+        this.capvals["sasl"] = e.params[2];
     }
 
     e.destObject = this.parent;
@@ -2806,7 +2889,12 @@ function serv_join(e)
             //If away-notify is active, query the list of users for away status.
             if (e.server.caps["away-notify"])
             {
-                e.server.sendData("WHO " + e.channel.encodedName + "\n");
+                // If the server supports extended who, use it.
+                // This lets us initialize the account property.
+                if (e.server.supports["whox"])
+                    e.server.who(e.channel.unicodeName + " %acdfhnrstu," + e.server.WHOX_TYPE);
+                else
+                    e.server.who(e.channel.unicodeName);
             }
         };
         // Between 10s - 20s.

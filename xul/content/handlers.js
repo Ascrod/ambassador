@@ -794,7 +794,7 @@ function onWhoTimeout()
                 chan.getUsersLength() < client.prefs["autoAwayCap"])
             {
                 net.primServ.LIGHTWEIGHT_WHO = true;
-                net.primServ.sendData("WHO " + chan.encodedName + "\n");
+                net.primServ.who(chan.unicodeName);
                 net.lastWhoCheckChannel = chan;
                 net.lastWhoCheckTime = Number(new Date());
                 return;
@@ -1121,6 +1121,8 @@ CIRCNetwork.prototype.on903 = /* SASL Auth success */
 CIRCNetwork.prototype.on904 = /* SASL Auth failed */
 CIRCNetwork.prototype.on905 = /* SASL Command too long */
 CIRCNetwork.prototype.on906 = /* SASL Aborted */
+CIRCNetwork.prototype.on907 = /* SASL Already authenticated */
+CIRCNetwork.prototype.on908 = /* SASL Mechanisms */
 function my_showtonet (e)
 {
     var p = (3 in e.params) ? e.params[2] + " " : "";
@@ -1827,8 +1829,8 @@ function my_315 (e)
 CIRCNetwork.prototype.on352 =
 function my_352 (e)
 {
-    //0-352 1-rginda_ 2-#chatzilla 3-chatzilla 4-h-64-236-139-254.aoltw.net
-    //5-irc.mozilla.org 6-rginda 7-H
+    //0-352 1-sender 2-channel 3-ident 4-host
+    //5-server 6-nick 7-H/G 8-hops and realname
     if ("pendingWhoReply" in this)
     {
         var status;
@@ -1842,6 +1844,49 @@ function my_352 (e)
                              e.user.desc, status, e.decodeParam(2),
                              e.params[5], e.user.hops]), e.code, e.user,
                      undefined, e.tags.time);
+    }
+
+    updateTitle(e.user);
+    if ("whoMatches" in this)
+        ++this.whoMatches;
+    else
+        this.whoMatches = 1;
+
+    if (!("whoUpdates" in this))
+        this.whoUpdates = new Object();
+
+    if (e.userHasChanges)
+    {
+        for (var c in e.server.channels)
+        {
+            var chan = e.server.channels[c];
+            if (chan.active && (e.user.canonicalName in chan.users))
+            {
+                if (!(c in this.whoUpdates))
+                    this.whoUpdates[c] = new Array();
+                this.whoUpdates[c].push(chan.users[e.user.canonicalName]);
+            }
+        }
+    }
+}
+
+CIRCNetwork.prototype.on354 =
+function my_354 (e)
+{
+    //0-352 1-sender 2-type 3-channel 4-ident 5-host
+    //6-server 7-nick 8-H/G 9-hops 10-account 11-realname
+    if ("pendingWhoReply" in this)
+    {
+        var status;
+        if (e.user.isAway)
+            status = MSG_GONE;
+        else
+            status = MSG_HERE;
+
+        this.display(getMsg(MSG_WHO_MATCH,
+                            [e.params[7], e.params[4], e.params[5],
+                             e.user.desc, status, e.decodeParam(3),
+                             e.params[6], e.user.hops]), e.code, e.user);
     }
 
     updateTitle(e.user);
@@ -2363,23 +2408,24 @@ function my_netdisconnect (e)
         client.getConnectionCount() == 0)
         window.close();
 
+    // Renew the STS policy.
+    if (e.server.isSecure && ("sts" in e.server.caps) && client.sts.ENABLED)
+    {
+        var policy = client.sts.parseParameters(e.server.capvals["sts"]);
+        client.sts.setPolicy(e.server.hostname, e.server.port, policy.duration);
+    }
+
     if (("reconnect" in this) && this.reconnect)
     {
+        if ("stsUpgradePort" in this)
+        {
+            e.server.port = this.stsUpgradePort;
+            e.server.isSecure = true;
+            delete this.stsUpgradePort;
+        }
         this.connect(this.requireSecurity);
         delete this.reconnect;
     }
-
-    // On disconnect, renew the STS policy.
-    if (e.server.isSecure && ("sts" in e.server.caps) && client.prefs["sts.enabled"])
-    {
-        var value = client.sts.parseParameters(e.server.capvals["sts"]).duration;
-        client.sts.setPolicy(e.server.hostname, e.server.port, value);
-    }
-
-    if (this.deleteWhenDone)
-        this.dispatch("delete-view");
-
-    delete this.deleteWhenDone;
 }
 
 CIRCNetwork.prototype.onCTCPReplyPing =
@@ -2482,11 +2528,9 @@ function my_cap(e)
         if (e.server.pendingCapNegotiation && e.stsUpgradePort)
         {
             this.display(getMsg(MSG_STS_UPGRADE, e.stsUpgradePort));
-            this.deleteWhenDone = true;
-            this.quit();
-
-            gotoIRCURL({scheme: "ircs", host: e.server.hostname, port: e.stsUpgradePort,
-                        pass: e.server.password, isserver: true});
+            this.reconnect = true;
+            this.stsUpgradePort = e.stsUpgradePort;
+            this.quit(MSG_RECONNECTING);
             return true;
         }
 
@@ -2509,10 +2553,10 @@ function my_cap(e)
         }
 
         // Update the STS duration policy.
-        if (e.server.isSecure && ("sts" in e.server.caps) && client.prefs["sts.enabled"])
+        if (e.server.isSecure && ("sts" in e.server.caps) && client.sts.ENABLED)
         {
-            var value = client.sts.parseParameters(e.server.capvals["sts"]).duration;
-            client.sts.setPolicy(e.server.hostname, e.server.port, value);
+            var policy = client.sts.parseParameters(e.server.capvals["sts"]);
+            client.sts.setPolicy(e.server.hostname, e.server.port, policy.duration);
         }
     }
     else if (e.params[2] == "LIST")
@@ -2545,10 +2589,9 @@ function my_cap(e)
     else if (e.params[2] == "NEW")
     {
         // Handle a new STS policy
-        if (client.prefs["sts.enabled"] && (arrayContains(e.newcaps, "sts")))
+        if (client.sts.ENABLED && (arrayContains(e.newcaps, "sts")))
         {
             var policy = client.sts.parseParameters(e.server.capvals["sts"]);
-
             if (!e.server.isSecure && policy.port)
             {
                 // Inform the user of the new upgrade policy and

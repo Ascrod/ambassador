@@ -4,18 +4,23 @@
 
 /**
  * The base CIRCSTS object.
- *     @param policyFile |nsIFile| for storing the STS cache.
  */
-function CIRCSTS(client)
+function CIRCSTS()
 {
-    this.usePreloadList = true;
-
-    this.policyFile = new nsLocalFile(client.prefs["profilePath"]);
-    this.policyFile.append("sts.json");
-
     this.policyList = new Object();
     this.preloadList = new Object();
+}
 
+CIRCSTS.prototype.ENABLED = false;
+CIRCSTS.prototype.USE_PRELOAD_LIST = true;
+
+/**
+ * Initializes the STS module.
+ *     @param policyFile |nsIFile| for storing the STS cache.
+ */
+CIRCSTS.prototype.init = function(policyFile)
+{
+    this.policyFile = policyFile;
     this.readCacheFromFile();
 }
 
@@ -121,7 +126,7 @@ CIRCSTS.prototype.removePolicy = function(host)
  */
 CIRCSTS.prototype.getPreloadPolicy = function(host)
 {
-    if (this.usePreloadList)
+    if (this.USE_PRELOAD_LIST)
     {
         return this.preloadList[host];
     }
@@ -136,6 +141,9 @@ CIRCSTS.prototype.getPreloadPolicy = function(host)
  */
 CIRCSTS.prototype.getUpgradePolicy = function(host)
 {
+    if (!this.ENABLED)
+        return null;
+
     var cdata = this.policyList[host];
     var pdata = this.getPreloadPolicy(host);
 
@@ -175,6 +183,9 @@ CIRCSTS.prototype.getUpgradePolicy = function(host)
  */
 CIRCSTS.prototype.setPolicy = function(host, port, duration)
 {
+    if (!this.ENABLED)
+        return;
+
     port = Number(port);
     duration = Number(duration);
 
