@@ -1635,7 +1635,8 @@ function my_list_init ()
             if (end - start > CHUNK_SIZE)
                 end = start + CHUNK_SIZE;
             for (var i = start; i < end; ++i)
-                network.displayHere (getMsg(MSG_FMT_CHANLIST, list[i]), "322");
+                network.displayHere (getMsg(MSG_FMT_CHANLIST, list[i]), "322",
+                                     undefined, undefined, list[i][3]);
             list.displayed = end;
         }
         if (list.done && (list.displayed == list.length))
@@ -1643,7 +1644,8 @@ function my_list_init ()
             if (list.event323)
             {
                 var length = list.event323.params.length;
-                network.displayHere (list.event323.params[length - 1], "323");
+                network.displayHere (list.event323.params[length - 1], "323",
+                                     undefined, undefined, list.event323.tags.time);
             }
             network.displayHere(getMsg(MSG_LIST_END,
                                        [list.displayed, list.count]));
@@ -1726,7 +1728,7 @@ function my_listrply (e)
     {
         if (!("file" in this._list))
         {
-            this._list.push([chanName, e.params[3], topic]);
+            this._list.push([chanName, e.params[3], topic, e.tags.time]);
         }
         else
         {
