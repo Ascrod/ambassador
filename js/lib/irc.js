@@ -745,7 +745,7 @@ function serv_decodetagdata(str)
                 if (co)
                     rv += co;
                 else
-                    rv += ci;
+                    rv += data[i+1];
                 i++
             }
             else if (ci != "\\")
