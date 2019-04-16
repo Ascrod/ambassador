@@ -5225,7 +5225,7 @@ function addHistory (source, obj, mergeData)
     {
         if (typeof source.messageCount != "number")
             source.messageCount = 1;
-        else
+        else if (obj.getAttribute("msg-type") != MT_MARKER)
             source.messageCount++;
 
         if (source.messageCount > source.MAX_MESSAGES)
