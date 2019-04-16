@@ -5243,16 +5243,23 @@ function removeExcessMessages(source)
     var rows = source.messages.rows;
     var lastItemOffset = rows[rows.length - 1].offsetTop;
     var tbody = source.messages.firstChild;
+    var firstMsg = tbody.firstChild;
     while (source.messageCount > source.MAX_MESSAGES)
     {
-        if (tbody.firstChild.className == "msg-nested-tr")
+        // Ignore the line marker.
+        if (firstMsg.getAttribute("msg-type") == "MARKER")
         {
-            var table = tbody.firstChild.firstChild.firstChild;
+            firstMsg = firstMsg.nextSibling;
+        }
+
+        if (firstMsg.className == "msg-nested-tr")
+        {
+            var table = firstMsg.firstChild.firstChild;
             var toBeRemoved = source.messageCount - source.MAX_MESSAGES;
             // If we can remove the entire table, do that...
             if (table.rows.length <= toBeRemoved)
             {
-                tbody.removeChild(tbody.firstChild);
+                tbody.removeChild(firstMsg);
                 source.messageCount -= table.rows.length;
                 table = null; // Don't hang onto this.
                 continue;
@@ -5260,19 +5267,19 @@ function removeExcessMessages(source)
             // Otherwise, remove rows from this table instead:
             tbody = table.firstChild;
         }
-        var nextLastNode = tbody.firstChild.nextSibling;
+        var nextLastNode = firstMsg.nextSibling;
         // If the next node has only 2 childNodes,
         // assume we're dealing with collapsed msgs,
         // and move the nickname element:
         if (nextLastNode.childNodes.length == 2)
         {
-            var nickElem = tbody.firstChild.childNodes[1];
+            var nickElem = firstMsg.childNodes[1];
             var rowspan = nickElem.getAttribute("rowspan") - 1;
-            tbody.firstChild.removeChild(nickElem);
+            firstMsg.removeChild(nickElem);
             nickElem.setAttribute("rowspan", rowspan);
             nextLastNode.insertBefore(nickElem, nextLastNode.lastChild);
         }
-        tbody.removeChild(tbody.firstChild);
+        tbody.removeChild(firstMsg);
         --source.messageCount;
     }
     var oldestItem = rows[0];
