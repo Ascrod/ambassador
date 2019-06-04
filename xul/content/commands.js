@@ -171,6 +171,7 @@ function initCommands()
          ["timestamps",        cmdTimestamps,                      CMD_CONSOLE],
          ["toggle-ui",         cmdToggleUI,                        CMD_CONSOLE],
          ["toggle-pref",       cmdTogglePref,                                0],
+         ["toggle-group",      cmdToggleGroup,                               0],
          ["topic",             cmdTopic,           CMD_NEED_CHAN | CMD_CONSOLE],
          ["unalias",           cmdAlias,                           CMD_CONSOLE],
          ["unignore",          cmdIgnore,           CMD_NEED_NET | CMD_CONSOLE],
@@ -1258,6 +1259,7 @@ function cmdHelp(e)
 
 function cmdTestDisplay(e)
 {
+    startMsgGroup("testdisplay", getMsg(MSG_COLLAPSE_TEST));
     display(MSG_TEST_HELLO, MT_HELLO);
     display(MSG_TEST_INFO, MT_INFO);
     display(MSG_TEST_ERROR, MT_ERROR);
@@ -1317,6 +1319,7 @@ function cmdTestDisplay(e)
             display(MSG_TEST_STYLES, "PRIVMSG", me, sampleChannel);
         }
     }
+    endMsgGroup();
 }
 
 function cmdNetwork(e)
@@ -1724,6 +1727,23 @@ function cmdTogglePref (e)
     client.prefs[e.prefName] = state;
     feedback(e, getMsg (MSG_FMT_PREF,
                         [e.prefName, state ? MSG_VAL_ON : MSG_VAL_OFF]));
+}
+
+function cmdToggleGroup(e)
+{
+    var document = getContentDocument(e.sourceObject.frame);
+    var msgs = document.querySelectorAll("[msg-groups*=\"" + e.groupId + "\"]");
+    if (!msgs.length)
+        return;
+
+    var isHidden = (msgs[0].style.display == "none");
+    for (i = 0; i < msgs.length; i++)
+    {
+        if (isHidden)
+            msgs[i].style.display = "";
+        else
+            msgs[i].style.display = "none";
+    }
 }
 
 function cmdToggleUI(e)
