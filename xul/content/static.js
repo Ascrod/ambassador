@@ -4574,7 +4574,10 @@ function __startMsgGroup(id, groupMsg)
     var groupId = id + "-" + Date.now();
 
     // Add the button to the end of the message.
-    var headerMsg = groupMsg + " " + getMsg(MSG_COLLAPSE_BUTTON, [groupId]);
+    var headerMsg = groupMsg + " " + getMsg(MSG_COLLAPSE_BUTTON,
+                                            [MSG_COLLAPSE_HIDE,
+                                             MSG_COLLAPSE_HIDETITLE,
+                                             groupId]);
 
     // Show the group header message.
     client.munger.getRule(".inline-buttons").enabled = true;

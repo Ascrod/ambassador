@@ -1744,6 +1744,18 @@ function cmdToggleGroup(e)
         else
             msgs[i].style.display = "none";
     }
+
+    var button = msgs[0].previousSibling.querySelector(".ambassador-link");
+    if (button.text == MSG_COLLAPSE_HIDE)
+    {
+        button.text = MSG_COLLAPSE_SHOW;
+        button.title = MSG_COLLAPSE_SHOWTITLE;
+    }
+    else
+    {
+        button.text = MSG_COLLAPSE_HIDE;
+        button.title = MSG_COLLAPSE_HIDETITLE;
+    }
 }
 
 function cmdToggleUI(e)
