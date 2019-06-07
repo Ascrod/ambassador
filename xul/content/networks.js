@@ -45,49 +45,51 @@ function networksGetDefaults()
     var networks = new Object();
 
     // Set up default network list.
-    networks["moznet"] = {
-        displayName:  "moznet",
-        servers: [{hostname: "irc.mozilla.org", port:6667},
-                  {hostname: "irc.mozilla.org", port:6697, isSecure: true}]};
-   networks["slashnet"] = {
+    networks["freenode"] = {
+        displayName:  "freenode",
+        servers: [{hostname: "chat.freenode.net", port:6697, isSecure: true},
+                  {hostname: "chat.freenode.net", port:7000, isSecure: true},
+                  // XXX irc.freenode.net is only here until we can link servers
+                  // to networks without them being in the network's server list
+                  {hostname: "irc.freenode.net", port:6697, isSecure: true},
+                  {hostname: "irc.freenode.net", port:7000, isSecure: true}]};
+    networks["slashnet"] = {
         displayName:  "slashnet",
-        servers: [{hostname: "irc.slashnet.org", port:6667}]};
+        servers: [{hostname: "irc.slashnet.org", port:6697, isSecure: true}]};
     networks["dalnet"] = {
         displayName:  "dalnet",
-        servers: [{hostname: "irc.dal.net", port:6667}]};
+        servers: [{hostname: "irc.dal.net", port:6697, isSecure: true}]};
     networks["undernet"] = {
         displayName:  "undernet",
         servers: [{hostname: "irc.undernet.org", port:6667}]};
-    networks["webbnet"] = {
-        displayName:  "webbnet",
-        servers: [{hostname: "irc.webbnet.info", port:6667}]};
     networks["quakenet"] = {
         displayName:  "quakenet",
         servers: [{hostname: "irc.quakenet.org", port:6667}]};
     networks["ircnet"] = {
         displayName:  "ircnet",
-        servers: [{hostname: "ircnet.eversible.com", port:6667}]};
-    networks["freenode"] = {
-        displayName:  "freenode",
-        servers: [{hostname: "chat.freenode.net", port:6667},
-                  {hostname: "chat.freenode.net", port:7000, isSecure: true},
-                  // XXX irc.freenode.net is only here until we can link servers
-                  // to networks without them being in the network's server list
-                  {hostname: "irc.freenode.net", port:6667},
-                  {hostname: "irc.freenode.net", port:7000, isSecure: true}]};
-    networks["serenia"] = {
-        displayName:  "serenia",
-        servers: [{hostname: "chat.serenia.net", port:9999, isSecure: true}]};
+        servers: [{hostname: "open.ircnet.net", port:6667}]};
+    networks["moznet"] = {
+        displayName:  "moznet",
+        servers: [{hostname: "irc.mozilla.org", port:6697, isSecure: true}]};
     networks["efnet"] = {
         displayName:  "efnet",
-        servers: [{hostname: "irc.prison.net", port: 6667},
-                  {hostname: "irc.magic.ca", port: 6667}]};
+        servers: [{hostname: "irc.choopa.net", port: 9999, isSecure: true},
+                  {hostname: "irc.mzima.net", port: 9999, isSecure: true},
+                  {hostname: "efnet.port80.se", port: 9999, isSecure: true},
+                  {hostname: "irc.efnet.fr", port: 9999, isSecure: true},
+                  {hostname: "irc.efnet.nl", port: 6697, isSecure: true}]};
     networks["hispano"] = {
         displayName:  "hispano",
         servers: [{hostname: "irc.irc-hispano.org", port: 6667}]};
-    networks["solidirc"] = {
-        displayName:  "solidirc",
-        servers: [{hostname: "irc.solidirc.com", port: 6667}]};
+    networks["rizon"] = {
+        displayName:  "rizon",
+        servers: [{hostname: "irc.rizon.net", port: 6697, isSecure: true}]};
+    networks["oftc"] = {
+        displayName:  "oftc",
+        servers: [{hostname: "irc.oftc.net", port: 6697, isSecure: true}]};
+    networks["snoonet"] = {
+        displayName:  "snoonet",
+        servers: [{hostname: "irc.snoonet.org", port: 6697, isSecure: true}]};
 
     for (var name in networks)
         networks[name].name = name;
