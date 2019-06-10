@@ -4568,7 +4568,7 @@ CIRCChannel.prototype.startMsgGroup =
 CIRCUser.prototype.startMsgGroup =
 CIRCDCCChat.prototype.startMsgGroup =
 CIRCDCCFileTransfer.prototype.startMsgGroup =
-function __startMsgGroup(id, groupMsg)
+function __startMsgGroup(id, groupMsg, msgtype)
 {
     // The given ID may not be unique, so append a timestamp to ensure it is.
     var groupId = id + "-" + Date.now();
@@ -4581,7 +4581,7 @@ function __startMsgGroup(id, groupMsg)
 
     // Show the group header message.
     client.munger.getRule(".inline-buttons").enabled = true;
-    this.displayHere(headerMsg);
+    this.displayHere(headerMsg, msgtype);
     client.munger.getRule(".inline-buttons").enabled = false;
 
     // Add the group to a list of active message groups.
@@ -4593,9 +4593,9 @@ function __startMsgGroup(id, groupMsg)
     return groupId;
 }
 
-function startMsgGroup(groupId, headerMsg)
+function startMsgGroup(groupId, headerMsg, msgtype)
 {
-    client.currentObject.startMsgGroup(groupId, headerMsg);
+    client.currentObject.startMsgGroup(groupId, headerMsg, msgtype);
 }
 
 client.endMsgGroup =
