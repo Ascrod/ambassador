@@ -1745,7 +1745,8 @@ function cmdToggleGroup(e)
             msgs[i].style.display = "none";
     }
 
-    var button = msgs[0].previousSibling.querySelector(".ambassador-link");
+    var els = msgs[0].previousSibling.querySelectorAll(".ambassador-link");
+    var button = els[els.length - 1];
     if (button.text == MSG_COLLAPSE_HIDE)
     {
         button.text = MSG_COLLAPSE_SHOW;
