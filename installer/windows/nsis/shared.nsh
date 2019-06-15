@@ -905,7 +905,7 @@ Function SetAsDefaultAppUserHKCU
   ; Only set as the user's main IRC client if the IRC
   ; registry keys are for this install.
   ClearErrors
-  ReadRegStr $0 HKCU "Software\Clients\IRC\${ClientRegName}\DefaultIcon" ""
+  ReadRegStr $0 HKCU "Software\Clients\IRC\${AppRegName}\DefaultIcon" ""
   ${Unless} ${Errors}
     ${GetPathFromString} "$0" $0
     ${GetParent} "$0" $0
