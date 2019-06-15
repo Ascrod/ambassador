@@ -33,6 +33,11 @@
 
 #include "mozilla/WindowsDllBlocklist.h"
 
+#if !defined(MOZ_WIDGET_COCOA) && !defined(MOZ_WIDGET_ANDROID)
+#define MOZ_BROWSER_CAN_BE_CONTENTPROC
+#include "../../ipc/contentproc/plugin-container.cpp"
+#endif
+
 using namespace mozilla;
 
 #ifdef XP_MACOSX
