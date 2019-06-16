@@ -1311,6 +1311,8 @@ function serv_disconnect(e)
         delete this.isStartTLS;
     }
 
+    delete this.batches;
+
     this.connection = null;
     this.isConnected = false;
 
