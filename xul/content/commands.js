@@ -2230,6 +2230,7 @@ function cmdGotoStartup(e)
 function cmdGotoURL(e)
 {
     const EXT_PROTO_SVC = "@mozilla.org/uriloader/external-protocol-service;1";
+	const FILE_PROTO_SVC = "@mozilla.org/network/protocol;1?name=file";
 
     if (/^ircs?:/.test(e.url))
     {
@@ -2273,11 +2274,20 @@ function cmdGotoURL(e)
 
     if ((e.command.name == "goto-url-external") || (client.host == "XULRunner"))
     {
-        const extProtoSvc = getService(EXT_PROTO_SVC,
-                                       "nsIExternalProtocolService");
-        extProtoSvc.loadUrl(uri);
-        dispatch("focus-input");
-        return;
+        if (uri.scheme == "file")
+        {
+            const fileProtoHandler = getService(FILE_PROTO_SVC,
+                                                "nsIFileProtocolHandler");
+            fileProtoHandler.getFileFromURLSpec(uri.asciiSpec).launch();
+        }
+        else
+        {
+            const extProtoSvc = getService(EXT_PROTO_SVC,
+                                           "nsIExternalProtocolService");
+            extProtoSvc.loadUrl(uri);
+            dispatch("focus-input");
+            return;
+        }
     }
 
     var browserWin = getWindowByType("navigator:browser");
