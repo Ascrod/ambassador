@@ -2672,6 +2672,8 @@ function my_auth (e)
 
 /* Start or end of batch. */
 CIRCNetwork.prototype.onBatch =
+CIRCChannel.prototype.onBatch =
+CIRCUser.prototype.onBatch =
 function my_batch(e)
 {
     switch (e.batchtype)
@@ -2679,44 +2681,44 @@ function my_batch(e)
         case "NETSPLIT":
             if (e.starting)
             {
-                startMsgGroup(e.reftag, getMsg(MSG_BATCH_NETSPLIT_START,
+                this.startMsgGroup(e.reftag, getMsg(MSG_BATCH_NETSPLIT_START,
                                                [e.params[3],
                                                 e.params[4]]),
                               e.batchtype);
             }
             else
             {
-                display(MSG_BATCH_NETSPLIT_END, e.batchtype);
-                endMsgGroup();
+                this.display(MSG_BATCH_NETSPLIT_END, e.batchtype);
+                this.endMsgGroup();
             }
             break;
 
         case "NETJOIN":
             if (e.starting)
             {
-                startMsgGroup(e.reftag, getMsg(MSG_BATCH_NETJOIN_START,
+                this.startMsgGroup(e.reftag, getMsg(MSG_BATCH_NETJOIN_START,
                                                [e.params[3],
                                                 e.params[4]]),
                               e.batchtype);
             }
             else
             {
-                display(MSG_BATCH_NETJOIN_END, e.batchtype);
-                endMsgGroup();
+                this.display(MSG_BATCH_NETJOIN_END, e.batchtype);
+                this.endMsgGroup();
             }
             break;
 
         case "CHATHISTORY":
             if (e.starting)
             {
-                startMsgGroup(e.reftag, getMsg(MSG_BATCH_CHATHISTORY_START,
+                this.startMsgGroup(e.reftag, getMsg(MSG_BATCH_CHATHISTORY_START,
                                                [e.params[3]]),
                               e.batchtype);
             }
             else
             {
-                display(MSG_BATCH_CHATHISTORY_END, e.batchtype);
-                endMsgGroup();
+                this.display(MSG_BATCH_CHATHISTORY_END, e.batchtype);
+                this.endMsgGroup();
             }
             break;
     }

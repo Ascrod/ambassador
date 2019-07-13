@@ -2543,6 +2543,14 @@ function serv_batch (e)
             var newBatch = new Object();
             newBatch.messages = [e];
             newBatch.type = e.params[2].toUpperCase();
+            if (newBatch.type == "CHATHISTORY")
+            {
+                newBatch.destObject = new CIRCChannel(this, null, e.params[3]);
+            }
+            else
+            {
+                newBatch.destObject = this.parent;
+            }
             newBatch.playback = false;
             this.batches[e.reftag] = newBatch;
         }
@@ -2586,8 +2594,15 @@ function serv_batch (e)
     {
         // Batch command is ready for handling.
         e.batchtype = this.batches[e.reftag].type;
-        e.destObject = this.parent;
-        e.set = "network";
+        e.destObject = this.batches[e.reftag].destObject;
+        if (e.destObject.TYPE == "CIRCChannel")
+        {
+            e.set = "channel";
+        }
+        else
+        {
+            e.set = "network";
+        }
 
         if (!e.starting)
         {
