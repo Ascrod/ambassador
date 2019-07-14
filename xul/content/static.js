@@ -428,7 +428,7 @@ function initStatic()
 function getVersionInfo()
 {
     var version = new Object();
-    version.cz = __cz_version + (__cz_suffix ? "-" + __cz_suffix : "");
+    version.cz = __cz_version + (__cz_suffix ? __cz_suffix : "");
     version.ua = navigator.userAgent;
 
     var app = getService("@mozilla.org/xre/app-info;1", "nsIXULAppInfo");
