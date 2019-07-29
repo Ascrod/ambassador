@@ -2670,57 +2670,78 @@ function my_auth (e)
     e.server.sendAuthResponse(auth);
 }
 
-/* Start or end of batch. */
-CIRCNetwork.prototype.onBatch =
-CIRCChannel.prototype.onBatch =
-CIRCUser.prototype.onBatch =
-function my_batch(e)
+CIRCNetwork.prototype.onNetsplitBatch =
+function my_netsplit_batch(e)
 {
-    switch (e.batchtype)
+    for (var c in this.primServ.channels)
     {
-        case "NETSPLIT":
-            if (e.starting)
-            {
-                this.startMsgGroup(e.reftag, getMsg(MSG_BATCH_NETSPLIT_START,
+        if (e.starting)
+        {
+           this.startMsgGroup(e.reftag, getMsg(MSG_BATCH_NETSPLIT_START,
                                                [e.params[3],
                                                 e.params[4]]),
                               e.batchtype);
-            }
-            else
-            {
-                this.display(MSG_BATCH_NETSPLIT_END, e.batchtype);
-                this.endMsgGroup();
-            }
-            break;
+        }
+        else
+        {
+            this.display(MSG_BATCH_NETSPLIT_END, e.batchtype);
+            this.endMsgGroup();
+        }
+    }
+}
 
-        case "NETJOIN":
-            if (e.starting)
-            {
-                this.startMsgGroup(e.reftag, getMsg(MSG_BATCH_NETJOIN_START,
-                                               [e.params[3],
-                                                e.params[4]]),
-                              e.batchtype);
-            }
-            else
-            {
-                this.display(MSG_BATCH_NETJOIN_END, e.batchtype);
-                this.endMsgGroup();
-            }
-            break;
+CIRCNetwork.prototype.onNetjoinBatch =
+function my_netjoin_batch(e)
+{
+    for (var c in this.primServ.channels)
+    {
+        if (e.starting)
+        {
+            this.startMsgGroup(e.reftag, getMsg(MSG_BATCH_NETJOIN_START,
+                                                [e.params[3],
+                                                 e.params[4]]),
+                               e.batchtype);
+        }
+        else
+        {
+            this.display(MSG_BATCH_NETJOIN_END, e.batchtype);
+            this.endMsgGroup();
+        }
+    }
+}
 
-        case "CHATHISTORY":
-            if (e.starting)
-            {
-                this.startMsgGroup(e.reftag, getMsg(MSG_BATCH_CHATHISTORY_START,
-                                               [e.params[3]]),
-                              e.batchtype);
-            }
-            else
-            {
-                this.display(MSG_BATCH_CHATHISTORY_END, e.batchtype);
-                this.endMsgGroup();
-            }
-            break;
+CIRCChannel.prototype.onChathistoryBatch =
+function my_chathistory_batch(e)
+{
+    if (e.starting)
+    {
+        this.startMsgGroup(e.reftag, getMsg(MSG_BATCH_CHATHISTORY_START,
+                                            [e.params[3]]),
+                           e.batchtype);
+    }
+    else
+    {
+        this.display(MSG_BATCH_CHATHISTORY_END, e.batchtype);
+        this.endMsgGroup();
+    }
+}
+
+CIRCNetwork.prototype.onUnknownBatch =
+CIRCChannel.prototype.onUnknownBatch =
+CIRCUser.prototype.onUnknownBatch =
+function my_unknown_batch(e)
+{
+    if (e.starting)
+    {
+        this.startMsgGroup(e.reftag, getMsg(MSG_BATCH_UNKNOWN,
+                                            [e.batchtype,
+                                             e.params.slice(3)]),
+                           "BATCH");
+    }
+    else
+    {
+        this.display(MSG_BATCH_UNKNOWN_END, e.batchtype);
+        this.endMsgGroup();
     }
 }
 

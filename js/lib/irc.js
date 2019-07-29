@@ -2543,9 +2543,13 @@ function serv_batch (e)
             var newBatch = new Object();
             newBatch.messages = [e];
             newBatch.type = e.params[2].toUpperCase();
-            if (newBatch.type == "CHATHISTORY")
+            if (e.params[3] && (e.params[3] in this.channels))
             {
-                newBatch.destObject = new CIRCChannel(this, null, e.params[3]);
+                newBatch.destObject = this.channels[e.params[3]];
+            }
+            else if (e.params[3] && (e.params[3] in this.users))
+            {
+                newBatch.destObject = this.users[e.params[3]];
             }
             else
             {
@@ -2612,6 +2616,19 @@ function serv_batch (e)
             if (Object.entries(this.batches).length == 0)
                 delete this.batches;
         }
+
+        // Massage the batchtype into a method name for handlers:
+        // netsplit            - onNetsplitBatch
+        // some-batch-type     - onSomeBatchTypeBatch
+        // example.com/example - onExampleComExampleBatch
+        var batchCode = e.batchtype.split(/[\.\/-]/).map(function(s)
+        {
+            return s[0].toUpperCase() + s.substr(1).toLowerCase();
+        }).join("");
+        e.destMethod = "on" + batchCode + "Batch";
+
+        if (!e.destObject[e.destMethod])
+            e.destMethod = "onUnknownBatch";
     }
 }
 
