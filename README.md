@@ -20,12 +20,13 @@ The stand-alone version can be downloaded in the following formats:
 ## Features
 
 Ambassador includes most of the features found in ChatZilla, along with some unique features of its own.
-- Partial IRCv3 support
+- IRCv3 support
 - Password management
 - A window for viewing secure connection details
 - An editor for the built-in networks list
 - CTCP request notifications
 - Several new commands
+- Emoji support
 - Removed CEIP
 
 Please see the [release notes](https://github.com/Ascrod/ambassador/releases/) for further details on these new features.
