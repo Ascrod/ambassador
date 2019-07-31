@@ -194,11 +194,6 @@
 #endif
 
 #ifdef MOZ_DEVTOOLS
-; [Webide Files]
-@RESPATH@/chrome/webide@JAREXT@
-@RESPATH@/chrome/webide.manifest
-@RESPATH@/@PREF_DIR@/webide-prefs.js
-
 ; DevTools
 @RESPATH@/chrome/devtools@JAREXT@
 @RESPATH@/chrome/devtools.manifest
