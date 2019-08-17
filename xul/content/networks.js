@@ -116,7 +116,7 @@ function networksSyncToList()
         var listNet = null;
         for (var i = 0; i < client.networkList.length; i++)
         {
-            if (client.networkList[i].name == name)
+            if (client.networkList[i].name == net.canonicalName)
             {
                 listNet = client.networkList[i];
                 networkMap[i] = true;
@@ -127,7 +127,7 @@ function networksSyncToList()
         // Network not in list, so construct a shiny new one.
         if (listNet == null)
         {
-            var listNet = { name: name, displayName: name };
+            var listNet = { name: net.canonicalName, displayName: net.unicodeName };
 
             client.networkList.push(listNet);
             networkMap[client.networkList.length - 1] = true;
@@ -197,11 +197,11 @@ function networksSyncFromList()
 
         // Create new network object if necessary.
         var net = null;
-        if (!(listNet.name in client.networks))
+        if (!client.getNetwork(listNet.name))
             client.addNetwork(listNet.name, []);
 
         // Get network object and make sure server list is empty.
-        net = client.networks[listNet.name];
+        net = client.getNetwork(listNet.name);
         net.clearServerList();
 
         // Update server list.
@@ -214,7 +214,7 @@ function networksSyncFromList()
                 listServ.isSecure = false;
 
             // NOTE: this must match the name given by CIRCServer.
-            var servName = listServ.hostname + ":" + listServ.port;
+            var servName = ":" + listServ.hostname + ":" + listServ.port;
 
             var serv = null;
             if (!(servName in net.servers))
@@ -232,10 +232,11 @@ function networksSyncFromList()
     for (var name in client.networks)
     {
         // Skip temporary networks, as they don't matter.
-        if (client.networks[name].temporary)
+        var net = client.networks[name];
+        if (net.temporary)
             continue;
-        if (!(name in networkMap))
-            client.removeNetwork(name);
+        if (!(net.canonicalName in networkMap))
+            client.removeNetwork(net.canonicalName);
     }
 }
 

@@ -78,6 +78,7 @@ function CIRCNetwork (name, serverList, eventPump, temporary)
     this.unicodeName = name;
     this.viewName = name;
     this.canonicalName = name;
+    this.collectionKey = ":" + name;
     this.encodedName = name;
     this.servers = new Object();
     this.serverList = new Array();
@@ -525,6 +526,7 @@ function CIRCServer (parent, hostname, port, isSecure, password)
     s.unicodeName = serverName;
     s.viewName = serverName;
     s.canonicalName = serverName;
+    s.collectionKey = ":" + serverName;
     s.encodedName = serverName;
     s.hostname = hostname;
     s.port = port;
@@ -550,7 +552,7 @@ function CIRCServer (parent, hostname, port, isSecure, password)
     s.caps = new Object();
     s.capvals = new Object();
 
-    parent.servers[s.canonicalName] = s;
+    parent.servers[s.collectionKey] = s;
     if ("onInit" in s)
         s.onInit();
     return s;
@@ -792,12 +794,12 @@ function serv_geturl(target, flags)
 CIRCServer.prototype.getUser =
 function chan_getuser(nick)
 {
-    var tnick = this.toLowerCase(nick);
+    var tnick = ":" + this.toLowerCase(nick);
 
     if (tnick in this.users)
         return this.users[tnick];
 
-    tnick = this.toLowerCase(fromUnicode(nick, this));
+    tnick = ":" + this.toLowerCase(fromUnicode(nick, this));
 
     if (tnick in this.users)
         return this.users[tnick];
@@ -808,12 +810,12 @@ function chan_getuser(nick)
 CIRCServer.prototype.getChannel =
 function chan_getchannel(name)
 {
-    var tname = this.toLowerCase(name);
+    var tname = ":" + this.toLowerCase(name);
 
     if (tname in this.channels)
         return this.channels[tname];
 
-    tname = this.toLowerCase(fromUnicode(name, this));
+    tname = ":" + this.toLowerCase(fromUnicode(name, this));
 
     if (tname in this.channels)
         return this.channels[tname];
@@ -1666,8 +1668,8 @@ function serv_001 (e)
      */
     if (e.params[1] != e.server.me.encodedName)
     {
-        renameProperty(e.server.users, e.server.me.canonicalName,
-                       this.toLowerCase(e.params[1]));
+        renameProperty(e.server.users, e.server.me.collectionKey,
+                       ":" + this.toLowerCase(e.params[1]));
         e.server.me.changeNick(toUnicode(e.params[1], this));
     }
 
@@ -1756,24 +1758,26 @@ function serv_005 (e)
     // Update all users and channels if the casemapping changed.
     if (this.supports["casemapping"] != oldCaseMapping)
     {
-        var newName, encodedName;
-        for (var user in this.users)
+        var encodedName;
+        for (var userKey in this.users)
         {
-            newName = this.toLowerCase(this.users[user].encodedName);
-            renameProperty(this.users, user, newName);
-            this.users[newName].canonicalName = newName;
+            var user = this.users[userKey];
+            user.canonicalName = this.toLowerCase(user.encodedName);
+            user.collectionKey = ":" + user.canonicalName;
+            renameProperty(this.users, userKey, user.collectionKey);
         }
-        for (var channel in this.channels)
+        for (var channelKey in this.channels)
         {
-            newName = this.toLowerCase(this.channels[channel].encodedName);
-            renameProperty(this.channels, this.channels[channel].canonicalName,
-                           newName);
-            this.channels[channel].canonicalName = newName;
-            for (user in this.channels[channel].users)
+            var channel = this.channels[channelKey];
+            channel.canonicalName = this.toLowerCase(this.channels[channel].encodedName);
+            channel.collectionKey = ":" + channel.canonicalName;
+            renameProperty(this.channels, channelKey, channel.collectionKey);
+            for (userKey in this.channels.users)
             {
-                encodedName = this.channels[channel].users[user].encodedName;
-                newName = this.toLowerCase(encodedName);
-                renameProperty(this.channels[channel].users, user, newName);
+                var user = channel.users[userKey];
+                user.canonicalName = this.toLowerCase(user.encodedName);
+                user.collectionKey = ":" + user.canonicalName;
+                renameProperty(this.channel.users, userKey, user.collectionKey);
             }
         }
     }
@@ -1948,7 +1952,7 @@ function serv_330(e)
 {
     e.user = new CIRCUser(this, null, e.params[2]);
     var account = (e.params[3] == "*" ? null : e.params[3]);
-    this.users[e.user.canonicalName].account = account;
+    this.users[e.user.collectionKey].account = account;
 
     e.destObject = this.parent;
     e.set = "network";
@@ -2693,8 +2697,8 @@ function serv_away (e)
 CIRCServer.prototype.onChghost =
 function serv_chghost (e)
 {
-    this.users[e.user.canonicalName].name = e.params[1];
-    this.users[e.user.canonicalName].host = e.params[2];
+    this.users[e.user.collectionKey].name = e.params[1];
+    this.users[e.user.collectionKey].host = e.params[2];
 }
 
 /* user changed the mode */
@@ -2866,8 +2870,8 @@ CIRCServer.prototype.onNick =
 function serv_nick (e)
 {
     var newNick = e.params[1];
-    var newKey = this.toLowerCase(newNick);
-    var oldKey = e.user.canonicalName;
+    var newKey = ":" + this.toLowerCase(newNick);
+    var oldKey = e.user.collectionKey;
     var ev;
 
     renameProperty (this.users, oldKey, newKey);
@@ -2921,26 +2925,26 @@ function serv_quit (e)
     for (var c in e.server.channels)
     {
         if (e.server.channels[c].active &&
-            e.user.canonicalName in e.server.channels[c].users)
+            e.user.collectionKey in e.server.channels[c].users)
         {
             var ev = new CEvent ("channel", "quit", e.server.channels[c],
                                  "onQuit");
             ev.tags = e.tags;
-            ev.user = e.server.channels[c].users[e.user.canonicalName];
+            ev.user = e.server.channels[c].users[e.user.collectionKey];
             ev.channel = e.server.channels[c];
             ev.server = ev.channel.parent;
             ev.reason = reason;
             this.parent.eventPump.routeEvent(ev);
-            delete e.server.channels[c].users[e.user.canonicalName];
+            delete e.server.channels[c].users[e.user.collectionKey];
         }
     }
 
-    this.users[e.user.canonicalName].lastQuitMessage = reason;
-    this.users[e.user.canonicalName].lastQuitDate = new Date();
+    this.users[e.user.collectionKey].lastQuitMessage = reason;
+    this.users[e.user.collectionKey].lastQuitDate = new Date();
 
     // 0 == prune onQuit.
     if (this.PRUNE_OLD_USERS == 0)
-        delete this.users[e.user.canonicalName];
+        delete this.users[e.user.collectionKey];
 
     e.reason = reason;
     e.destObject = e.user;
@@ -2972,7 +2976,7 @@ function serv_kick (e)
 {
     e.channel = new CIRCChannel(this, null, e.params[1]);
     e.lamer = new CIRCChanUser(e.channel, null, e.params[2]);
-    delete e.channel.users[e.lamer.canonicalName];
+    delete e.channel.users[e.lamer.collectionKey];
     if (userIsMe(e.lamer))
     {
         e.channel.active = false;
@@ -2997,8 +3001,8 @@ function serv_join(e)
     {
         var account = (e.params[2] == "*" ? null : e.params[2]);
         var desc = e.decodeParam([3], e.user);
-        this.users[e.user.canonicalName].account = account;
-        this.users[e.user.canonicalName].desc = desc;
+        this.users[e.user.collectionKey].account = account;
+        this.users[e.user.collectionKey].desc = desc;
     }
 
     if (userIsMe(e.user))
@@ -3066,7 +3070,7 @@ CIRCServer.prototype.onAccount =
 function serv_acct (e)
 {
     var account = (e.params[1] == "*" ? null : e.params[1]);
-    this.users[e.user.canonicalName].account = account;
+    this.users[e.user.collectionKey].account = account;
 
     return true;
 }
@@ -3525,13 +3529,14 @@ function CIRCChannel(parent, unicodeName, encodedName)
     if (!encodedName)
         encodedName = fromUnicode(unicodeName, parent);
 
-    var canonicalName = parent.toLowerCase(encodedName);
-    if (canonicalName in parent.channels)
-        return parent.channels[canonicalName];
+    var collectionKey = ":" + parent.toLowerCase(encodedName);
+    if (collectionKey in parent.channels)
+        return parent.channels[collectionKey];
 
     this.parent = parent;
     this.encodedName = encodedName;
-    this.canonicalName = canonicalName;
+    this.canonicalName = collectionKey.substr(1);
+    this.collectionKey = collectionKey;
     this.unicodeName = unicodeName || toUnicode(encodedName, this);
     this.viewName = this.unicodeName;
 
@@ -3550,7 +3555,7 @@ function CIRCChannel(parent, unicodeName, encodedName)
     this.active = false;
     this.joined = false;
 
-    this.parent.channels[this.canonicalName] = this;
+    this.parent.channels[this.collectionKey] = this;
     if ("onInit" in this)
         this.onInit();
 
@@ -3581,9 +3586,9 @@ function chan_geturl()
 CIRCChannel.prototype.rehome =
 function chan_rehome(newParent)
 {
-    delete this.parent.channels[this.canonicalName];
+    delete this.parent.channels[this.collectionKey];
     this.parent = newParent;
-    this.parent.channels[this.canonicalName] = this;
+    this.parent.channels[this.collectionKey] = this;
 }
 
 CIRCChannel.prototype.addUser =
@@ -3596,14 +3601,14 @@ CIRCChannel.prototype.getUser =
 function chan_getuser(nick)
 {
     // Try assuming it's an encodedName first.
-    nick = this.parent.toLowerCase(nick);
-    if (nick in this.users)
-        return this.users[nick];
+    var tnick = ":" + this.parent.toLowerCase(nick);
+    if (tnick in this.users)
+        return this.users[tnick];
 
     // Ok, failed, so try assuming it's a unicodeName.
-    nick = this.parent.toLowerCase(fromUnicode(nick, this.parent));
-    if (nick in this.users)
-        return this.users[nick];
+    tnick = ":" + this.parent.toLowerCase(fromUnicode(nick, this.parent));
+    if (tnick in this.users)
+        return this.users[tnick];
 
     return null;
 }
@@ -3657,19 +3662,19 @@ function chan_userslen (mode)
 CIRCChannel.prototype.iAmOp =
 function chan_amop()
 {
-    return this.active && this.users[this.parent.me.canonicalName].isOp;
+    return this.active && this.users[this.parent.me.collectionKey].isOp;
 }
 
 CIRCChannel.prototype.iAmHalfOp =
 function chan_amhalfop()
 {
-    return this.active && this.users[this.parent.me.canonicalName].isHalfOp;
+    return this.active && this.users[this.parent.me.collectionKey].isHalfOp;
 }
 
 CIRCChannel.prototype.iAmVoice =
 function chan_amvoice()
 {
-    return this.active && this.users[this.parent.me.canonicalName].isVoice;
+    return this.active && this.users[this.parent.me.collectionKey].isVoice;
 }
 
 CIRCChannel.prototype.setTopic =
@@ -3946,10 +3951,10 @@ function CIRCUser(parent, unicodeName, encodedName, name, host)
     if (!encodedName)
         encodedName = fromUnicode(unicodeName, parent);
 
-    var canonicalName = parent.toLowerCase(encodedName);
-    if (canonicalName in parent.users)
+    var collectionKey = ":" + parent.toLowerCase(encodedName);
+    if (collectionKey in parent.users)
     {
-        var existingUser = parent.users[canonicalName];
+        var existingUser = parent.users[collectionKey];
         if (name)
             existingUser.name = name;
         if (host)
@@ -3959,7 +3964,8 @@ function CIRCUser(parent, unicodeName, encodedName, name, host)
 
     this.parent = parent;
     this.encodedName = encodedName;
-    this.canonicalName = canonicalName;
+    this.canonicalName = collectionKey.substr(1);
+    this.collectionKey = collectionKey;
     this.unicodeName = unicodeName || toUnicode(encodedName, this.parent);
     this.viewName = this.unicodeName;
 
@@ -3971,7 +3977,7 @@ function CIRCUser(parent, unicodeName, encodedName, name, host)
     this.isAway = false;
     this.modestr = this.parent.parent.INITIAL_UMODE;
 
-    this.parent.users[this.canonicalName] = this;
+    this.parent.users[this.collectionKey] = this;
     if ("onInit" in this)
         this.onInit();
 
@@ -3990,9 +3996,9 @@ function usr_geturl()
 CIRCUser.prototype.rehome =
 function usr_rehome(newParent)
 {
-    delete this.parent.users[this.canonicalName];
+    delete this.parent.users[this.collectionKey];
     this.parent = newParent;
-    this.parent.users[this.canonicalName] = this;
+    this.parent.users[this.collectionKey] = this;
 }
 
 CIRCUser.prototype.changeNick =
@@ -4002,6 +4008,7 @@ function usr_changenick(unicodeName)
     this.viewName = this.unicodeName;
     this.encodedName = fromUnicode(this.unicodeName, this.parent);
     this.canonicalName = this.parent.toLowerCase(this.encodedName);
+    this.collectionKey = ":" + this.canonicalName;
 }
 
 CIRCUser.prototype.getHostMask =
@@ -4075,11 +4082,11 @@ function CIRCChanUser(parent, unicodeName, encodedName, modes, userInChannel, na
 
     // We should have both unicode and encoded names by now.
 
-    var canonicalName = parent.parent.toLowerCase(encodedName);
+    var collectionKey = ":" + parent.parent.toLowerCase(encodedName);
 
-    if (canonicalName in parent.users)
+    if (collectionKey in parent.users)
     {
-        var existingUser = parent.users[canonicalName];
+        var existingUser = parent.users[collectionKey];
         if (modes)
         {
             // If we start with a single character mode, assume we're replacing
@@ -4156,7 +4163,7 @@ function CIRCChanUser(parent, unicodeName, encodedName, modes, userInChannel, na
     this.updateSortName();
 
     if (userInChannel)
-        parent.users[this.canonicalName] = this;
+        parent.users[this.collectionKey] = this;
 
     return this;
 }

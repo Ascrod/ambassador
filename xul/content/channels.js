@@ -235,7 +235,7 @@ function setNetwork(newNetwork, noUpdate)
 
 function update()
 {
-    var newNetwork = client.networks[xul.network.value] || null;
+    var newNetwork = client.getNetwork(xul.network.value);
     if (network != newNetwork)
     {
         network = newNetwork;

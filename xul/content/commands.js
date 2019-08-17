@@ -1271,11 +1271,11 @@ function cmdTestDisplay(e)
     {
         var me = e.server.me;
         var sampleUser = {TYPE: "IRCUser",
-                          encodedName: "diplobot", canonicalName: "diplobot",
+                          encodedName: "diplobot", collectionKey: ":diplobot",
                           unicodeName: "Diplobot", viewName: "Diplobot",
                           host: "", name: "Diplobot"};
         var sampleChannel = {TYPE: "IRCChannel",
-                             encodedName: "#mojo", canonicalName: "#mojo",
+                             encodedName: "#mojo", collectionKey: ":#mojo",
                              unicodeName: "#Mojo", viewName: "#Mojo",
                              name: "#Mojo"};
 
@@ -1324,13 +1324,13 @@ function cmdTestDisplay(e)
 
 function cmdNetwork(e)
 {
-    if (!(e.networkName in client.networks))
+    var network = client.getNetwork(e.networkName);
+
+    if (!network)
     {
         display (getMsg(MSG_ERR_UNKNOWN_NETWORK, e.networkName), MT_ERROR);
         return;
     }
-
-    var network = client.networks[e.networkName];
 
     dispatch("create-tab-for-view", { view: network });
     dispatch("set-current-view", { view: network });
@@ -1341,16 +1341,15 @@ function cmdNetworks(e)
     var wrapper = newInlineText(MSG_NETWORKS_HEADA);
 
     var netnames = keys(client.networks).sort();
-    var lastname = netnames[netnames.length - 1];
 
-    for (var n in netnames)
+    for (var i = 0; i < netnames.length; i++)
     {
-        var net = client.networks[netnames[n]];
+        var net = client.networks[netnames[i]];
         /* Test for an all-SSL network */
         var isSecure = true;
-        for (var s in client.networks[netnames[n]].serverList)
+        for (var s in net.serverList)
         {
-            if (!client.networks[netnames[n]].serverList[s].isSecure)
+            if (!net.serverList[s].isSecure)
             {
                 isSecure = false;
                 break;
@@ -1363,7 +1362,7 @@ function cmdNetworks(e)
         };
         wrapper.appendChild(newInlineText(linkData, "ambassador-link", "a"));
 
-        if (netnames[n] != lastname)
+        if (i + 1 < netnames.length)
             wrapper.appendChild(document.createTextNode(MSG_COMMASP));
     }
 

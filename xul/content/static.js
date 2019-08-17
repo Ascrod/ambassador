@@ -1446,7 +1446,7 @@ function openQueryTab(server, nick)
         for (var c in server.channels)
         {
             var chan = server.channels[c];
-            if (!(user.canonicalName in chan.users))
+            if (!(user.collectionKey in chan.users))
                 continue;
             /* This takes a boolean value for each channel (true - channel has
              * same value as first), and &&-s them all together. Thus, |same|
@@ -1816,13 +1816,15 @@ function gotoIRCURL(url, e)
     {
         for (var n in client.networks)
         {
-            for (var s in client.networks[n].servers)
+            var net = client.networks[n];
+            for (var s in net.servers)
             {
-                if ((client.networks[n].servers[s].hostname == url.host) &&
-                    (client.networks[n].servers[s].port == url.port))
+                var serv = net.servers[s];
+                if ((serv.hostname == url.host) &&
+                    (serv.port == url.port))
                 {
                     url.isserver = false;
-                    url.host = n;
+                    url.host = net.canonicalName;
                     break;
                 }
             }
@@ -1839,23 +1841,23 @@ function gotoIRCURL(url, e)
         if (url.port != 6667)
             name += ":" + url.port;
         // There is no temporary network for this server:port, make one up.
-        if (!(name in client.networks))
+        if (!client.getNetwork(name))
         {
             var server = {name: url.host, port: url.port,
                           isSecure: url.scheme == "ircs"};
             client.addNetwork(name, [server], true);
         }
-        network = client.networks[name];
+        network = client.getNetwork(name);
     }
     else
     {
         // There is no network called this, sorry.
-        if (!(url.host in client.networks))
+        if (!client.getNetwork(url.host))
         {
             display(getMsg(MSG_ERR_UNKNOWN_NETWORK, url.host));
             return;
         }
-        network = client.networks[url.host];
+        network = client.getNetwork(url.host);
     }
 
     // We should only prompt for a password if we're not connected.
@@ -2436,9 +2438,9 @@ function updateTitle (obj)
             if ("me" in o.parent)
             {
                 nick = o.parent.me.unicodeName;
-                if (o.parent.me.canonicalName in client.currentObject.users)
+                if (o.parent.me.collectionKey in client.currentObject.users)
                 {
-                    var cuser = client.currentObject.users[o.parent.me.canonicalName];
+                    var cuser = client.currentObject.users[o.parent.me.collectionKey];
                     if (cuser.isFounder)
                         nick = "~" + nick;
                     else if (cuser.isAdmin)
@@ -4145,18 +4147,26 @@ function cli_adoptnode_noop(node, doc)
 client.addNetwork =
 function cli_addnet(name, serverList, temporary)
 {
-    client.networks[name] =
-        new CIRCNetwork(name, serverList, client.eventPump, temporary);
+    var net = new CIRCNetwork(name, serverList, client.eventPump, temporary);
+    client.networks[net.collectionKey] = net;
+}
+
+client.getNetwork =
+function cli_getnet(name)
+{
+    return client.networks[":" + name] || null;
 }
 
 client.removeNetwork =
 function cli_removenet(name)
 {
-    // Allow network a chance to clean up any mess.
-    if (typeof client.networks[name].destroy == "function")
-        client.networks[name].destroy();
+    var net = client.getNetwork(name);
 
-    delete client.networks[name];
+    // Allow network a chance to clean up any mess.
+    if (typeof net.destroy == "function")
+        net.destroy();
+
+    delete client.networks[net.collectionKey];
 }
 
 client.connectToNetwork =
@@ -4173,14 +4183,13 @@ function cli_connect(networkOrName, requireSecurity)
     else
     {
         name = networkOrName;
+        network = client.getNetwork(name);
 
-        if (!(name in client.networks))
+        if (!network)
         {
             display(getMsg(MSG_ERR_UNKNOWN_NETWORK, name), MT_ERROR);
             return null;
         }
-
-        network = client.networks[name];
     }
     name = network.unicodeName;
 
