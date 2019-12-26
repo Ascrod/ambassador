@@ -1,0 +1,4 @@
+#!/bin/sh
+
+MACH_CMD=./platform/mach
+$MACH_CMD $@
