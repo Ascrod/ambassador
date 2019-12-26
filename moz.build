@@ -7,7 +7,6 @@ CONFIGURE_SUBST_FILES += ['installer/Makefile']
 
 DIRS += [
     'components',
-    'fonts',
     'locales',
     'app',
     'xpi',
