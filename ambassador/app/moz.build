@@ -31,9 +31,9 @@ LOCAL_INCLUDES += [
 ]
 
 LOCAL_INCLUDES += [
-    '/toolkit/xre',
-    '/xpcom/base',
-    '/xpcom/build',
+    '/platform/toolkit/xre',
+    '/platform/xpcom/base',
+    '/platform/xpcom/build',
 ]
 
 USE_LIBS += [
