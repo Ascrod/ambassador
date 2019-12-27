@@ -6,13 +6,19 @@ installer:
 	@$(MAKE) -C ambassador/installer installer
 
 package:
+	@$(MAKE) -C ambassador/installer make-archive
+
+l10n-package:
+	@$(MAKE) -C ambassador/installer make-langpack
+
+mozpackage:
 	@$(MAKE) -C ambassador/installer
 
 package-compare:
 	@$(MAKE) -C ambassador/installer package-compare
 
 stage-package:
-	@$(MAKE) -C ambassador/installer stage-package
+	@$(MAKE) -C ambassador/installer stage-package make-buildinfo-file
 
 sdk:
 	@$(MAKE) -C ambassador/installer make-sdk

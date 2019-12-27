@@ -104,7 +104,7 @@ INSTALL_SDK = 1
 endif
 
 include $(MOZILLA_SRCDIR)/toolkit/mozapps/installer/signing.mk
-include $(MOZILLA_SRCDIR)/toolkit/mozapps/installer/packager.mk
+include $(MOZILLA_SRCDIR)/toolkit/mozapps/installer/packager-uxp.mk
 
 ifeq (bundle, $(MOZ_FS_LAYOUT))
 BINPATH = $(_BINPATH)
@@ -151,9 +151,16 @@ endif
 endif
 endif
 
-
-libs::
+# Builds using the hybrid FasterMake/RecursiveMake backend will
+# fail to produce a langpack. See bug 1255096.
+make-langpack:
+ifeq (,$(filter FasterMake+RecursiveMake,$(BUILD_BACKENDS)))
 	$(MAKE) -C $(DEPTH)/$(MOZ_APP_NAME)/locales langpack
+ else
+	@echo WARNING: "Language Pack was not generated due to using the hybrid FasterMake/RecursiveMake backend." >&2
+endif
+
+libs:: make-langpack
 
 ifeq (WINNT,$(OS_ARCH))
 PKGCOMP_FIND_OPTS =
