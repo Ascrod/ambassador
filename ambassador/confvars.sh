@@ -20,7 +20,7 @@ MOZ_APP_ID={4523665a-317f-4a66-9376-3763d1ad1978}
 MOZ_APP_STATIC_INI=1
 
 # Application Branding
-MOZ_BRANDING_DIRECTORY=$MOZ_BUILD_APP/branding
+MOZ_BRANDING_DIRECTORY=ambassador/branding
 
 # Set the chrome packing format
 # Possible values are omni, jar, and flat
