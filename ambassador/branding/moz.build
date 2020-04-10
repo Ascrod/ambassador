@@ -47,6 +47,6 @@ elif 'gtk' in CONFIG['MOZ_WIDGET_TOOLKIT']:
         'ambassador-window48.png',
     ]
 
-JS_PREFERENCE_FILES += [
+JS_PREFERENCE_PP_FILES += [
     'ambassador-branding.js'
 ]
