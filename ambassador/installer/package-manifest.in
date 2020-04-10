@@ -214,7 +214,7 @@
 ; All the pref files must be part of base to prevent migration bugs
 @RESPATH@/defaults/pref/ambassador.js
 @RESPATH@/defaults/pref/ambassador-branding.js
-@RESPATH@/greprefs.js
+@RESPATH@/goanna.js
 @RESPATH@/defaults/autoconfig/prefcalls.js
 
 ; Warning: changing the path to channel-prefs.js can cause bugs (Bug 756325)
