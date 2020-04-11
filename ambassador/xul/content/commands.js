@@ -2278,7 +2278,14 @@ function cmdGotoURL(e)
             const fileProtoHandler = getService(FILE_PROTO_SVC,
                                                 "nsIFileProtocolHandler");
             fileProtoHandler.getFileFromURLSpec(uri.asciiSpec).launch();
+            return;
         }
+        if (uri.scheme == "chrome" || uri.scheme == "resource")
+        {
+            window.openDialog(e.url, "_blank", "chrome,dialog=no,all", null);
+            return;
+        }
+
         else
         {
             const extProtoSvc = getService(EXT_PROTO_SVC,
