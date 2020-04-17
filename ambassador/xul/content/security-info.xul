@@ -16,7 +16,7 @@
         buttons="accept"
         title="&window.title;">
 
-    <script src="chrome://ambassador/lib/js/utils.js"/>
+    <script src="chrome://ambassador/content/lib/js/utils.js"/>
     <script src="security-info.js"/>
 
     <vbox id="securityPanel">
