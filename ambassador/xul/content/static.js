@@ -6,7 +6,7 @@
 #expand const __cz_guid      = "__MOZ_APP_ID__";
 const __cz_condition = "green";
 const __cz_suffix    = "";
-const __cz_locale    = "1.2.0";
+const __cz_locale    = "1.3.0";
 
 var warn;
 var ASSERT;
