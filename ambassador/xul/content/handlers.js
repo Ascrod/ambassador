@@ -2250,6 +2250,11 @@ function my_netdisconnect (e)
                              [this.getURL(), e.server.getURL()]);
                 break;
 
+            case NS_ERROR_NET_INTERRUPT:
+                msg = getMsg(MSG_CONNECTION_INTERRUPT,
+                             [this.getURL(), e.server.getURL()]);
+                break;
+
             case NS_ERROR_UNKNOWN_HOST:
                 msg = getMsg(MSG_UNKNOWN_HOST,
                              [e.server.hostname, this.getURL(),
