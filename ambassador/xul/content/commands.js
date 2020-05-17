@@ -16,6 +16,7 @@ function initCommands()
          ["about",             cmdAbout,                           CMD_CONSOLE],
          ["about-buildconfig", cmdAboutBuildConfig,                          0],
          ["about-config",      cmdAboutConfig,                               0],
+         ["about-profiles",    cmdAboutProfiles,                             0],
          ["add-ons",           cmdAddons,                                    0],
          ["alias",             cmdAlias,                           CMD_CONSOLE],
          ["attach",            cmdAttach,                          CMD_CONSOLE],
@@ -4838,6 +4839,12 @@ function cmdAboutBuildConfig(e)
     toOpenWindowByType("about:buildconfig",
                        "chrome://global/content/buildconfig.html",
                        "chrome,resizable,width=800,height=800");
+}
+
+function cmdAboutProfiles(e)
+{
+    toOpenWindowByType("about:profiles",
+                       "chrome://global/content/aboutProfiles.xhtml");
 }
 
 function cmdPasswordManager(e)
