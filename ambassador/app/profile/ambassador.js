@@ -56,3 +56,8 @@ pref("app.update.timer", 600000);
 
 // Seems to be broken, and nothing else uses it.
 pref("app.update.showInstalledUI", false);
+
+// Disable SSL session tickets and cache.
+// Most servers don't handle them properly, making reconnects a pain, and
+// long-term connections don't benefit much from the performance gains.
+pref("security.ssl.disable_session_identifiers", true);
