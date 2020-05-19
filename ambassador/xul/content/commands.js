@@ -4867,7 +4867,7 @@ function cmdUpdate(e)
     }
     else if (!um)
     {
-        display(MSG_ERR_UPDATE_DISABLED, MT_ERROR);
+        dispatch("goto-url-newtab", {url: "update"});
         return;
     }
 
