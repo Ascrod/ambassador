@@ -47,6 +47,15 @@
       </Description>
     </em:targetApplication>
 
+    <!-- Hyperbola Icedove -->
+    <em:targetApplication>
+      <Description>
+        <em:id>{3aa07e56-beb0-47a0-b0cb-c735edd25419}</em:id>
+        <em:minVersion>52.9</em:minVersion>
+        <em:maxVersion>52.*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
     <!-- front-end metadata -->
     <em:name>Ambassador</em:name>
     <em:description>A clean, easy to use and highly extensible Internet Relay Chat (IRC) client.</em:description>

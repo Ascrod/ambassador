@@ -517,6 +517,9 @@ function initApplicationCompatibility()
             case "{3550f703-e582-4d05-9a08-453d09bdfdc6}": // Interlink
                 client.host = "Interlink";
                 break;
+            case "{3aa07e56-beb0-47a0-b0cb-c735edd25419}": // Hyperbola Icedove
+                client.host = "Icedove-UXP";
+                break;
             default:
                 client.unknownUID = app.ID;
                 client.host = ""; // Unknown host, show an error later.
