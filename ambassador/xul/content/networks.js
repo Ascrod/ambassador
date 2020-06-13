@@ -68,9 +68,6 @@ function networksGetDefaults()
     networks["ircnet"] = {
         displayName:  "ircnet",
         servers: [{hostname: "open.ircnet.net", port:6667}]};
-    networks["moznet"] = {
-        displayName:  "moznet",
-        servers: [{hostname: "irc.mozilla.org", port:6697, isSecure: true}]};
     networks["efnet"] = {
         displayName:  "efnet",
         servers: [{hostname: "irc.choopa.net", port: 9999, isSecure: true},

@@ -13,7 +13,7 @@ function initMingus()
     // regular expression which matches their hostmask, like so:
     // addOwner(/rginda.*!.*@.*netscape\.com$/i);
 
-    bot.primNet = bot.networks["moznet"];
+    bot.primNet = bot.networks["freenode"];
 
     load("DP.js");
     CIRCNetwork.prototype.INITIAL_NICK = "mingus";
