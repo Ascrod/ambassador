@@ -2298,6 +2298,14 @@ function cmdGotoURL(e)
     }
 
     var browserWin = getWindowByType("navigator:browser");
+    var messengerWin = getWindowByType("mail:3pane");
+
+    if (!browserWin && messengerWin)
+    {
+        messengerWin.messenger.launchExternalURL(e.url);
+        return;
+    }
+
     var location = browserWin ? browserWin.gBrowser.currentURI.spec : null;
     var action = e.command.name;
 
