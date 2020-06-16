@@ -2674,6 +2674,8 @@ function serv_chghost (e)
 {
     this.users[e.user.collectionKey].name = e.params[1];
     this.users[e.user.collectionKey].host = e.params[2];
+    e.destObject = this.parent;
+    e.set = "network";
 }
 
 /* User realname changed */
@@ -2681,6 +2683,8 @@ CIRCServer.prototype.onSetname =
 function serv_setname (e)
 {
     this.users[e.user.collectionKey].desc = e.decodeParam(1);
+    e.destObject = this.parent;
+    e.set = "network";
 }
 
 /* user changed the mode */
