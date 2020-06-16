@@ -23,6 +23,7 @@ const JSIRCV3_SUPPORTED_CAPS = [
     "multi-prefix",
     "sasl",
     "server-time",
+    "setname",
     "tls",
     "userhost-in-names",
 ];
@@ -2673,6 +2674,13 @@ function serv_chghost (e)
 {
     this.users[e.user.collectionKey].name = e.params[1];
     this.users[e.user.collectionKey].host = e.params[2];
+}
+
+/* User realname changed */
+CIRCServer.prototype.onSetname =
+function serv_setname (e)
+{
+    this.users[e.user.collectionKey].desc = e.decodeParam(1);
 }
 
 /* user changed the mode */
