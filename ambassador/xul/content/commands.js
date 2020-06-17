@@ -2126,6 +2126,14 @@ function _sendMsgTo(message, msgType, target, displayObj)
 
 function cmdNick(e)
 {
+    /*  If we're being called from a user view, the command argument (nickname)
+        conflicts with the nickname in the view's context. As a workaround, we
+        assume that the user is not really trying to change their nickname to
+        the view's nickname, and force a prompt.
+    */
+    if ((e.TYPE == "IRCUser") && (e.nickname == e.userName))
+        e.nickname = undefined;
+
     if (!e.nickname)
     {
         var curNick;
