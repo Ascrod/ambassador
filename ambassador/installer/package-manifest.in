@@ -2,7 +2,7 @@
 ; License, v. 2.0. If a copy of the MPL was not distributed with this
 ; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-; Package file for the Firefox build.
+; Package file for the Ambassador build.
 ;
 ; Packaging manifest is used to copy files from dist/bin
 ; to the staging directory.
@@ -32,6 +32,12 @@
 
 #filter substitution
 
+#ifdef XP_UNIX
+#ifndef XP_MACOSX
+#define UNIX_BUT_NOT_MAC
+#endif
+#endif
+
 #ifdef XP_MACOSX
 ; Mac bundle stuff
 @APPNAME@/Contents/Info.plist
@@ -44,12 +50,12 @@
 @RESPATH@/chrome/@AB_CD@@JAREXT@
 @RESPATH@/chrome/@AB_CD@.manifest
 @RESPATH@/dictionaries/*
-#if defined(XP_WIN) || defined(XP_LINUX)
+#if MOZ_BUNDLED_FONTS
 @RESPATH@/fonts/*
 #endif
 @RESPATH@/hyphenation/*
 @RESPATH@/defaults/pref/ambassador-l10n.js
-#ifdef XP_WIN32
+#ifdef HAVE_MAKENSISU
 @BINPATH@/uninstall/helper.exe
 #endif
 #ifdef MOZ_UPDATER
@@ -126,16 +132,12 @@
 @BINPATH@/@DLL_PREFIX@mozavutil@DLL_SUFFIX@
 @BINPATH@/@DLL_PREFIX@mozavcodec@DLL_SUFFIX@
 #endif
-#ifdef XP_UNIX
-#ifndef XP_MACOSX
+#ifdef UNIX_BUT_NOT_MAC
 @RESPATH@/run-mozilla.sh
-#endif
 #endif
 
 ; [Components]
 @RESPATH@/components/*
-#ifdef MOZ_ARTIFACT_BUILDS
-#endif
 #ifdef ACCESSIBILITY
 #ifdef XP_WIN32
 @BINPATH@/Accessible.tlb
@@ -143,25 +145,6 @@
 @BINPATH@/IA2Marshal.dll
 #endif
 #endif
-#ifdef MOZ_WEBRTC
-#endif
-#ifdef MOZ_WEBSPEECH
-#endif
-#ifdef MOZ_GTK
-#endif
-#ifdef NS_PRINTING
-#endif
-#ifdef NECKO_WIFI
-#endif
-#ifdef MOZ_WEBRTC
-#endif
-#ifdef MOZ_ENABLE_XREMOTE
-#endif
-#ifdef XP_MACOSX
-#endif
-
-@RESPATH@/chrome/marionette@JAREXT@
-@RESPATH@/chrome/marionette.manifest
 
 ; Modules
 @RESPATH@/modules/*
@@ -199,14 +182,12 @@
 #endif
 
 ; shell icons
-#ifdef XP_UNIX
-#ifndef XP_MACOSX
+#ifdef UNIX_BUT_NOT_MAC
 ; shell icons
 @RESPATH@/icon/*.png
 #ifdef MOZ_UPDATER
 ; updater icon
-; FIXME @RESPATH@/icons/updater.png
-#endif
+@RESPATH@/icons/updater.png
 #endif
 #endif
 
@@ -302,16 +283,4 @@
 #else
 @BINPATH@/updater@BIN_SUFFIX@
 #endif
-#endif
-
-; Shutdown Terminator
-
-#if defined(CLANG_CXX)
-#if defined(MOZ_ASAN) || defined(MOZ_TSAN)
-@BINPATH@/llvm-symbolizer
-#endif
-#endif
-
-#if defined(MOZ_ASAN) && defined(CLANG_CL)
-@BINPATH@/clang_rt.asan_dynamic-*.dll
 #endif
