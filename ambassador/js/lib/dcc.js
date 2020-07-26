@@ -274,6 +274,7 @@ function CIRCDCCUser(parent, user, remoteIP)
     this.id = parent.getNextID();
     this.unicodeName = user.unicodeName;
     this.viewName = user.unicodeName;
+    this.canonicalName = user.collectionKey.substr(1);
     this.remoteIP = remoteIP;
 
     this.key = escape(user.collectionKey) + ":" + remoteIP;
