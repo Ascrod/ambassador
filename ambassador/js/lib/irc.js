@@ -1744,7 +1744,7 @@ function serv_005 (e)
         for (var channelKey in this.channels)
         {
             var channel = this.channels[channelKey];
-            channel.canonicalName = this.toLowerCase(this.channels[channel].encodedName);
+            channel.canonicalName = this.toLowerCase(channel.encodedName);
             channel.collectionKey = ":" + channel.canonicalName;
             renameProperty(this.channels, channelKey, channel.collectionKey);
             for (userKey in this.channels.users)
