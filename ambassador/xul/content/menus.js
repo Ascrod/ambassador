@@ -107,6 +107,7 @@ function initMenus()
         items:
         [
          ["cmd-prefs"],
+         ["about-profiles", {visibleif: XULRunner}],
          ["install-plugin"],
          ["goto-startup"],
          ["-"],
