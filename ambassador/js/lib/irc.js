@@ -3603,14 +3603,14 @@ CIRCChannel.prototype.removeUser =
 function chan_removeuser(nick)
 {
     // Try assuming it's an encodedName first.
-    nick = this.parent.toLowerCase(nick);
-    if (nick in this.users)
-        delete this.users[nick]; // see ya
+    key = ":" + this.parent.toLowerCase(nick);
+    if (key in this.users)
+        delete this.users[key]; // see ya
 
     // Ok, failed, so try assuming it's a unicodeName.
-    nick = this.parent.toLowerCase(fromUnicode(nick, this.parent));
-    if (nick in this.users)
-        delete this.users[nick];
+    key = ":" + this.parent.toLowerCase(fromUnicode(nick, this.parent));
+    if (key in this.users)
+        delete this.users[key];
 }
 
 CIRCChannel.prototype.getUsersLength =
