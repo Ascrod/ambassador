@@ -2056,7 +2056,7 @@ function serv_354 (e)
 CIRCServer.prototype.on315 =
 function serv_315 (e)
 {
-    e.user = new CIRCUser(this, null, e.params[2]);
+    e.user = new CIRCUser(this, null, e.params[1]);
     e.destObject = this.parent;
     e.set = "network";
 
