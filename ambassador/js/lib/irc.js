@@ -23,7 +23,7 @@ const JSIRCV3_SUPPORTED_CAPS = [
     "multi-prefix",
     "sasl",
     "server-time",
-    "setname",
+    //"setname",
     "tls",
     "userhost-in-names",
 ];
