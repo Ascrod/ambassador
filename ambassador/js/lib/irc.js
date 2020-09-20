@@ -2134,14 +2134,26 @@ function serv_366 (e)
     return true;
 }
 
-/* channel time stamp? */
+/* channel homepage */
+CIRCServer.prototype.on328 =
+function serv_328 (e)
+{
+    e.channel = new CIRCChannel(this, null, e.params[2]);
+    e.destObject = e.channel;
+    e.set = "channel";
+    e.channel.homepage = e.params[3];
+
+    return true;
+}
+
+/* channel timestamp */
 CIRCServer.prototype.on329 =
 function serv_329 (e)
 {
     e.channel = new CIRCChannel(this, null, e.params[2]);
     e.destObject = e.channel;
     e.set = "channel";
-    e.channel.timeStamp = new Date (Number(e.params[3]) * 1000);
+    e.channel.timestamp = new Date (Number(e.params[3]) * 1000);
 
     return true;
 }
