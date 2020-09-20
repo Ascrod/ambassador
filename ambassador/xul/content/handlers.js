@@ -2933,6 +2933,23 @@ function my_366 (e)
     this._updateConferenceMode();
 }
 
+/* channel homepage */
+CIRCChannel.prototype.on328 =
+function my_328 (e)
+{
+    this.display(getMsg(MSG_CHANNEL_HOMEPAGE, [this.unicodeName,
+                 this.homepage]), e.code, undefined, undefined, e.tags.time);
+}
+
+/* channel timestamp */
+CIRCChannel.prototype.on329 =
+function my_329 (e)
+{
+    this.display(getMsg(MSG_CHANNEL_TIMESTAMP, [this.unicodeName,
+                 this.timestamp.toString()]), e.code, undefined, undefined,
+                 e.tags.time);
+}
+
 CIRCChannel.prototype.onTopic = /* user changed topic */
 CIRCChannel.prototype.on332 = /* TOPIC reply */
 function my_topic (e)
