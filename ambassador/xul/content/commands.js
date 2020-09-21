@@ -110,13 +110,15 @@ function initCommands()
          ["kick-ban",          cmdKick,            CMD_NEED_CHAN | CMD_CONSOLE],
          ["knock",             cmdKnock,            CMD_NEED_SRV | CMD_CONSOLE],
          ["leave",             cmdLeave,            CMD_NEED_NET | CMD_CONSOLE],
-         ["line-marker",       cmdLineMarker,                      CMD_CONSOLE],
          ["links",             cmdSimpleCommand,    CMD_NEED_SRV | CMD_CONSOLE],
          ["list",              cmdList,             CMD_NEED_SRV | CMD_CONSOLE],
          ["list-plugins",      cmdListPlugins,                     CMD_CONSOLE],
          ["load",              cmdLoad,                            CMD_CONSOLE],
          ["log",               cmdLog,                             CMD_CONSOLE],
          ["map",               cmdSimpleCommand,    CMD_NEED_SRV | CMD_CONSOLE],
+         ["marker",            cmdMarker,                          CMD_CONSOLE],
+         ["marker-clear",      cmdMarker,                          CMD_CONSOLE],
+         ["marker-set",        cmdMarker,                          CMD_CONSOLE],
          ["match-users",       cmdMatchUsers,      CMD_NEED_CHAN | CMD_CONSOLE],
          ["me",                cmdMe,                              CMD_CONSOLE],
          ["motd",              cmdSimpleCommand,    CMD_NEED_SRV | CMD_CONSOLE],
@@ -2100,15 +2102,7 @@ function cmdMsg(e)
 function _sendMsgTo(message, msgType, target, displayObj)
 {
     if (!displayObj)
-    {
         displayObj = target;
-
-        // user just sent a message, so user is present, so hide marker
-        if (("setActivityMarker" in target) && checkScroll(target.frame))
-        {
-            target.setActivityMarker(false);
-        }
-    }
 
 
     var msg = filterOutput(message, msgType, target);
@@ -2622,50 +2616,37 @@ function cmdLeave(e)
     }
 }
 
-function cmdLineMarker(e)
+function cmdMarker(e)
 {
-    var view = e.sourceObject;
+    if (!client.initialized)
+        return;
 
-    if (e.action == null)
+    var view = e.sourceObject;
+    if (!("setActivityMarker" in e.sourceObject))
+        return;
+
+    var marker = e.sourceObject.getActivityMarker();
+    if ((e.command.name == "marker") && (marker == null))
     {
-        // Scroll to marker, then hide it. If not up, show it
-        if ("getActivityMarker" in e.sourceObject)
-        {
-            if (e.sourceObject.getActivityMarker().state)
-            {
-                e.sourceObject.scrollToElement("marker", "center");
-                if (("setActivityMarker" in e.sourceObject))
-                    e.sourceObject.setActivityMarker(false, true);
-            }
-            else
-            {
-                if (("setActivityMarker" in e.sourceObject))
-                    e.sourceObject.setActivityMarker(true, true);
-            }
-        }
+        // Marker is not currently set but user wants to scroll to it,
+        // so we just call set like normal.
+        e.command.name = "marker-set";
     }
-    else if (e.action == "hide")
+
+    switch(e.command.name)
     {
-        // Hide without scrolling.
-        if (("setActivityMarker" in e.sourceObject))
-            e.sourceObject.setActivityMarker(false, true);
-    }
-    else if (e.action == "reset")
-    {
-        // Hide and scroll to bottom.
-        if (("setActivityMarker" in e.sourceObject))
-            e.sourceObject.setActivityMarker(false, true);
-        scrollDown(e.sourceObject.frame, true);
-    }
-    else if (e.action == "show")
-    {
-        // Show.
-        if (("setActivityMarker" in e.sourceObject))
-            e.sourceObject.setActivityMarker(true, true);
-    }
-    else
-    {
-        view.display(MSG_ERR_INVALID_CMD);
+        case "marker":    /* Scroll to the marker. */
+            e.sourceObject.scrollToElement("marker", "center");
+            break;
+        case "marker-set":   /* Set (or reset) the marker. */
+            e.sourceObject.setActivityMarker(true);
+            e.sourceObject.scrollToElement("marker", "center");
+            break;
+        case "marker-clear": /* Clear the marker. */
+            e.sourceObject.setActivityMarker(false);
+            break;
+        default:
+            view.display(MSG_ERR_UNKNOWN_COMMAND, e.command.name);
     }
 }
 
