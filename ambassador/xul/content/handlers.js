@@ -604,13 +604,6 @@ function onWindowKeyPress(e)
             if (!e.ctrlKey && !e.altKey && !e.metaKey && !e.shiftKey &&
                 (elemFocused != userList))
             {
-                if (code == 34) // Hide Line marker on non-scrolling Page Down
-                {
-                var view = client.currentObject;
-                if (("setActivityMarker" in view) && checkScroll(view.frame, true))
-                    view.setActivityMarker(false);
-                }
-
                 w = client.currentFrame;
                 newOfs = w.pageYOffset + (w.innerHeight * 0.75) *
                                          (2 * code - 67);
@@ -2883,66 +2876,50 @@ function chan_part(reason)
     this._part(reason);
 }
 
+client.setActivityMarker =
+CIRCNetwork.prototype.setActivityMarker =
 CIRCChannel.prototype.setActivityMarker =
-function chan_setactivitymarker(state, manual)
+CIRCUser.prototype.setActivityMarker =
+CIRCDCCChat.prototype.setActivityMarker =
+CIRCDCCFileTransfer.prototype.setActivityMarker =
+function view_setactivitymarker(state)
 {
-    if (typeof manual == "undefined")
-        manual = false;
-
-    // If the pref set to false, then dont turn on automatically
-    if (state && !manual && !this.prefs["autoLineMarker"])
+    if (!client.initialized)
         return;
 
-    if (state == this.activityMarker.state)
+    // Always clear the activity marker first
+    var markedRow = this.getActivityMarker();
+    if (markedRow)
     {
-        // We're visible, and being told to show, store manual if it was passed.
-        if (state && manual)
-            this.activityMarker.manual = manual;
-        return;
+        markedRow.classList.remove("ambassador-line-marker");
     }
-    // If we were manually turned on, don't turn off automatically.
-    if (this.activityMarker.manual && !state && !manual)
-        return;
 
-    this.activityMarker.state = state;
-    /* Only store manual as true if we set it ON manually. The flag is
-     * meaningless when the marker is off.
-     */
-    this.activityMarker.manual = (manual && state);
-
-    if (this.activityMarker.state == true)
+    if (state)
     {
-        var marker = document.createElementNS(XHTML_NS, "html:hr");
-        marker.setAttribute("class","ambassador-line-marker");
-        this.display(marker, MT_MARKER);
-        this.activityMarker.marker = marker;
-    }
-    else
-    {
-        var row = this.activityMarker.marker;
-        while (row.parentNode && !/(?:^|\s)msg(?:\s|$)/.test(row.className))
-            row = row.parentNode;
-        row.parentNode.removeChild(row);
-        this.activityMarker.marker = null;
+        // Mark the last row.
+        var target = this.messages.firstChild.lastChild;
+        if (!target)
+            return;
+        target.classList.add("ambassador-line-marker");
     }
 }
 
+client.getActivityMarker =
+CIRCNetwork.prototype.getActivityMarker =
 CIRCChannel.prototype.getActivityMarker =
-function chan_getactivitymarker()
+CIRCUser.prototype.getActivityMarker =
+CIRCDCCChat.prototype.getActivityMarker =
+CIRCDCCFileTransfer.prototype.getActivityMarker =
+function view_getactivitymarker()
 {
-    return this.activityMarker;
+    return this.messages.querySelector(".ambassador-line-marker");
 }
-
 CIRCChannel.prototype.onInit =
 function chan_oninit ()
 {
     this.logFile = null;
     this.pendingNamesReply = false;
     this.importantMessages = 0;
-    this.activityMarker = new Object();
-    this.activityMarker.marker = null;
-    this.activityMarker.state = false;
-    this.activityMarker.manual = false;
 }
 
 CIRCChannel.prototype.onPrivmsg =

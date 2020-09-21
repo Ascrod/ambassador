@@ -2697,6 +2697,11 @@ function setCurrentObject (obj)
     if (tb)
         tb.setAttribute("state", "normal");
 
+    // If we're tracking last read lines, set a mark on the current view
+    // before switching to the new one.
+    if (tb && client.currentObject.prefs["autoMarker"])
+        client.currentObject.dispatch("marker-set");
+
     client.currentObject = obj;
 
     // Update userlist:
@@ -2726,11 +2731,7 @@ function setCurrentObject (obj)
     updateSecurityIcon();
     updateLoggingIcon();
 
-    // Scroll to marker, if visisble, otherwise scroll down normally.
-    if (("getActivityMarker" in obj) && obj.getActivityMarker().state)
-        obj.scrollToElement("marker", "center");
-    else
-        scrollDown(obj.frame, false);
+    scrollDown(obj.frame, false);
 
     // Input area should have the same direction as the output area
     if (("frame" in client.currentObject) &&
@@ -4938,13 +4939,9 @@ function __display(message, msgtype, sourceObj, destObj, time)
             msgRowData.appendChild(message);
             tmpMsgs = tmpMsgs.innerHTML.replace(/<[^<]*>/g, "");
         }
-        // Don't log display of the line marker
-        if (msgtype != MT_MARKER)
-        {
-            tmpMsgs = tmpMsgs.split(/\r?\n/);
-            for (var l = 0; l < tmpMsgs.length; l++)
-                logStrings[l] = logStringPfx + tmpMsgs[l];
-        }
+        tmpMsgs = tmpMsgs.split(/\r?\n/);
+        for (var l = 0; l < tmpMsgs.length; l++)
+            logStrings[l] = logStringPfx + tmpMsgs[l];
     }
 
     if ("mark" in this)
@@ -5103,7 +5100,6 @@ function addHistory (source, obj, mergeData)
     var tbody = source.messages.firstChild;
     var appendTo = tbody;
 
-    var frame = ("frame" in source) ? source.frame : null;
     var needScroll = false;
 
     if (mergeData)
@@ -5187,37 +5183,8 @@ function addHistory (source, obj, mergeData)
         }
     }
 
-    if (frame != null)
-        needScroll = checkScroll(frame);
-    // Don't allow scrolling down if the activity marker is on.
-    var windowHasFocus = (client.mainWindow && client.mainWindow.isFocused);
-    var current = (("currentObject" in client) &&
-                   client.currentObject == source);
-
-    if (("getActivityMarker" in source) &&
-        source.getActivityMarker().state)
-    {
-        /* Turn the marker off if the user is *right* at the bottom, and
-         * looking at it.
-         */
-        if (windowHasFocus && current)
-        {
-            if (("setActivityMarker" in source) && checkScroll(frame, true))
-                source.setActivityMarker(false);
-        }
-        else
-        {
-            source.scrollToElement("marker", "center");
-            needScroll = false;
-        }
-    }
-    else if (!windowHasFocus || !current)
-    {
-        if ("setActivityMarker" in source)
-            source.setActivityMarker(true);
-        //dd("" + windowHasFocus + " " + current);
-    }
-
+    if ("frame" in source)
+        needScroll = checkScroll(source.frame);
     if (obj)
         appendTo.appendChild(client.adoptNode(obj, appendTo.ownerDocument));
 
@@ -5225,7 +5192,7 @@ function addHistory (source, obj, mergeData)
     {
         if (typeof source.messageCount != "number")
             source.messageCount = 1;
-        else if (obj.getAttribute("msg-type") != MT_MARKER)
+        else
             source.messageCount++;
 
         if (source.messageCount > source.MAX_MESSAGES)
@@ -5233,33 +5200,25 @@ function addHistory (source, obj, mergeData)
     }
 
     if (needScroll)
-        scrollDown(frame, true);
+        scrollDown(source.frame, true);
 }
 
 function removeExcessMessages(source)
 {
-    var frame = ("frame" in source) ? source.frame : null;
-    var window = getContentWindow(frame);
+    var window = getContentWindow(source.frame);
     var rows = source.messages.rows;
     var lastItemOffset = rows[rows.length - 1].offsetTop;
     var tbody = source.messages.firstChild;
-    var firstMsg = tbody.firstChild;
     while (source.messageCount > source.MAX_MESSAGES)
     {
-        // Ignore the line marker.
-        if (firstMsg.getAttribute("msg-type") == "MARKER")
+        if (tbody.firstChild.className == "msg-nested-tr")
         {
-            firstMsg = firstMsg.nextSibling;
-        }
-
-        if (firstMsg.className == "msg-nested-tr")
-        {
-            var table = firstMsg.firstChild.firstChild;
+            var table = tbody.firstChild.firstChild.firstChild;
             var toBeRemoved = source.messageCount - source.MAX_MESSAGES;
             // If we can remove the entire table, do that...
             if (table.rows.length <= toBeRemoved)
             {
-                tbody.removeChild(firstMsg);
+                tbody.removeChild(tbody.firstChild);
                 source.messageCount -= table.rows.length;
                 table = null; // Don't hang onto this.
                 continue;
@@ -5267,19 +5226,19 @@ function removeExcessMessages(source)
             // Otherwise, remove rows from this table instead:
             tbody = table.firstChild;
         }
-        var nextLastNode = firstMsg.nextSibling;
+        var nextLastNode = tbody.firstChild.nextSibling;
         // If the next node has only 2 childNodes,
         // assume we're dealing with collapsed msgs,
         // and move the nickname element:
         if (nextLastNode.childNodes.length == 2)
         {
-            var nickElem = firstMsg.childNodes[1];
+            var nickElem = tbody.firstChild.childNodes[1];
             var rowspan = nickElem.getAttribute("rowspan") - 1;
-            firstMsg.removeChild(nickElem);
+            tbody.firstChild.removeChild(nickElem);
             nickElem.setAttribute("rowspan", rowspan);
             nextLastNode.insertBefore(nickElem, nextLastNode.lastChild);
         }
-        tbody.removeChild(firstMsg);
+        tbody.removeChild(tbody.firstChild);
         --source.messageCount;
     }
     var oldestItem = rows[0];
@@ -5290,7 +5249,7 @@ function removeExcessMessages(source)
     // Scroll by as much as the lowest item has moved up:
     lastItemOffset -= rows[rows.length - 1].offsetTop;
     var y = window.pageYOffset;
-    if (!checkScroll(frame) && (y > lastItemOffset))
+    if (!checkScroll(source.frame) && (y > lastItemOffset))
         window.scrollBy(0, -lastItemOffset);
 }
 

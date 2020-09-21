@@ -165,8 +165,8 @@ a.ambassador-link:hover {
 }
 
 /* line marker */
-hr.ambassador-line-marker {
-    border: 2px solid red;
+.ambassador-line-marker {
+    box-shadow: 0px 2px darkgreen;
 }
 
 /* basic styles */
