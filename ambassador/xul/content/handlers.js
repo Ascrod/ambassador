@@ -731,6 +731,11 @@ function onWindowFocus(e)
 function onWindowBlue(e)
 {
     window.isFocused = false;
+
+    // If we're tracking last read lines, set a mark on the current view
+    // when losing focus.
+    if (client.currentObject && client.currentObject.prefs["autoMarker"])
+        client.currentObject.dispatch("marker-set");
 }
 
 function onInputCompleteLine(e)
