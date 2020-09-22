@@ -103,7 +103,7 @@ function initPrefs()
          ["aliases",            [],       "lists.aliases"],
          ["autoAwayCap",        300,      "global"],
          ["autoAwayPeriod",     2,        "appearance.misc"],
-         ["autoMarker",         true,     "appearance.misc"],
+         ["autoMarker",         false,    "appearance.misc"],
          ["autoperform.channel", [],      "lists.autoperform"],
          ["autoperform.client",  [],      "lists.autoperform"],
          ["autoperform.network", [],      "lists.autoperform"],
