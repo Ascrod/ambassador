@@ -1132,6 +1132,10 @@ function serv_messto (code, target, msg, ctcpCode)
         sfx = "\01";
     }
 
+    // We may have no message at all with CTCP commands.
+    if (!lines.length && ctcpCode)
+        lines.push("");
+
     for (i in lines)
     {
         if ((lines[i] != "") || ctcpCode)
