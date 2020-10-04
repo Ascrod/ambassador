@@ -193,7 +193,7 @@ function init()
     dispatch("help", { hello: true });
     dispatch("networks");
 
-    setTimeout("dispatch('focus-input')", 0);
+    setTimeout(dispatch, 0, 'focus-input');
     setTimeout(processStartupAutoperform, 0);
     setTimeout(processStartupURLs, 0);
 }
@@ -1350,7 +1350,7 @@ function playEventSounds(type, event, source)
     if (client.prefs["sound.overlapDelay"] > 0)
     {
         client.soundList[ev] = true;
-        setTimeout("delete client.soundList['" + ev + "']",
+        setTimeout(function() { delete client.soundList[ev] },
                    client.prefs["sound.overlapDelay"]);
     }
 
@@ -1380,7 +1380,7 @@ function blockEventSounds(type, event)
     if (client.prefs["sound.overlapDelay"] > 0)
     {
         client.soundList[ev] = true;
-        setTimeout("delete client.soundList['" + ev + "']",
+        setTimeout(function() { delete client.soundList[ev] },
                    client.prefs["sound.overlapDelay"]);
     }
 }
@@ -1426,15 +1426,15 @@ function mainStep()
     {
         var count = client.eventPump.stepEvents();
         if (count > 0)
-            setTimeout("mainStep()", client.STEP_TIMEOUT);
+            setTimeout(mainStep, client.STEP_TIMEOUT);
         else
-            setTimeout("mainStep()", client.STEP_TIMEOUT / 5);
+            setTimeout(mainStep, client.STEP_TIMEOUT / 5);
     }
     catch(ex)
     {
         dd("Exception in mainStep!");
         dd(formatException(ex));
-        setTimeout("mainStep()", client.STEP_TIMEOUT);
+        setTimeout(mainStep, client.STEP_TIMEOUT);
     }
 }
 
@@ -5557,7 +5557,7 @@ function checkLogFiles()
      * here for when it is not a whole number of hours from UTC.
      */
     var shiftedDate = d.getTime() + d.getTimezoneOffset() * 60000;
-    setTimeout("checkLogFiles()", 3602000 - (shiftedDate % 3600000));
+    setTimeout(checkLogFiles, 3602000 - (shiftedDate % 3600000));
 }
 
 CIRCChannel.prototype.getLCFunction =
