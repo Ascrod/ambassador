@@ -22,6 +22,10 @@ a.ambassador-link:visited {
     color: lightgrey;
 }
 
+.ambassador-line-marker {
+    box-shadow: 0px 2px darkgreen !important;
+}
+
 .header-outer {
     background-color: black;
 }
